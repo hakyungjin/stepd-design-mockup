@@ -448,7 +448,8 @@
   top: 0;
   right: 0;
   bottom: 0;
-  left: 240px;
+  /* 사이드바를 접으면 그만큼 넓어집니다 (AppShell 이 내보내는 값) */
+  left: var(--sidebar-w, 196px);
   z-index: 40;
   background: var(--bg-dark);
   display: flex;

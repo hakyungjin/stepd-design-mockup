@@ -5,6 +5,16 @@
   background: var(--bg-dark);
 }
 
+/*
+ * 화면에 고정으로 띄우는 것들(드로어·선택 바 등)이 사이드바를 피해 가야 합니다.
+ * 같은 값을 변수로도 내보내 두면 접을 때 함께 따라옵니다.
+ * 폭 자체는 아래 .sidebar 가 들고 있고, 이 변수는 그 값을 따라 적습니다.
+ */
+.shell { --sidebar-w: 196px; }
+.shell:has(.sidebarCompact) { --sidebar-w: 76px; }
+@media (max-width: 800px) { .shell { --sidebar-w: 176px; } }
+@media (max-width: 640px) { .shell { --sidebar-w: 62px; } }
+
 .sidebar {
   flex: none;
   /* 가장 긴 항목("배포/스케줄")이 들어가는 선에서 가장 좁게 잡았습니다 */

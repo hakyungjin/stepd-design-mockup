@@ -32,7 +32,7 @@ function demoThread(): ChatThread {
 
 export function useChatMock() {
   const [threads, setThreads] = useState<ChatThread[]>(() => [demoThread()])
-  const [selectedId, setSelectedId] = useState<string | null>('demo-highlight')
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [program, setProgram] = useState<ProgramName>('나는 SOLO')
   const [pending, setPending] = useState<string[]>([])
   const [view, setView] = useState<'conversation' | 'tasks'>('conversation')
