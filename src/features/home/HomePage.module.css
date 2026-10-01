@@ -1,0 +1,42 @@
+.page { max-width: 1260px; width: 100%; margin: 0 auto; padding: 28px 42px 40px; }
+.topLine { display: flex; justify-content: space-between; gap: 15px; font-size: 11px; color: var(--text-muted); margin-bottom: 48px; }
+.welcome h1 { font-size: 30px; letter-spacing: -.8px; margin: 0 0 10px; font-weight: 600; }
+.welcome p { font-size: 13px; color: var(--text-muted); margin: 0; }
+.shortcuts { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin: 30px 0 42px; }
+.shortcuts button { display: flex; align-items: center; gap: 12px; padding: 18px 15px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 9px; cursor: pointer; text-align: left; }
+.shortcutIcon { color: var(--text-muted); flex: none; }
+.shortcuts strong { display: block; font-size: 13px; font-weight: 600; }
+.shortcuts small { display: block; color: var(--text-muted); font-size: 10px; margin-top: 6px; }
+.chevron { margin-left: auto; color: var(--text-muted); }
+.shortcuts button:hover { border-color: var(--text-accent); }
+.columns { display: grid; grid-template-columns: 1.15fr 1fr; gap: 30px; }
+.sectionHead { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 16px; }
+.sectionHead h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.sectionHead button { color: var(--text-muted); background: transparent; font-size: 11px; cursor: pointer; padding: 4px 0; }
+.sectionHead button span { margin-left: 8px; }
+.schedule { border-top: 1px solid var(--border-subtle); }
+.scheduleItem { display: flex; width: 100%; gap: 18px; align-items: center; background: transparent; border-bottom: 1px solid var(--border-subtle); padding: 20px 0; text-align: left; cursor: pointer; }
+.scheduleItem time { font-size: 15px; color: var(--text-secondary); min-width: 45px; }
+.scheduleText { flex: 1; min-width: 0; }
+.scheduleText strong { display: block; font-size: 12px; font-weight: 500; }
+.scheduleText small { display: block; font-size: 10px; color: var(--text-muted); margin-top: 7px; }
+.scheduled { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+.issueCount { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--bg-card-hover); color: var(--text-muted); }
+.attention { display: flex; align-items: flex-start; width: 100%; text-align: left; gap: 12px; padding: 18px 15px; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--bg-card); margin-bottom: 10px; cursor: pointer; }
+.issueIcon { display: grid; place-items: center; flex: none; width: 19px; height: 19px; border-radius: 50%; background: rgba(245,158,11,.12); color: var(--color-amber-600); font-size: 11px; }
+.attention > span:nth-child(2) { flex: 1; }
+.attention strong { display: block; font-size: 12px; font-weight: 500; }
+.attention small { display: block; font-size: 10px; line-height: 1.7; margin-top: 8px; color: var(--text-muted); }
+.attention > span:last-child { color: var(--text-muted); }
+.recent { margin-top: 40px; }
+.recentHead, .recentRow { display: grid; grid-template-columns: 2fr 1fr 125px; gap: 20px; align-items: center; }
+.recentHead { font-size: 10px; color: var(--text-muted); padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); }
+.recentRow { width: 100%; padding: 18px 10px; background: transparent; border-bottom: 1px solid var(--border-subtle); text-align: left; font-size: 11px; color: var(--text-muted); cursor: pointer; }
+.recentTitle { display: flex; align-items: center; gap: 12px; }
+.recentTitle strong { display: block; color: var(--text-primary); font-size: 12px; font-weight: 500; }
+.recentTitle small { display: block; color: var(--text-muted); font-size: 10px; margin-top: 6px; }
+.recentRow:hover, .scheduleItem:hover { background: var(--bg-card-hover); }
+.homeFooter { margin-top: 35px; font-size: 10px; color: var(--text-muted); }
+.page button:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; }
+@media (max-width:1100px) { .shortcuts { grid-template-columns: repeat(2,minmax(0,1fr)); } .columns { grid-template-columns: 1fr; gap: 28px; } }
+@media (max-width:640px) { .page { padding: 22px 18px; } .topLine { flex-wrap: wrap; margin-bottom: 30px; } .welcome h1 { font-size: 25px; } .shortcuts { gap: 8px; } .shortcuts button { padding: 12px; gap: 8px; } .shortcuts small { display: none; } .recentHead, .recentRow { grid-template-columns: 1fr 90px; gap: 10px; } .recentHead > span:nth-child(2), .recentRow > span:nth-child(2) { display: none; } .scheduleItem { gap: 10px; } }

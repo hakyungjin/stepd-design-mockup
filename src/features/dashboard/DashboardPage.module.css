@@ -1,0 +1,314 @@
+.page {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topBarMeta {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 오늘 수익 ---------------- */
+
+.revenueCard {
+  flex: 1;
+  min-height: 340px;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.revenueGrid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(190px, 0.8fr) minmax(0, 2fr) minmax(220px, 1fr);
+  gap: 24px;
+}
+
+.revenueLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.revenueBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.revenueLabel {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.revenueValue {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.revenueDelta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12.5px;
+}
+
+.deltaUp {
+  font-size: 15px;
+  color: var(--status-success-text);
+}
+
+.deltaNote {
+  color: var(--text-muted);
+}
+
+.closeBox {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+}
+
+.closeLabel {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.closeValue {
+  font-size: 22px;
+  color: var(--text-primary);
+}
+
+.chartCol {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chartLegend {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.chartBox {
+  position: relative;
+  flex: 1;
+  min-height: 64px;
+}
+
+.chartSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.nowDot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid #1c60ff;
+  box-sizing: border-box;
+}
+
+.masked {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.chartAxis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.topCol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: 20px;
+  border-left: 1px solid var(--border-subtle);
+}
+
+.topColTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.topRank {
+  flex: none;
+  width: 18px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.topBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.topTitle {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-primary);
+  text-wrap: pretty;
+}
+
+.topChannel {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.topAmount {
+  flex: none;
+  width: 72px;
+  text-align: right;
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+
+/* ---------------- 오늘 배포 ---------------- */
+
+.planCard {
+  flex: none;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.planHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.planHeadLeft {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.planSub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.planCount {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-accent);
+}
+
+.planLink {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-accent);
+  cursor: pointer;
+}
+
+.planLink:hover {
+  color: var(--bg-active-hover);
+}
+
+.planRow {
+  display: grid;
+  grid-template-columns: 60px minmax(180px, 1fr) 160px 120px 100px;
+  align-items: center;
+  gap: 16px;
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.planRow:hover {
+  background: var(--bg-card-hover);
+}
+
+.planTime {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.planTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.planChannel {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.planAction {
+  display: grid;
+}

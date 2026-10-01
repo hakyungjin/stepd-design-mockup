@@ -1,0 +1,359 @@
+/* 상세 모달의 버전 · 댓글 패널 */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-left: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+}
+
+.head {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 18px 18px 12px;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.count {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 버전 ---------------- */
+
+.versions {
+  flex: none;
+  padding: 0 18px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.versionHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.versionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.newVersion {
+  margin-left: auto;
+  padding: 4px 9px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 7px;
+  background: transparent;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.newVersion:hover {
+  border-color: var(--bg-active);
+  color: var(--bg-active);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.chip {
+  padding: 4px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.chipOn {
+  composes: chip;
+  border-color: var(--bg-active);
+  background: var(--bg-accent-subtle);
+  color: var(--text-primary);
+}
+
+.versionRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: var(--bg-input);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.versionCur {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--bg-accent-subtle);
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--badge-text);
+}
+
+.versionNote {
+  flex: 1;
+  min-width: 0;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.restore {
+  flex: none;
+  padding: 3px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.restore:hover {
+  background: var(--bg-card-hover);
+}
+
+/* ---------------- 댓글 ---------------- */
+
+.thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 14px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.empty {
+  margin: auto 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.system {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.systemLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.comment {
+  display: flex;
+  gap: 9px;
+}
+
+.avatar {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.byline {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-bottom: 3px;
+}
+
+.by {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.at {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ver {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.text {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mention {
+  font-weight: 700;
+  color: var(--text-accent);
+}
+
+/* ---------------- 입력 ---------------- */
+
+.composer {
+  flex: none;
+  position: relative;
+  padding: 12px 18px 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.inputBox {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-input);
+}
+
+.inputBox:focus-within {
+  border-color: var(--bg-active);
+}
+
+.input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.inputFoot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.send {
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: var(--bg-active);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+}
+
+.send:hover {
+  background: var(--bg-active-hover);
+}
+
+.send:disabled {
+  background: var(--bg-card-hover);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* ---------------- @멘션 자동완성 ---------------- */
+
+.menu {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: calc(100% - 8px);
+  z-index: 2;
+  padding: 5px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-card);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+  max-height: 210px;
+  overflow-y: auto;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 8px;
+  border-radius: 7px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.optionOn {
+  composes: option;
+  background: var(--bg-accent-subtle);
+}
+
+.optionName {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.optionRole {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.menuEmpty {
+  padding: 10px 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}

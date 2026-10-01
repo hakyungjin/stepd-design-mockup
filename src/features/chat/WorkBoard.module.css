@@ -1,0 +1,130 @@
+.board { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--bg-input); border-left: 1px solid var(--border-subtle); }
+.boardHead { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 24px 28px 0; flex: none; }
+.boardHead > div { display: flex; align-items: center; gap: 10px; }
+.workType { font-size: 11px; color: var(--text-blue-light); }
+.draft, .approved { font-size: 10px; padding: 4px 7px; border-radius: 4px; background: var(--bg-card-hover); color: var(--text-muted); white-space: nowrap; }
+.approved { color: var(--status-success-text); background: var(--status-success-bg); }
+.versionSelect { max-width: 215px; }
+.versionSelect select { width: 100%; padding: 7px 9px; background: transparent; color: var(--text-secondary); font-size: 10px; border: 1px solid var(--border-subtle); border-radius: 6px; text-overflow: ellipsis; }
+.titleBlock { padding: 16px 28px 18px; flex: none; }
+.titleBlock h1 { font-size: 24px; font-weight: 700; letter-spacing: -.9px; margin: 0 0 10px; line-height: 1.4; }
+.titleBlock p { margin: 0; color: var(--text-muted); font-size: 11px; line-height: 1.8; }
+.titleBlock p > span { margin: 0 8px; color: var(--border-subtle); }
+.tabs { display: flex; gap: 25px; margin: 0 28px; border-bottom: 1px solid var(--border-subtle); flex: none; }
+.tabs button { background: transparent; cursor: pointer; color: var(--text-muted); padding: 10px 0 13px; font-size: 12px; border-bottom: 2px solid transparent; display: flex; gap: 7px; align-items: center; }
+.tabs button[aria-pressed=true] { color: var(--text-primary); border-bottom-color: var(--text-accent); }
+.tabs small { font-size: 9px; border-radius: 4px; padding: 1px 5px; background: var(--bg-card-hover); color: var(--text-muted); }
+.boardScroll { flex: 1; min-height: 0; overflow: auto; padding: 22px 28px 28px; }
+.sectionHead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 12px; }
+.sectionHead h2, .editControls h2, .channelDescription h2 { font-size: 13px; font-weight: 600; margin: 0; }
+.sectionHead h2 small { color: var(--text-muted); font-size: 10px; margin-left: 7px; font-weight: 400; }
+.sectionHead > small { font-size: 10px; color: var(--text-muted); }
+.sectionHead > button { background: transparent; color: var(--text-muted); font-size: 10px; cursor: pointer; }
+.player { border: 1px solid var(--border-subtle); border-radius: 10px; overflow: hidden; background: #182029; }
+.playerStage { position: relative; aspect-ratio: 16/9; overflow: hidden; background: #151e25; }
+.playerStage > svg { display: block; width: 100%; height: 100%; opacity: .9; }
+.verticalStage { aspect-ratio: auto; height: 280px; display: flex; justify-content: center; }
+.verticalStage > svg { width: auto; height: 100%; aspect-ratio: 9/16; }
+.previewLabel { position: absolute; right: 14px; top: 12px; color: #f8fafc; font-size: 9px; background: #172029a1; padding: 4px 7px; border-radius: 4px; }
+.playerCaption { position: absolute; bottom: 18px; left: 0; width: 100%; text-align: center; color: #fff; font-weight: 700; text-shadow: 0 2px 4px #000b; padding: 0 15px; }
+.playButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 46px; height: 46px; background: #111b27aa; border: 1px solid #ffffff60; color: #fff; border-radius: 50%; cursor: pointer; font-size: 15px; }
+.playerControls { display: flex; gap: 12px; align-items: center; color: #e2e8f0; padding: 12px 15px; background: #151b23; }
+.playerControls button { background: transparent; color: #fff; cursor: pointer; font-size: 11px; }
+.playerControls > span { font-size: 10px; flex: none; }
+.playerControls i { color: #95a3b3; font-style: normal; }
+.playerControls input { min-width: 35px; width: 100%; height: 3px; accent-color: #4a7bff; cursor: pointer; }
+.playerControls small { font-size: 9px; color: #95a3b3; }
+.sceneStrip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(122px,1fr); gap: 12px; overflow-x: auto; padding: 2px 0 8px; }
+.sceneCard { background: transparent; text-align: left; cursor: pointer; padding: 0; min-width: 0; }
+.sceneArt { position: relative; aspect-ratio: 16/10; border-radius: 6px; border: 2px solid transparent; overflow: hidden; margin-bottom: 9px; }
+.sceneArt svg { width: 100%; height: 100%; display: block; }
+.sceneCard[aria-pressed=true] .sceneArt { border-color: var(--text-accent); }
+.sceneNumber { width: 21px; height: 21px; background: var(--bg-active); color: white; border-radius: 50%; display: inline-grid; place-items: center; font-size: 10px; flex: none; }
+.sceneArt > .sceneNumber { position: absolute; top: 5px; left: 5px; width: 18px; height: 18px; font-size: 9px; }
+.sceneDuration { position: absolute; bottom: 5px; right: 5px; color: white; background: #111b27d9; padding: 2px 4px; font-size: 9px; border-radius: 3px; }
+.sceneCard > strong { font-size: 11px; display: inline; }
+.sceneCard > small { display: inline; margin-left: 6px; font-size: 9px; color: var(--text-muted); }
+.sceneCard > p { font-size: 10px; color: var(--text-muted); line-height: 1.7; margin: 6px 0 0; }
+.deploySummary { border: 1px solid var(--border-subtle); border-radius: 9px; padding: 14px 16px; margin-top: 23px; }
+.deploySummary > .sectionHead { margin: 0 0 13px; }
+.publishRow { display: flex; align-items: center; gap: 12px; background: var(--bg-card-hover); border-radius: 6px; padding: 11px 13px; }
+.youtube { color: #fff; background: #f62433; width: 32px; height: 23px; border-radius: 7px; display: grid; place-items: center; font-size: 12px; }
+.publishRow strong { font-size: 11px; font-weight: 600; }
+.publishRow p { margin: 5px 0 0; color: var(--text-muted); font-size: 10px; }
+.publishRow > span:last-child { margin-left: auto; color: var(--text-muted); background: var(--bg-card); border-radius: 4px; padding: 4px 6px; font-size: 9px; }
+.boardFooter { flex: none; border-top: 1px solid var(--border-subtle); background: var(--bg-input); padding: 15px 28px 20px; }
+.boardFooter > p { font-size: 10px; color: var(--text-muted); margin: 0 0 12px; }
+.boardFooter > div { display: flex; gap: 9px; }
+.boardFooter button { border: 1px solid var(--border-subtle); background: transparent; border-radius: 7px; padding: 12px 16px; font-size: 11px; cursor: pointer; }
+.boardFooter .primary { background: var(--bg-active); border-color: var(--bg-active); color: #fff; flex: 1; font-weight: 600; }
+.board button:disabled { opacity: .45; cursor: default; }
+.board button:hover:not(:disabled) { filter: brightness(1.08); }
+.board button:focus-visible, .board input:focus-visible, .board select:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; }
+.outline { display: grid; gap: 8px; }
+.outlineRow { display: flex; gap: 12px; align-items: center; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 13px; }
+.outlineRow > svg { width: 75px; height: 48px; border-radius: 4px; flex: none; }
+.outlineRow > div:not(.reorder) { flex: 1; min-width: 0; }
+.outlineRow strong { font-size: 12px; }
+.outlineRow small { display: block; font-size: 10px; color: var(--text-muted); margin-top: 5px; }
+.outlineRow p { font-size: 10px; line-height: 1.7; margin: 6px 0 0; color: var(--text-muted); }
+.outlineRow > span:not(.sceneNumber) { font-size: 11px; color: var(--text-muted); }
+.reorder { display: flex; gap: 3px; flex: none; }
+.reorder button { background: var(--bg-card-hover); color: var(--text-secondary); cursor: pointer; border-radius: 4px; width: 25px; height: 27px; font-size: 13px; }
+.historyNote { color: var(--text-blue-light); background: var(--bg-accent-subtle); border-radius: 6px; padding: 10px 12px; font-size: 10px; line-height: 1.7; margin-bottom: 15px; }
+.versionList { display: grid; gap: 10px; }
+.versionList > button { display: flex; align-items: center; gap: 15px; text-align: left; border: 1px solid var(--border-subtle); padding: 16px; border-radius: 8px; background: transparent; cursor: pointer; }
+.versionList > button[aria-current=true] { border-color: var(--text-accent); background: var(--bg-accent-subtle); }
+.versionNumber { font-size: 17px; color: var(--text-accent); }
+.versionList strong { font-size: 12px; }
+.versionList p { color: var(--text-muted); font-size: 10px; margin: 7px 0 0; }
+.versionList > button > span:last-child { font-size: 10px; margin-left: auto; color: var(--text-muted); }
+.searchCard { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid var(--border-subtle); }
+.searchPreview { width: 155px; height: 95px; flex: none; position: relative; padding: 0; overflow: hidden; border-radius: 6px; background: var(--bg-card); cursor: pointer; }
+.searchPreview svg { width: 100%; height: 100%; }
+.searchPreview > span { position: absolute; left: 7px; bottom: 6px; color: #fff; background: #182333b8; font-size: 9px; padding: 3px 4px; border-radius: 3px; }
+.searchCard > div { min-width: 0; }
+.searchCard small { font-size: 10px; color: var(--text-muted); }
+.searchCard h3 { font-size: 13px; margin: 7px 0; }
+.searchCard p { font-size: 10px; color: var(--text-muted); margin: 0; line-height: 1.7; }
+.searchActions { display: flex; gap: 9px; margin-top: 10px; flex-wrap: wrap; }
+.searchActions button { background: var(--bg-card-hover); color: var(--text-secondary); font-size: 10px; padding: 6px 8px; border-radius: 5px; cursor: pointer; }
+.searchCard + .player { margin-top: 20px; }
+.editControls { padding: 18px; border: 1px solid var(--border-subtle); border-radius: 8px; margin-top: 22px; }
+.editControls > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; margin-top: 17px; }
+.editControls label, .deployEditor label { display: flex; flex-direction: column; gap: 8px; font-size: 10px; color: var(--text-muted); }
+.editControls input, .editControls select, .deployEditor input, .deployEditor select { border: 1px solid var(--border-subtle); background: var(--bg-card); padding: 9px 10px; border-radius: 5px; color: var(--text-primary); font-size: 11px; min-width: 0; width: 100%; }
+.editControls label > small { font-size: 9px; margin-top: -4px; }
+.editControls > button, .planBottom button { background: var(--bg-card-hover); padding: 9px 13px; border-radius: 5px; font-size: 11px; cursor: pointer; color: var(--text-secondary); }
+.editControls > button { margin-top: 16px; }
+.deployEditor { padding: 20px; border: 1px solid var(--border-subtle); border-radius: 9px; }
+.deployEditor > .sectionHead { margin-top: 0; margin-bottom: 20px; }
+.deployEditor fieldset { padding: 0; border: 0; margin: 19px 0; }
+.deployEditor legend { font-size: 10px; color: var(--text-muted); margin-bottom: 9px; }
+.days { display: flex; gap: 8px; }
+.days button { flex: 1; border: 1px solid var(--border-subtle); background: transparent; padding: 10px 0; border-radius: 5px; font-size: 11px; cursor: pointer; }
+.days button[aria-pressed=true] { color: var(--text-blue-light); border-color: var(--text-accent); background: var(--bg-accent-subtle); }
+.planFields { display: grid; grid-template-columns: .8fr 1fr 1.3fr; gap: 12px; }
+.planBottom { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 19px; }
+.planBottom > span { font-size: 9px; color: var(--text-muted); }
+.channelInsights { display: flex; justify-content: space-between; gap: 16px; padding: 17px 0 23px; border-bottom: 1px solid var(--border-subtle); }
+.channelInsights small { display: block; font-size: 10px; color: var(--text-muted); margin-bottom: 8px; }
+.channelInsights strong { font-size: 12px; font-weight: 500; }
+.channelOptions { display: grid; gap: 13px; }
+.channelOptions > button { border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--bg-card); padding: 0; overflow: hidden; cursor: pointer; text-align: left; }
+.channelOptions > button[aria-pressed=true] { border-color: var(--text-accent); }
+.channelBanner { position: relative; height: 122px; background: #737e8d; overflow: hidden; color: #fff; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; }
+.channelBanner svg { position: absolute; width: 54%; height: 100%; right: 0; top: 0; }
+.channelBanner strong, .channelBanner span { position: relative; z-index: 1; width: 45%; }
+.channelBanner strong { font-size: 25px; font-weight: 700; letter-spacing: -1px; }
+.channelBanner span { font-size: 10px; margin-top: 9px; }
+.channelBanner[data-option='1'] { background: #687d6b; }
+.channelBanner[data-option='2'] { background: #9c716d; }
+.channelOptionLabel { display: flex; align-items: center; gap: 10px; padding: 12px 15px; }
+.profile { width: 28px; height: 28px; display: grid; place-items: center; background: var(--bg-active); color: #fff; border-radius: 50%; font-size: 13px; }
+.channelOptionLabel strong { font-size: 11px; }
+.channelOptionLabel > span:last-child { margin-left: auto; color: var(--text-muted); font-size: 10px; }
+.channelDescription { margin-top: 23px; padding: 18px; border: 1px solid var(--border-subtle); border-radius: 8px; }
+.channelDescription p { font-size: 12px; color: var(--text-muted); line-height: 1.9; margin: 13px 0 0; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media(max-width:1300px) { .boardHead { padding: 18px 20px 0; } .titleBlock { padding: 14px 20px; } .titleBlock h1 { font-size: 20px; } .tabs { margin: 0 20px; } .boardScroll { padding: 18px 20px; } .boardFooter { padding: 14px 20px; } .searchCard { flex-direction: column; } .searchPreview { width: 100%; height: 150px; } .channelInsights { flex-wrap: wrap; } .outlineRow > svg { display: none; } }
+@media(max-width:600px) { .boardHead { gap: 10px; } .versionSelect { max-width: 180px; } .planFields { grid-template-columns: 1fr 1fr; } .planFields label:last-child { grid-column: 1/-1; } .outlineRow { gap: 9px; padding: 12px 9px; } .outlineRow p { display: none; } .reorder { gap: 2px; } .boardFooter button { padding: 12px 10px; } .boardFooter p { line-height: 1.6; } .titleBlock h1 { font-size: 19px; } }

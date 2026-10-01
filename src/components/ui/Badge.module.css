@@ -1,0 +1,108 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chipMd {
+  height: 22px;
+  padding: 0 9px;
+  font-size: 11.5px;
+}
+
+.toneMuted {
+  background: var(--bg-card-hover);
+  color: var(--text-secondary);
+}
+
+.toneAccent {
+  background: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+.toneSuccess {
+  background: var(--status-success-bg);
+  color: var(--status-success-text);
+}
+
+.toneAmber {
+  background: rgba(245, 158, 11, 0.12);
+  color: hsl(var(--status-warn));
+}
+
+.toneError {
+  background: rgba(239, 68, 68, 0.1);
+  color: hsl(var(--status-error));
+}
+
+.toneProgress {
+  background: rgba(34, 211, 238, 0.12);
+  color: var(--status-render);
+}
+
+/* ---------------- StatusBadge ---------------- */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+  padding: 0 9px;
+  border-radius: var(--radius-pill);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dotPulse {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.72);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dotPulse {
+    animation: none;
+  }
+}
+
+/* ---------------- Pill (배포 매트릭스 셀) ---------------- */
+
+.pill {
+  height: 22px;
+  min-width: 62px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pillStatic {
+  cursor: default;
+}

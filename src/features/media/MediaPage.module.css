@@ -1,0 +1,1154 @@
+.page {
+  flex: 1;
+  min-width: 0;
+  padding: 26px 30px 110px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.h1 {
+  margin: 0;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.uploadBtn {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--bg-active);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+
+.uploadBtn:hover {
+  background: var(--bg-active-hover);
+}
+
+/* ---------------- 출처 탭 ---------------- */
+
+.sourceTabs {
+  display: flex;
+  gap: 28px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.sourceTab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px 2px 13px;
+  margin-bottom: -1px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sourceTabOn {
+  border-bottom-color: var(--bg-active);
+}
+
+.sourceLabel {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.sourceLabelOn {
+  color: var(--text-primary);
+}
+
+.sourceCount {
+  margin-left: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.sourceCountOn {
+  color: var(--bg-active);
+}
+
+.sourceSub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 필터 ---------------- */
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.segment {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+}
+
+.seg {
+  height: 32px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.segOn {
+  background: var(--bg-active);
+  color: #fff;
+  font-weight: 600;
+}
+
+.countLabel {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 그룹 ---------------- */
+
+.groupStack {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.programGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.programHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.caret {
+  font-size: 11px;
+  color: var(--text-muted);
+  width: 10px;
+}
+
+.programName {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.programSub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.epCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.epHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 18px;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--bg-active);
+  cursor: pointer;
+}
+
+.epHeadBtn {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.epHeading {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.epAir {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.epCount {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.epAttention {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: hsl(var(--status-error));
+}
+
+.epLink {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-accent);
+  cursor: pointer;
+}
+
+.epLink:hover {
+  color: var(--bg-active-hover);
+}
+
+/* ---------------- 목록(A) ---------------- */
+
+.rowGrid {
+  display: grid;
+  grid-template-columns: 24px 88px minmax(260px, 1fr) 160px 176px 174px;
+  gap: 14px;
+}
+
+.rowHead {
+  composes: rowGrid;
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.row {
+  composes: rowGrid;
+  align-items: center;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  background: var(--bg-card);
+}
+
+.rowSelected {
+  background: var(--bg-accent-subtle);
+}
+
+.rowFailed {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.thumbBox {
+  position: relative;
+  width: 88px;
+  height: 50px;
+  border-radius: 6px;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.thumbLandscape {
+  width: 88px;
+  height: 50px;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbPortrait {
+  height: 50px;
+  width: 28px;
+  object-fit: cover;
+  display: block;
+}
+
+.durBadge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.65);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.rowTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.chipWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.channelChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 5px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.channelChipSm {
+  height: 20px;
+  padding: 0 6px;
+  font-size: 11px;
+}
+
+.channelChipBad {
+  border-color: rgba(220, 38, 38, 0.35);
+  color: hsl(var(--status-error));
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.channelDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.rowBtn {
+  flex: none;
+  white-space: nowrap;
+  height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.rowBtn:hover {
+  background: var(--bg-card-hover);
+}
+
+.rowDelBtn {
+  flex: none;
+  height: 30px;
+  width: 30px;
+  padding: 0;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 7px;
+  background: rgba(220, 38, 38, 0.06);
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--status-error));
+  cursor: pointer;
+}
+
+/* ---------------- 카드(B) ---------------- */
+
+.tileCard {
+  composes: epCard;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+}
+
+.tileSide {
+  padding: 18px;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-input);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tileSideAir {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.tileSideEp {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tileStat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+
+.tileStatLabel {
+  color: var(--text-muted);
+}
+
+.tileSelectAll {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.tileBody {
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.tileSectionLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 9px;
+}
+
+.tileRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tile {
+  cursor: pointer;
+  padding: 6px;
+  margin: -6px;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  border: 0;
+  text-align: left;
+}
+
+.tileSelected {
+  background: var(--bg-accent-subtle);
+}
+
+.tileShort {
+  width: 132px;
+}
+
+.tileClip {
+  width: 268px;
+}
+
+.tileMedia {
+  position: relative;
+  background: #0f172a;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.tileMediaShort {
+  aspect-ratio: 9 / 16;
+}
+
+.tileMediaWide {
+  aspect-ratio: 16 / 9;
+}
+
+.tileImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tileCheck {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  display: flex;
+  padding: 3px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.tileDur {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.65);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.tileOverlay {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.tileTitle {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin-top: 7px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 34px;
+}
+
+.tileTitleOne {
+  composes: tileTitle;
+  display: block;
+  min-height: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tileChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+/* ---------------- 빈 상태 ---------------- */
+
+.empty {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 56px 20px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.emptyNote {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+/* ---------------- 선택 바 ---------------- */
+
+.selectionBar {
+  position: fixed;
+  left: 240px;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  height: 60px;
+  padding: 0 30px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-subtle);
+  box-shadow: 0 -6px 20px -8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.selCount {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.selNote {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 상세 모달 ---------------- */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 41;
+  width: min(1420px, calc(100vw - 48px));
+  height: min(820px, calc(100vh - 48px));
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modalHeadText {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.closeBtn {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.closeBtn:hover {
+  background: var(--bg-card-hover);
+}
+
+.modalBody {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  /* 왼쪽 미리보기 · 가운데 메타데이터 · 오른쪽 버전/댓글 */
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) 360px;
+}
+
+.modalLeft {
+  overflow-y: auto;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.modalRight {
+  overflow-y: auto;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.playerBox {
+  background: #0f172a;
+  border-radius: var(--radius-lg);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.playerShort {
+  height: min(560px, calc(100vh - 300px));
+  aspect-ratio: 9 / 16;
+  display: block;
+  object-fit: cover;
+}
+
+.playerWide {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  object-fit: cover;
+}
+
+
+.detailTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.detailMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sectionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.smallBtn {
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.smallBtn:hover {
+  background: var(--bg-card-hover);
+}
+
+.thumbRow {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.thumbPreviewShort {
+  width: 108px;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #0f172a;
+  flex: none;
+}
+
+.thumbPreviewWide {
+  width: 220px;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #0f172a;
+  flex: none;
+}
+
+.thumbNote {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.metaTabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.metaTab {
+  flex: none;
+  height: 34px;
+  padding: 0 12px;
+  border: 0;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  background: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.metaTabOn {
+  border-bottom-color: var(--bg-active);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metaField {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.metaLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.metaValue {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.45;
+}
+
+.metaDesc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.tagChip {
+  height: 24px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 5px;
+  background: var(--bg-card-hover);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.metaExtraGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.metaExtraValue {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.input {
+  height: 36px;
+  box-sizing: border-box;
+  padding: 0 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--bg-active);
+}
+
+.textarea {
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--text-primary);
+  resize: vertical;
+  outline: none;
+}
+
+.textarea:focus {
+  border-color: var(--bg-active);
+}
+
+.editFoot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.editNote {
+  margin-right: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.distList {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.distRow {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.distRow:last-child {
+  border-bottom: 0;
+}
+
+.distTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.distCh {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 84px;
+}
+
+.distAt {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.distErr {
+  font-size: 12px;
+  color: hsl(var(--status-error));
+}
+
+.noDist {
+  padding: 14px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 9px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.modalFoot {
+  padding: 14px 22px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dangerBtn {
+  height: 38px;
+  padding: 0 12px;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--status-error));
+  cursor: pointer;
+}
+
+.footRight {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.footBtn {
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.primaryBtn {
+  height: 38px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--bg-active);
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+
+.primaryBtn:disabled {
+  background: var(--border-subtle);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* ---------------- 업로드 모달 ---------------- */
+
+.upScrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.upModal {
+  width: 520px;
+  max-width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 14px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.upTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dropZone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 28px 20px;
+  border: 1.5px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+  cursor: pointer;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.dropZone:hover {
+  border-color: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.dropNote {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.upGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.upField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.upLabel {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.upActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 88px;
+  transform: translateX(-50%);
+  padding: 11px 18px;
+  border-radius: 9px;
+  background: #111;
+  color: #fff;
+  font-size: 13px;
+  z-index: 60;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}

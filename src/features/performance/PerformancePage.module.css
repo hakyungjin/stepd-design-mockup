@@ -1,0 +1,563 @@
+.page {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---------------- 필터 바 ---------------- */
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filterLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: var(--border-subtle);
+}
+
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dateInput {
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+}
+
+.dateInput:focus {
+  border-color: var(--bg-active);
+}
+
+.rangeNote {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ---------------- KPI ---------------- */
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kpiCard {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.kpiLabel {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.kpiValue {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.kpiDelta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--status-success-text);
+}
+
+.kpiDeltaMuted {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 카드 공통 ---------------- */
+
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cardNote {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.headActions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.segmentInput {
+  background: var(--bg-input);
+}
+
+/* ---------------- 차트 ---------------- */
+
+.chartBox {
+  position: relative;
+  height: 220px;
+  margin-top: 18px;
+}
+
+.chartSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.markLine {
+  position: absolute;
+  top: -4px;
+  bottom: 0;
+  width: 0;
+  border-left: 1px dashed rgba(245, 158, 11, 0.6);
+  pointer-events: none;
+}
+
+.markLabel {
+  position: absolute;
+  top: -20px;
+  padding: 1px 7px;
+  border-radius: 5px;
+  background: rgba(245, 158, 11, 0.14);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: hsl(var(--status-warn));
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.hoverLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--text-muted);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.hoverDot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid #1c60ff;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  top: 8px;
+  min-width: 170px;
+  max-width: 240px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.tipDate {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+}
+
+.tipRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 11.5px;
+}
+
+.tipKey {
+  color: var(--text-muted);
+}
+
+.tipVal {
+  color: var(--text-primary);
+}
+
+.tipNote {
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 11px;
+  color: hsl(var(--status-warn));
+}
+
+.chartTicks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 콘텐츠 성과 테이블 ---------------- */
+
+.tableCard {
+  composes: card;
+  gap: 6px;
+}
+
+.tableHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.tableCount {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 2.6fr) 84px 110px 84px 84px 76px 64px 76px 70px;
+  gap: 0 8px;
+}
+
+.headRow {
+  composes: grid;
+  padding: 0 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.headBtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.headBtnActive {
+  color: var(--text-primary);
+}
+
+.headLeft {
+  text-align: left;
+}
+
+.headRight {
+  text-align: right;
+}
+
+.row {
+  composes: grid;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.row:hover {
+  background: var(--bg-card-hover);
+}
+
+.rowTitleCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.rowThumb {
+  flex: none;
+  width: 52px;
+  height: 30px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.rowTitleBox {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowTitle {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowChannel {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cellText {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.cellNum {
+  font-size: 12.5px;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.cellNumBold {
+  composes: cellNum;
+  font-weight: 700;
+}
+
+.cellMuted {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.cellEnd {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tableEmpty {
+  padding: 32px 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tableFoot {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ---------------- 하단 2단 ---------------- */
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 14px;
+}
+
+.insight {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 16px;
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+}
+
+.insightHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.insightTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.insightMetric {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--status-success-text);
+  text-align: right;
+}
+
+.insightWhy {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.insightFoot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.insightNext {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.insightNextKey {
+  color: var(--text-primary);
+}
+
+.insightCta {
+  flex: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-accent);
+  cursor: pointer;
+}
+
+.insightCta:hover {
+  color: var(--bg-active-hover);
+}
+
+.compareHead {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.statBox {
+  padding: 14px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-input);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.statValueGreen {
+  composes: statValue;
+  color: var(--status-success-text);
+}
+
+.statValueSm {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.statNote {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.editList {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.editListTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.editRow {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 10px;
+}
+
+.editLabel {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.editTrack {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-input);
+  overflow: hidden;
+}
+
+.editBar {
+  height: 100%;
+  border-radius: 4px;
+}
+
+.editVal {
+  font-size: 12px;
+  text-align: right;
+}
+
+.footNote {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}

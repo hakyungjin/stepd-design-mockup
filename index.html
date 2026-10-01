@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 내부 QA용 목업이라 검색에는 걸리지 않게 둡니다 -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>STEP D · 배포 캘린더</title>
+
+    <!--
+      STEP D 디자인 시스템 폰트 (Outfit + Spoqa Han Sans Neo).
+      STEPD 본 프로젝트에 붙일 때는 프로젝트가 이미 쓰는 폰트 로딩 방식으로 교체하세요.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/spoqa/spoqa-han-sans-neo@01ff0283e4f36e159ffbf744b36e16ef77347907/css/SpoqaHanSansNeo.css"
+    />
+
+    <!--
+      저장해 둔 흑·화이트 설정을 React 가 뜨기 전에 먼저 반영합니다.
+      이게 없으면 밝은 화면으로 설정해 둬도 첫 순간에 어두운 화면이 번쩍합니다.
+    -->
+    <script>
+      try {
+        if (localStorage.getItem('stepd-theme') === 'light') {
+          document.documentElement.classList.remove('dark')
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

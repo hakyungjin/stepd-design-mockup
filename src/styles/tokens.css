@@ -1,0 +1,117 @@
+/*
+ * STEP D 디자인 토큰
+ * ------------------------------------------------------------------
+ * claude.ai/design 의 "STEP D Design System" 번들(_ds_bundle.css)에서
+ * 실제로 쓰이는 토큰만 추려낸 파일입니다.
+ *
+ * STEPD 본 프로젝트에 붙일 때:
+ *   - 프로젝트에 이미 같은 토큰이 있으면 이 파일은 지우고 import 만 제거하세요.
+ *   - 없으면 이 파일만 그대로 옮기면 모든 컴포넌트가 그대로 동작합니다.
+ *   - 컴포넌트 CSS 는 전부 이 변수만 참조하고 하드코딩된 색이 없습니다.
+ *     (단, 플랫폼/상태/유형 고유색은 constants.ts 에서 관리합니다)
+ */
+
+:root {
+  /* typography */
+  --font-en: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-kr: 'Spoqa Han Sans Neo', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  --font-base: 'Outfit', 'Spoqa Han Sans Neo', -apple-system, 'Apple SD Gothic Neo',
+    'Malgun Gothic', sans-serif;
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  /* brand */
+  --color-navy-900: #0f172a;
+  --color-blue-700: #0d1eb8;
+  --color-blue-500: #1c60ff;
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--color-navy-900) 0%,
+    var(--color-blue-700) 55%,
+    var(--color-blue-500) 100%
+  );
+
+  /* surfaces — light */
+  --bg-dark: #f8fafc;
+  --bg-sidebar: #111111;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-input: #ffffff;
+  --bg-active: #1c60ff;
+  --bg-active-hover: #0d1eb8;
+  --bg-accent-subtle: rgba(28, 96, 255, 0.08);
+  --bg-dark-backdrop: #0f111a;
+
+  --border-subtle: #e2e8f0;
+  --border-card: #e2e8f0;
+
+  --text-primary: #111111;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-accent: #1c60ff;
+  --text-blue-light: #1c60ff;
+  --text-on-dark: #94a3b8;
+
+  --badge-bg: rgba(28, 96, 255, 0.1);
+  --badge-text: #1c60ff;
+
+  --status-success-bg: rgba(22, 163, 74, 0.14);
+  --status-success-text: #15803d;
+  /* hsl 컴포넌트만 담습니다 — 사용할 때 hsl(var(--status-warn)) 형태로 씁니다 */
+  --status-warn: 40 85% 32%;
+  --status-error: 5 63% 42%;
+  --color-amber-600: #d97706;
+  /* 렌더링 중 · 지난 시간대 — 라이트/다크에서 각각 읽히는 값 */
+  --status-render: #0e7490;
+  --surface-past: rgba(15, 23, 42, 0.06);
+
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+
+  /* 라디우스 스케일 */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-pill: 999px;
+}
+
+html.dark {
+  color-scheme: dark;
+
+  --bg-dark: #111111;
+  --bg-sidebar: #111111;
+  --bg-card: #1c1e24;
+  --bg-card-hover: #252830;
+  --bg-input: #16181d;
+  --bg-active: #1c60ff;
+  --bg-active-hover: #0d1eb8;
+  --bg-accent-subtle: rgba(28, 96, 255, 0.18);
+  --bg-dark-backdrop: #0f111a;
+
+  /* 배포 캘린더 화면은 DS 기본값(#252830)보다 한 단계 밝은 보더를 씁니다 */
+  --border-subtle: #2a2e3b;
+  --border-card: #2a2e3b;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-accent: #3b82f6;
+  --text-blue-light: #60a5fa;
+  --text-on-dark: #94a3b8;
+
+  --badge-bg: rgba(28, 96, 255, 0.2);
+  --badge-text: #60a5fa;
+
+  --status-success-bg: rgba(16, 185, 129, 0.1);
+  --status-success-text: #10b981;
+  --status-warn: 43 96% 56%;
+  --status-error: 353 100% 71%;
+  --color-amber-600: #f59e0b;
+  --status-render: #22d3ee;
+  --surface-past: rgba(0, 0, 0, 0.22);
+
+  --card-shadow: none;
+}

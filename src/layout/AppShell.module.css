@@ -1,0 +1,351 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+  min-width: 0;
+  background: var(--bg-dark);
+}
+
+.sidebar {
+  flex: none;
+  width: 240px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-subtle);
+  padding: 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* 긴 화면에서도 내비가 따라오도록 고정합니다 (원본 목업은 함께 스크롤됩니다) */
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transition: width 180ms ease;
+}
+
+.section {
+  display: contents;
+}
+
+.sidebarTooltip {
+  position: fixed;
+  z-index: 100;
+  transform: translateY(-50%);
+  padding: 8px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 8px 20px;
+  color: #fff;
+}
+
+/* STEP AI 마크 — 접힌 사이드바에서는 이것만 보입니다 */
+.brandMark {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  background: var(--gradient-accent);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+}
+
+.brandName {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.primaryNav { display: flex; gap: 5px; padding: 0 4px 12px; border-bottom: 1px solid rgba(255,255,255,.07); margin-bottom: 5px; }
+.primaryItem { display: flex; gap: 7px; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 9px; background: transparent; border-radius: 6px; color: var(--text-on-dark); font-size: 12px; cursor: pointer; }
+.primaryItem[aria-current=page] { background: rgba(255,255,255,.1); color: white; font-weight: 600; }
+.primaryItem:hover { background: rgba(255,255,255,.07); color: white; }
+.navLabel { flex: 1; }
+.navItem > svg { flex: none; opacity: .8; }
+.sidebar :is(button):focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
+
+.navItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-on-dark);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.navItemActive {
+  padding: 9px 10px;
+  border-radius: 8px;
+  background: var(--bg-active);
+  color: #fff;
+  font-weight: 600;
+}
+
+.navItemActive:hover {
+  background: var(--bg-active);
+  color: #fff;
+}
+
+.navBadge {
+  flex: none;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--bg-card);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navBadgeError {
+  color: hsl(var(--status-error));
+}
+
+.navBadgeWarn {
+  color: hsl(var(--status-warn));
+}
+
+.navGroup {
+  padding: 18px 10px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  /* 사이드바는 라이트에서도 어두우므로 테마를 타지 않는 색을 씁니다 */
+  color: var(--text-on-dark);
+}
+
+/* ---------------- 하단 계정 바 (한 줄) ---------------- */
+
+.accountBar {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.accountBtn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.accountBtn:hover,
+.accountBtnActive {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.accountBtn:focus-visible,
+.iconBtn:focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
+}
+
+.accountNameText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.accountCaret {
+  flex: none;
+  font-size: 10px;
+  color: var(--text-on-dark);
+}
+
+.iconBtn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-on-dark);
+  cursor: pointer;
+}
+
+.iconBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.iconBtn[aria-current='page'] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.sidebarCompact .accountBar {
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0 2px;
+}
+
+.sidebarCompact .accountBtn {
+  flex: none;
+  justify-content: center;
+  padding: 7px;
+}
+
+.sidebarCompact .accountNameText,
+.sidebarCompact .accountCaret {
+  display: none;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-dark);
+}
+
+.topBar {
+  flex: none;
+  height: 56px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 20px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.topBarTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+@media (max-width: 800px) { .sidebar { width: 200px; } }
+@media (max-width: 640px) { .sidebar { width: 62px; padding: 16px 7px; } .brand { justify-content: center; padding: 0 0 20px; } .brandName { display: none; } .primaryNav { flex-direction: column; padding: 0 0 12px; } .primaryItem { padding: 10px 0; } .primaryItem > span, .navLabel, .navGroup, .accountNameText, .accountCaret, .navBadge { display: none; } .navItem, .navItemActive { padding: 11px; justify-content: center; } .accountBar { flex-direction: column; gap: 2px; padding: 8px 0 2px; } .accountBtn { flex: none; justify-content: center; padding: 7px; } }
+
+.sidebarCompact { width: 76px; padding: 18px 10px; overflow-x: hidden; }
+.sidebarCompact .brand { justify-content: center; padding: 2px 0 20px; }
+.sidebarCompact .brandName { display: none; }
+.sidebarCompact .primaryNav { flex-direction: column; align-items: stretch; padding: 0 0 12px; }
+.sidebarCompact .primaryItem { flex: none; flex-direction: column; gap: 5px; padding: 9px 0; }
+.sidebarCompact .primaryItem[aria-current=page] { height: 54px; }
+.sidebarCompact .primaryItem > span { display: block; font-size: 10px; white-space: nowrap; }
+.sidebarCompact .section { display: flex; flex-direction: column; gap: 3px; padding: 8px 0; }
+.sidebarCompact .section + .section { border-top: 1px solid rgba(255,255,255,.07); }
+.sidebarCompact :is(.navLabel,.navGroup,.navBadge) { display: none; }
+.sidebarCompact .navItem { min-height: 38px; padding: 10px; justify-content: center; }
+@media (max-width: 640px) { .sidebarCompact { width: 62px; padding: 16px 7px; } }
+@media (prefers-reduced-motion: reduce) { .navItem, .sidebar { transition: none; } }
+
+/* ---------------- 계정 메뉴 ---------------- */
+
+.menuScrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: transparent;
+  cursor: default;
+}
+
+.accountMenu {
+  position: fixed;
+  z-index: 41;
+  min-width: 190px;
+  padding: 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 11px;
+  background: var(--bg-card);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+.accountMenuHead {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.accountMenuHead strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.accountMenuHead span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.accountMenu button {
+  display: block;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 7px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: left;
+  cursor: pointer;
+}
+
+.accountMenu button:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+/* 지금 보고 있는 화면 */
+.accountMenu button[aria-current='page'] {
+  background: var(--bg-accent-subtle);
+  color: var(--text-accent);
+  font-weight: 600;
+}

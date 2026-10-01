@@ -1,0 +1,160 @@
+/* ---------------- 세그먼트(알약) 토글 ---------------- */
+
+.segment {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  width: max-content;
+}
+
+.segmentLg {
+  padding: 4px;
+  border-radius: var(--radius-xl);
+}
+
+.pill {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.pill:hover:not(.pillOn) {
+  color: var(--text-primary);
+}
+
+.pillOn {
+  background: var(--bg-active);
+  color: #fff;
+  font-weight: 700;
+}
+
+.pillLg {
+  height: 34px;
+  padding: 0 20px;
+  border-radius: 9px;
+  font-size: 13.5px;
+}
+
+/* ---------------- 아웃라인 칩 ---------------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.chip:hover:not(:disabled):not(.chipOn) {
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.chipOn {
+  border-color: var(--bg-active);
+  background: rgba(28, 96, 255, 0.16);
+  color: var(--text-primary);
+}
+
+.chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------------- 체크박스 ---------------- */
+
+.box {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 5px;
+  background: transparent;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.boxOn {
+  border-color: var(--bg-active);
+  background: var(--bg-active);
+}
+
+.boxRound {
+  border-radius: 50%;
+}
+
+.box:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* ---------------- 네이티브 select ---------------- */
+
+.select {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+}
+
+.select:focus {
+  border-color: var(--bg-active);
+}
+
+.selectPlain {
+  border: 0;
+  border-radius: var(--radius-lg);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.selectPill {
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 0 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+/* ---------------- 썸네일 ---------------- */
+
+.thumb {
+  flex: none;
+  display: block;
+  background-color: #0f172a;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

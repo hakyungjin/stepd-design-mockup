@@ -1,0 +1,638 @@
+/* 발행 예정 영상 상세 — 미리보기 · 게시물/타이틀 · 자막 수정 */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.kindChip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+.pos {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.body {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.left {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.frame {
+  flex: none;
+  border-radius: 11px;
+  background: #1b1f26;
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  background-position: center;
+  background-size: cover;
+}
+
+.frameShort {
+  composes: frame;
+  width: 360px;
+  aspect-ratio: 9 / 16;
+}
+
+.frameWide {
+  composes: frame;
+  width: 580px;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.frameTitle {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 15px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  line-height: 1.3;
+  text-align: left;
+}
+
+.frameCaption {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 14%;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  line-height: 1.35;
+}
+
+.rendering {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(10, 12, 15, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.playbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34px;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 11px;
+}
+
+.playGlyph {
+  color: #fff;
+  font-size: 11px;
+}
+
+.track {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.28);
+  position: relative;
+}
+
+.trackFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 38%;
+  background: var(--bg-card);
+  border-radius: 2px;
+}
+
+.playTime {
+  font-size: 10.5px;
+  color: #fff;
+}
+
+.dirtyNote {
+  padding: 10px 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 9px;
+  font-size: 11.5px;
+  color: hsl(var(--status-warn));
+  line-height: 1.6;
+}
+
+.right {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.detailTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.dtab {
+  padding: 7px 13px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dtabOn {
+  composes: dtab;
+  border-color: var(--bg-active);
+  background: var(--bg-accent-subtle);
+  color: var(--text-primary);
+}
+
+/* ---------------- 영상 안 타이틀 ---------------- */
+
+.fieldLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.fieldHint {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.alts {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.alt {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.altOn {
+  composes: alt;
+  border-color: var(--bg-active);
+  background: var(--bg-accent-subtle);
+}
+
+.radio {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+}
+
+.radioOn {
+  composes: radio;
+  border: 4px solid var(--bg-active);
+}
+
+.altKind {
+  flex: none;
+  width: 44px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.altText {
+  flex: 1;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.altText span {
+  color: var(--text-muted);
+}
+
+.lineRows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lineRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lineLabel {
+  flex: none;
+  width: 44px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 9px 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  background: var(--bg-card);
+  font-family: inherit;
+}
+
+.input:disabled {
+  background: var(--bg-dark);
+  color: var(--text-muted);
+}
+
+.input2 {
+  composes: input;
+  font-weight: 600;
+}
+
+.colorRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 2px solid var(--border-subtle);
+  cursor: pointer;
+}
+
+.swatchOn {
+  composes: swatch;
+  border-color: var(--text-primary);
+}
+
+.swatch:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.note {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 게시물 정보 ---------------- */
+
+.postHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.postTitle {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.block {
+  margin-bottom: 11px;
+}
+
+.blockWide {
+  margin-bottom: 14px;
+}
+
+.fullInput {
+  composes: input;
+  width: 100%;
+  flex: none;
+}
+
+.area {
+  composes: fullInput;
+  resize: vertical;
+}
+
+.publish {
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  padding: 12px 13px;
+  margin-bottom: 16px;
+}
+
+.publishLabel {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.publishAt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.publishNote {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ---------------- 자막 ---------------- */
+
+.cueHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.cueCount {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cueRange {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.cueSaved {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.cueStale {
+  composes: dirtyNote;
+  margin-bottom: 9px;
+}
+
+.cueList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 380px;
+  overflow: auto;
+  padding: 2px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-card-hover);
+}
+
+.addCue {
+  width: 100%;
+  padding: 4px 0;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.addCue:hover {
+  background: var(--bg-accent-subtle);
+  color: var(--bg-active);
+}
+
+.addCueThin {
+  composes: addCue;
+  padding: 3px 0;
+}
+
+.cueRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px;
+  background: var(--bg-card);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cueRowOn {
+  composes: cueRow;
+  background: var(--bg-accent-subtle);
+}
+
+.cueRowBad {
+  composes: cueRow;
+  background: rgba(239, 68, 68, 0.08);
+  border-color: #e8b4b4;
+}
+
+.cueRowEmpty {
+  opacity: 0.55;
+}
+
+.cueTimes {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cueTimeRow {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.nudge {
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  border-radius: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.timeInput {
+  width: 66px;
+  padding: 5px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  outline: none;
+  text-align: center;
+  font-family: inherit;
+}
+
+.timeInputBad {
+  composes: timeInput;
+  border-color: #e8b4b4;
+}
+
+.cueMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cueInput {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  font-family: inherit;
+}
+
+.cueFlags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.flagNew {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--badge-text);
+  background: var(--bg-accent-subtle);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.flagBad {
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--status-error));
+}
+
+.flagWarn {
+  font-size: 11px;
+  font-weight: 600;
+  color: hsl(var(--status-warn));
+}
+
+.flagMuted {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cueLen {
+  margin-left: auto;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.cueFoot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 9px;
+  flex-wrap: wrap;
+}
+
+.cueFootNote {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.cueError {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: hsl(var(--status-error));
+}
+
+/* ---------------- 저장 ---------------- */
+
+.saveWrap {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+}
+
+.saveBtn {
+  flex: none;
+  align-self: flex-start;
+  padding: 11px 18px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.saveBtn:disabled {
+  background: var(--bg-dark);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.saveNote {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}

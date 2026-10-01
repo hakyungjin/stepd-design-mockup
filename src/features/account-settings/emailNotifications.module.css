@@ -1,0 +1,68 @@
+/* 계정 플러그인: 이메일 알림 설정 */
+.scrim { position: fixed; inset: 0; z-index: 85; background: #090d168f; display: grid; place-items: center; padding: 24px; }
+.dialog { width: min(950px, 100%); max-height: calc(100dvh - 48px); overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--bg-card); box-shadow: 0 24px 90px #0004; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 26px 28px 24px; border-bottom: 1px solid var(--border-subtle); }
+.header h2 { margin: 0 0 8px; font-size: 23px; letter-spacing: -.5px; }
+.header p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.close { background: transparent; color: var(--text-muted); font-size: 25px; width: 30px; height: 30px; border-radius: 6px; cursor: pointer; }
+.close:hover { background: var(--bg-card-hover); }
+.content { display: grid; grid-template-columns: 1fr 1.1fr; }
+.settings { padding: 26px 28px; }
+.account { display: flex; align-items: center; gap: 10px; padding-bottom: 23px; border-bottom: 1px solid var(--border-subtle); }
+.avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-accent-subtle); color: var(--text-accent); font-size: 14px; font-weight: 700; }
+.account strong { display: block; font-size: 13px; }
+.account div > span { display: block; margin-top: 4px; font-size: 11px; color: var(--text-muted); }
+.scope { margin-left: auto; font-size: 10px; color: var(--text-muted); }
+.master { display: flex; justify-content: space-between; gap: 18px; align-items: center; padding: 23px 0; cursor: pointer; }
+.master strong { font-size: 14px; }
+.master small { display: block; font-size: 11px; margin-top: 7px; color: var(--text-muted); line-height: 1.5; }
+.master input { appearance: none; flex: none; width: 36px; height: 21px; border-radius: 20px; margin: 0; padding: 3px; background: var(--border-subtle); cursor: pointer; }
+.master input::before { content: ''; display: block; height: 15px; width: 15px; background: white; border-radius: 50%; transition: transform .15s; box-shadow: 0 1px 3px #0002; }
+.master input:checked { background: var(--bg-active); }
+.master input:checked::before { transform: translateX(15px); }
+.emailField label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 9px; }
+.emailField input { width: 100%; padding: 12px; color: var(--text-primary); background: var(--bg-input); border: 1px solid var(--border-subtle); border-radius: 7px; font-size: 13px; }
+.emailField input:disabled { opacity: .45; }
+.emailField p { color: var(--text-muted); font-size: 11px; margin: 8px 0 0; }
+.events { border: 0; padding: 0; margin: 25px 0 0; }
+.events legend { font-size: 12px; font-weight: 600; margin-bottom: 15px; padding: 0; }
+.event { display: flex; gap: 10px; align-items: flex-start; padding: 12px 0; cursor: pointer; }
+.event + .event { border-top: 1px solid var(--border-subtle); }
+.event input { width: 16px; height: 16px; margin: 2px 0 0; accent-color: var(--bg-active); flex: none; cursor: pointer; }
+.event strong { font-size: 13px; }
+.event small { display: block; color: var(--text-muted); font-size: 11px; line-height: 1.65; margin-top: 6px; }
+.events:disabled { opacity: .4; }
+.error { font-size: 12px; color: hsl(var(--status-error)); }
+.preview { padding: 25px 24px; background: var(--bg-dark); border-left: 1px solid var(--border-subtle); }
+.previewHead { display: flex; justify-content: space-between; align-items: center; }
+.previewHead strong { font-size: 12px; }
+.previewHead span { color: var(--text-muted); font-size: 11px; }
+.previewTabs { display: flex; margin: 14px 0; gap: 4px; }
+.previewTabs button { border-radius: 5px; padding: 6px 10px; font-size: 11px; background: transparent; color: var(--text-muted); cursor: pointer; }
+.previewTabs button[aria-pressed=true] { background: var(--bg-accent-subtle); color: var(--text-accent); font-weight: 600; }
+.mail { background: #fff; color: #152033; border: 1px solid #dde3eb; border-radius: 8px; overflow: hidden; }
+.mailEnvelope { padding: 17px; border-bottom: 1px solid #e8edf3; }
+.mailEnvelope > strong { font-size: 12px; display: block; line-height: 1.5; }
+.mailEnvelope > div { display: flex; gap: 8px; align-items: center; margin-top: 13px; }
+.senderAvatar { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 50%; color: white; background: #1c60ff; font-size: 12px; font-weight: 700; }
+.mailEnvelope b { font-size: 10px; display: block; }
+.mailEnvelope small { display: block; margin-top: 3px; color: #65748a; font-size: 9px; overflow-wrap: anywhere; }
+.mailBody { padding: 22px 20px; }
+.mailBrand { font-size: 13px; font-weight: 700; color: #1c60ff; }
+.mailBody h3 { font-size: 17px; letter-spacing: -.5px; line-height: 1.5; margin: 18px 0 9px; }
+.mailBody > p { font-size: 11px; line-height: 1.8; color: #58677b; margin: 0; }
+.mailBody dl { padding: 12px 0; border-top: 1px solid #e8edf3; border-bottom: 1px solid #e8edf3; margin: 18px 0; }
+.mailBody dl > div { display: flex; gap: 15px; font-size: 10px; padding: 6px 0; }
+.mailBody dt { color: #65748a; width: 65px; flex: none; }
+.mailBody dd { margin: 0; font-weight: 600; }
+.mailAction { display: inline-block; background: #1c60ff; padding: 9px 14px; border-radius: 5px; color: white; font-size: 10px; font-weight: 600; }
+.mailFoot { display: block; color: #65748a; font-size: 9px; margin-top: 18px; line-height: 1.7; }
+.footer { border-top: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 28px; }
+.footer > span { font-size: 11px; color: var(--text-muted); }
+.footer > div { display: flex; gap: 8px; }
+.cancel, .save { padding: 10px 15px; font-size: 12px; border-radius: 7px; cursor: pointer; }
+.cancel { background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+.save { background: var(--bg-active); color: white; }
+.dialog :is(button,input):focus-visible { outline: 2px solid var(--text-accent); outline-offset: 3px; }
+@media (max-width: 740px) { .content { grid-template-columns: 1fr; } .preview { border-left: 0; border-top: 1px solid var(--border-subtle); } .header, .settings { padding: 20px; } .footer { padding: 15px 20px; flex-wrap: wrap; } .footer > div { margin-left: auto; } .scrim { padding: 12px; } .dialog { max-height: calc(100dvh - 24px); } }
+@media (prefers-reduced-motion: reduce) { .master input::before { transition: none; } }
