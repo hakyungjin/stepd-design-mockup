@@ -6,7 +6,6 @@
  */
 
 export type ScreenKey =
-  | 'home'
   | 'chat'
   | 'dashboard'
   | 'programs'
@@ -26,7 +25,6 @@ export type ScreenKey =
   | 'editor-hl'
 
 export const SCREEN_KEYS: ScreenKey[] = [
-  'home',
   'chat',
   'dashboard',
   'programs',
@@ -51,8 +49,7 @@ export const isScreenKey = (v: string): v is ScreenKey =>
 
 /** 화면 제목 (상단 바 / 문서 타이틀) */
 export const SCREEN_TITLE: Record<ScreenKey, string> = {
-  home: '홈',
-  chat: '채팅',
+  chat: '에이전트',
   dashboard: '대시보드',
   programs: '프로그램',
   analysis: '영상 분석',

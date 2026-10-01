@@ -27,6 +27,7 @@ import {
 } from './data'
 import { CommentPanel } from './CommentPanel'
 import styles from './MediaPage.module.css'
+import type { MediaCollaborationStore, MediaCommentTarget } from './useMediaCollaborationMock'
 
 /** 댓글에서 부른 사람 찾기 */
 const MENTION_RE = /@[가-힣A-Za-z0-9_]+/g
@@ -45,6 +46,9 @@ export interface MediaPageProps {
   /** 'A' 목록(기본) · 'B' 카드 */
   initialLayout?: Layout
   onNavigate: (screen: ScreenKey) => void
+  collaboration: MediaCollaborationStore
+  commentTarget: MediaCommentTarget | null
+  onCommentTargetHandled: () => void
 }
 
 interface MetaDraft {
@@ -56,7 +60,7 @@ interface MetaDraft {
   extra: Record<string, string>
 }
 
-export function MediaPage({ initialLayout = 'A', onNavigate }: MediaPageProps) {
+export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, commentTarget, onCommentTargetHandled }: MediaPageProps) {
   const [clips, setClips] = useState<MediaClip[]>(CLIPS)
   const [layout, setLayout] = useState<Layout>(initialLayout)
   const [source, setSource] = useState<Source>('ai')
@@ -70,12 +74,22 @@ export function MediaPage({ initialLayout = 'A', onNavigate }: MediaPageProps) {
   const [metaCh, setMetaCh] = useState<string | null>(null)
   const [metaDraft, setMetaDraft] = useState<MetaDraft | null>(null)
 
-  /** 영상별 버전·댓글 — 열어 본 영상만 채워집니다 */
-  const [threads, setThreads] = useState<
-    Record<string, { versions: ClipVersion[]; comments: ClipComment[] }>
-  >({})
+  /** 댓글과 버전은 알림함과 공유하고 화면 이동 후에도 유지합니다. */
+  const { threads, setThreads } = collaboration
+  const [highlightedCommentId, setHighlightedCommentId] = useState<string | null>(null)
   /** 상세에서 보고 있는 버전 (null = 전체) */
   const [filterV, setFilterV] = useState<number | null>(null)
+  useEffect(() => {
+    if (!commentTarget) return
+    if (clips.some((clip) => clip.id === commentTarget.clipId)) {
+      setDetailId(commentTarget.clipId)
+      setFilterV(commentTarget.version)
+      setHighlightedCommentId(commentTarget.commentId)
+      setMetaCh(null)
+      setMetaDraft(null)
+    }
+    onCommentTargetHandled()
+  }, [commentTarget, clips, onCommentTargetHandled])
 
   /** 처음 열 때 시드로 채우고, 그 뒤로는 state 를 씁니다 */
   const threadOf = (clip: MediaClip) =>
@@ -466,6 +480,7 @@ export function MediaPage({ initialLayout = 'A', onNavigate }: MediaPageProps) {
           episode={detailEpisode}
           thread={threadOf(detail)}
           filterV={filterV}
+          highlightedCommentId={highlightedCommentId}
           onFilterV={setFilterV}
           onAddComment={(text, v) => {
             const t = threadOf(detail)
@@ -477,7 +492,7 @@ export function MediaPage({ initialLayout = 'A', onNavigate }: MediaPageProps) {
               text,
               v,
             }
-            setThreads((m) => ({ ...m, [detail.id]: { ...t, comments: [...t.comments, next] } }))
+            collaboration.addComment(detail, next)
             // TODO(api): POST /media/:id/comments
             const called = text.match(MENTION_RE)
             say(called ? `댓글을 남겼습니다 — ${called.join(', ')} 에게 알림` : '댓글을 남겼습니다')
@@ -534,6 +549,7 @@ export function MediaPage({ initialLayout = 'A', onNavigate }: MediaPageProps) {
             say(`${ch} 메타데이터를 저장했습니다`)
           }}
           onClose={() => {
+            setHighlightedCommentId(null)
             setDetailId(null)
             setMetaDraft(null)
             setFilterV(null)
@@ -1050,6 +1066,7 @@ function DetailModal({
   episode,
   thread,
   filterV,
+  highlightedCommentId,
   onFilterV,
   onAddComment,
   onAddVersion,
@@ -1069,6 +1086,7 @@ function DetailModal({
   episode: Episode
   thread: { versions: ClipVersion[]; comments: ClipComment[] }
   filterV: number | null
+  highlightedCommentId: string | null
   onFilterV: (v: number | null) => void
   onAddComment: (text: string, v: number) => void
   onAddVersion: () => void
@@ -1384,6 +1402,7 @@ function DetailModal({
           </div>
 
           <CommentPanel
+            highlightedCommentId={highlightedCommentId}
             versions={thread.versions}
             comments={thread.comments}
             filterV={filterV}

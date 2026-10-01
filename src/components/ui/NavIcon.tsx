@@ -2,7 +2,6 @@ import type { ScreenKey } from '@/app/screens'
 
 export function NavIcon({ screen, size = 17 }: { screen: ScreenKey; size?: number }) {
   const paths: Partial<Record<ScreenKey, string>> = {
-    home: 'M3 10 12 3l9 7M5 9v11h5v-6h4v6h5V9',
     chat: 'M4 4h16v12H9l-5 4V4Z',
     dashboard: 'M4 4h6v7H4V4Zm10 0h6v4h-6V4ZM4 15h6v5H4v-5Zm10-3h6v8h-6v-8Z',
     programs: 'M4 5h16v15H4V5Zm0 5h16M8 5V3m8 2V3',

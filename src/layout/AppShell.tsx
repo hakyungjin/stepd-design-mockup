@@ -5,6 +5,8 @@ import { useTheme } from '@/app/useTheme'
 import { ACCOUNT } from '@/features/account-settings/data'
 import styles from './AppShell.module.css'
 import { NavIcon } from '@/components/ui/NavIcon'
+import { MentionInbox } from '@/features/notifications/MentionInbox'
+import type { MediaCollaborationStore, MediaMention } from '@/features/media/useMediaCollaborationMock'
 
 /**
  * STEP D 공통 셸(좌측 내비 + 본문).
@@ -13,9 +15,21 @@ import { NavIcon } from '@/components/ui/NavIcon'
  * 각 화면 컴포넌트만 꽂으면 됩니다.
  */
 
+/** 사이드바를 접어 뒀는지 기억해 두는 자리 */
+const FOLD_KEY = 'stepd-sidebar-folded'
+const readFolded = () => {
+  try {
+    return window.localStorage.getItem(FOLD_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
 export interface AppShellProps {
   active: ScreenKey
   onNavigate: (key: ScreenKey) => void
+  collaboration: MediaCollaborationStore
+  onOpenMention: (item: MediaMention) => void
   /** 사이드바 항목 옆에 띄울 배지 (예: 배포 실패 건수) */
   badges?: Partial<Record<ScreenKey, { text: string; tone: 'error' | 'warn' }>>
   /** 하단 계정 줄에 보여 줄 사람 이름 */
@@ -28,19 +42,33 @@ export interface AppShellProps {
 export function AppShell({
   active,
   onNavigate,
+  collaboration,
+  onOpenMention,
   badges,
   userName = ACCOUNT.name,
   accountMeta = `${ACCOUNT.organization} · ${ACCOUNT.team} · ${ACCOUNT.role}`,
   children,
 }: AppShellProps) {
   const activeNav = navKeyFor(active)
+  const [inboxLeft, setInboxLeft] = useState<number | null>(null)
+  useEffect(() => { setInboxLeft(null) }, [active])
   /** 계정 정보·설정은 계정 메뉴로 들어가는 두 화면입니다 */
   const onAccountScreen = activeNav === 'settings' || activeNav === 'profile'
   const compact = active === 'chat'
   const { theme, toggle } = useTheme()
   const dark = theme === 'dark'
   const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 640px)').matches)
-  const collapsed = compact || narrow
+  /* 직접 접어 둔 상태 — 다시 들어와도 그대로입니다 */
+  const [folded, setFolded] = useState(readFolded)
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(FOLD_KEY, folded ? '1' : '0')
+    } catch {
+      /* 저장이 막힌 브라우저에서도 접기 자체는 동작해야 합니다 */
+    }
+  }, [folded])
+  /** 채팅 화면과 좁은 화면은 자동으로 접힙니다 */
+  const collapsed = compact || narrow || folded
   const tooltipId = useId()
   const [tooltip, setTooltip] = useState<{ label: string; left: number; top: number } | null>(null)
   const tooltipProps = (label: string, title = label) => ({
@@ -109,7 +137,7 @@ export function AppShell({
   return (
     <div className={styles.shell}>
       <nav
-        className={`${styles.sidebar} ${compact ? styles.sidebarCompact : ''}`}
+        className={`${styles.sidebar} ${compact || folded ? styles.sidebarCompact : ''}`}
         aria-label="주 메뉴"
         onPointerOver={(event) => { if (event.pointerType !== 'touch') showTooltip(event.target) }}
         onPointerOut={(event) => {
@@ -128,9 +156,25 @@ export function AppShell({
         </div>
 
         <div className={styles.primaryNav}>
-          {([{ key: 'home', label: '홈' }, { key: 'chat', label: '채팅' }] as const).map(({ key, label }) => <button key={key} type="button" className={styles.primaryItem} aria-current={activeNav === key ? 'page' : undefined} aria-label={label} {...tooltipProps(label)} onClick={() => onNavigate(key)}><NavIcon screen={key} size={18} />{activeNav === key && <span>{label}</span>}</button>)}
+          <button type="button" className={styles.primaryItem} aria-current={activeNav === 'chat' ? 'page' : undefined} aria-label="에이전트" {...tooltipProps('에이전트')} onClick={() => onNavigate('chat')}><NavIcon screen="chat" size={18} />{activeNav === 'chat' && <span>에이전트</span>}</button>
+          <button type="button" className={styles.primaryItem} aria-label={`알림${collaboration.unread ? ` · 미읽음 ${collaboration.unread}개` : ''}`} aria-haspopup="dialog" aria-expanded={inboxLeft !== null} {...tooltipProps('알림')} onClick={(event) => setInboxLeft(inboxLeft === null ? event.currentTarget.closest('nav')!.getBoundingClientRect().right + 8 : null)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>{inboxLeft !== null && <span>알림</span>}{collaboration.unread > 0 && <i className={styles.mentionBadge} aria-hidden="true">{collaboration.unread > 9 ? '9+' : collaboration.unread}</i>}</button>
+
+          {/* 채팅·좁은 화면은 이미 접혀 있어 누를 자리가 없습니다 */}
+          {!compact && !narrow && (
+            <button
+              type="button"
+              className={styles.foldBtn}
+              aria-label={folded ? '메뉴 펼치기' : '메뉴 접기'}
+              aria-pressed={folded}
+              {...tooltipProps(folded ? '메뉴 펼치기' : '메뉴 접기')}
+              onClick={() => setFolded((v) => !v)}
+            >
+              <FoldIcon folded={folded} />
+            </button>
+          )}
         </div>
 
+        {inboxLeft !== null && <MentionInbox store={collaboration} left={inboxLeft} onClose={() => setInboxLeft(null)} onOpen={onOpenMention} />}
         {NAV.map((section, si) => (
           <div key={section.title ?? si} className={styles.section}>
             {section.title && <div className={styles.navGroup}>{section.title}</div>}
@@ -247,6 +291,26 @@ export function AppShell({
 
       <div className={styles.main}>{children}</div>
     </div>
+  )
+}
+
+/** 세로줄 + 화살표 — 접힌 쪽에서는 반대로 돌려 펼치기를 가리킵니다 */
+function FoldIcon({ folded }: { folded: boolean }) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.65"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M4 4v16" />
+      {folded ? <path d="M10 12h10m-4-4 4 4-4 4" /> : <path d="M20 12H10m4-4-4 4 4 4" />}
+    </svg>
   )
 }
 

@@ -139,6 +139,8 @@
 
 /* ---------------- 댓글 ---------------- */
 
+.highlightedComment { background: var(--bg-accent-subtle); outline: 1px solid var(--text-accent); outline-offset: 4px; border-radius: 5px; }
+
 .thread {
   flex: 1;
   min-height: 0;

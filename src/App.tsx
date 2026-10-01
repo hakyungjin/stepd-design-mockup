@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { AppShell } from './layout/AppShell'
 import { StubScreen } from './components/StubScreen'
 import { SCREEN_TITLE, isFullScreen, type ScreenKey } from './app/screens'
@@ -18,10 +18,10 @@ import { AccountSettingsPage } from './features/account-settings/AccountSettings
 import { AccountProfilePage } from './features/account-settings/AccountProfilePage'
 import { useAccountSettings, type AccountSettingsStore } from './features/account-settings/useAccountSettings'
 import type { EditorMode } from './features/editor/data'
-import { HomePage } from './features/home/HomePage'
 import { ChatPage } from './features/chat/ChatPage'
 import { useChatMock, type ChatMockStore } from './features/chat/useChatMock'
 import { useScheduledTasksMock, type ScheduledTasksStore } from './features/chat/useScheduledTasksMock'
+import { useMediaCollaborationMock, type MediaCollaborationStore, type MediaCommentTarget, type MediaMention } from './features/media/useMediaCollaborationMock'
 
 /**
  * 목업 진입점.
@@ -34,26 +34,27 @@ export default function App() {
   const accountSettings = useAccountSettings()
   const chat = useChatMock()
   const tasks = useScheduledTasksMock()
+  const collaboration = useMediaCollaborationMock()
+  const [mediaTarget, setMediaTarget] = useState<MediaCommentTarget | null>(null)
+  const openMention = (item: MediaMention) => { setMediaTarget({ clipId: item.clipId, commentId: item.commentId, version: item.version }); navigate('media') }
 
   useEffect(() => {
     document.title = `STEP D · ${SCREEN_TITLE[screen]}`
   }, [screen])
 
-  const body = renderScreen(screen, navigate, accountSettings, chat, tasks)
+  const body = renderScreen(screen, navigate, accountSettings, chat, tasks, collaboration, mediaTarget, () => setMediaTarget(null))
 
   if (isFullScreen(screen)) return body
 
   return (
-    <AppShell active={screen} onNavigate={navigate}>
+    <AppShell active={screen} onNavigate={navigate} collaboration={collaboration} onOpenMention={openMention}>
       {body}
     </AppShell>
   )
 }
 
-function renderScreen(screen: ScreenKey, navigate: (s: ScreenKey) => void, accountSettings: AccountSettingsStore, chat: ChatMockStore, tasks: ScheduledTasksStore) {
+function renderScreen(screen: ScreenKey, navigate: (s: ScreenKey) => void, accountSettings: AccountSettingsStore, chat: ChatMockStore, tasks: ScheduledTasksStore, collaboration: MediaCollaborationStore, mediaTarget: MediaCommentTarget | null, onMediaTargetHandled: () => void) {
   switch (screen) {
-    case 'home':
-      return <HomePage onNavigate={navigate} />
     case 'chat':
       return <ChatPage store={chat} tasks={tasks} emailAvailable={accountSettings.emailInstalled && accountSettings.emailNotifications.enabled} onNavigate={navigate} />
     case 'dashboard':
@@ -73,7 +74,7 @@ function renderScreen(screen: ScreenKey, navigate: (s: ScreenKey) => void, accou
     case 'analysis':
       return <AnalysisPage onNavigate={navigate} />
     case 'media':
-      return <MediaPage onNavigate={navigate} />
+      return <MediaPage onNavigate={navigate} collaboration={collaboration} commentTarget={mediaTarget} onCommentTargetHandled={onMediaTargetHandled} />
     case 'auto':
       return <AutoDeployPage onNavigate={navigate} />
     case 'settings':

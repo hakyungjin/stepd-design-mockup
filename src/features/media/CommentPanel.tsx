@@ -25,6 +25,7 @@ const mentionToken = (value: string, caret: number) => {
 }
 
 export interface CommentPanelProps {
+  highlightedCommentId?: string | null
   versions: ClipVersion[]
   comments: ClipComment[]
   /** 지금 보고 있는 버전 — null 이면 전체 */
@@ -36,6 +37,7 @@ export interface CommentPanelProps {
 }
 
 export function CommentPanel({
+  highlightedCommentId,
   versions,
   comments,
   filterV,
@@ -59,8 +61,10 @@ export function CommentPanel({
   /* 새 댓글이 붙으면 아래로 따라갑니다 */
   useLayoutEffect(() => {
     const el = threadRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [comments.length, filterV])
+    const highlighted = el && [...el.querySelectorAll<HTMLElement>('[data-comment-id]')].find((node) => node.dataset.commentId === highlightedCommentId)
+    if (highlighted) { highlighted.scrollIntoView({ block: 'nearest' }); highlighted.focus({ preventScroll: true }) }
+    else if (el) el.scrollTop = el.scrollHeight
+  }, [comments.length, filterV, highlightedCommentId])
 
   useEffect(() => {
     setCursor(0)
@@ -199,7 +203,7 @@ export function CommentPanel({
               <span className={styles.systemLine} />
             </div>
           ) : (
-            <div key={c.id} className={styles.comment}>
+            <div key={c.id} data-comment-id={c.id} tabIndex={-1} className={`${styles.comment} ${c.id === highlightedCommentId ? styles.highlightedComment : ''}`}>
               <span
                 className={styles.avatar}
                 style={{ background: memberOf(c.by)?.color ?? 'var(--bg-active)' }}

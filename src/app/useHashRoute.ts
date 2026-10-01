@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { isScreenKey, type ScreenKey } from './screens'
 
-const DEFAULT_SCREEN: ScreenKey = 'home'
+const DEFAULT_SCREEN: ScreenKey = 'chat'
 
 const readHash = (): ScreenKey => {
   const raw = decodeURIComponent((window.location.hash || '').slice(1))
-  if (raw === 'agents') return 'chat'
+  if (raw === 'agents' || raw === 'home') return 'chat'
   return isScreenKey(raw) ? raw : DEFAULT_SCREEN
 }
 
@@ -21,6 +21,7 @@ export function useHashRoute() {
 
   useEffect(() => {
     const onHashChange = () => setScreen(readHash())
+    onHashChange()
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
