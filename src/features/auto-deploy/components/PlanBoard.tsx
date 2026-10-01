@@ -4,6 +4,7 @@ import { isPast, upcomingOf } from '../domain/plan'
 import type { PlanEntry, Rule } from '../types'
 import type { AutoDeployStore } from '../hooks/useAutoDeploy'
 import { cx } from './shared'
+import { frameThumb, portraitThumb } from '@/lib/frames'
 import styles from './schedule.module.css'
 
 export interface BoardLook { days: number; dense: boolean; text: boolean }
@@ -19,7 +20,6 @@ export function PlanBoard({ rule, plan, store, look }: { rule: Rule; plan: PlanE
     <div className={styles.toolbar}>
       <div className={styles.period}><span className={styles.calendarIcon}>▦</span><strong>{view === 'week' ? `${days[0].label.split(' ')[0]} – ${days[days.length - 1].label.split(' ')[0]}` : DAYS7[day].label}</strong><span className={styles.periodYear}>2026</span><button type="button" className={styles.todayButton} onClick={() => { setDay(0); setView('day') }}>오늘</button></div>
       <div className={styles.toolbarRight}>
-        <button type="button" className={styles.undo} disabled={!store.planHistory[rule.id]?.length} onClick={() => store.undoPlan(rule)}>↶ 되돌리기</button>
         <select className={styles.channelSelect} aria-label="편성표 플랫폼 필터" value={channel} onChange={(e) => setChannel(e.target.value)}><option value="all">모든 플랫폼</option>{rule.channels.map((c) => <option key={c.name} value={c.name}>{platOf(c.icon).name}</option>)}</select>
         <div className={styles.viewSwitch} aria-label="편성표 보기"><button type="button" aria-pressed={view === 'week'} onClick={() => setView('week')}>주간</button><button type="button" aria-pressed={view === 'day'} onClick={() => setView('day')}>일간</button></div>
       </div>
@@ -62,10 +62,14 @@ export function PlanBoard({ rule, plan, store, look }: { rule: Rule; plan: PlanE
                       onDragStart={(e) => { store.setPop(null); store.dragRef.current = { hid: h.id, from: entry }; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', h.id) }}
                       onDragEnd={() => { store.dragRef.current = null; store.setCellHover(null) }}>
                       <button type="button" className={styles.videoPreview} aria-label={`${h.line1 || h.title} 미리보기`} onClick={() => store.setPlayer({ title: h.line1 || h.title, kind: h.kind, meta: `${platform.name} · ${d.label} ${slot.t}` })}>
-                        <span className={styles.playTitle}><span className={styles.playIcon} aria-hidden>▶</span><span className={styles.videoTitle}>{h.line1 || h.title}</span></span>
+                        <span className={styles.cardThumbnail}>
+                          <img src={h.kind === '숏폼' ? portraitThumb(h.img) : frameThumb(h.img)} alt="" draggable={false} />
+                          <span className={styles.cardDuration}>{h.dur}</span>
+                        </span>
+                        <span className={styles.videoTitle} title={h.line1 || h.title}>{h.line1 || h.title}</span>
                       </button>
-                      <div className={styles.videoMeta}><span>{h.kind} · {h.dur}</span><span className={cx(styles.videoStatus, !past && (h.rendering || c.expired) && styles.warningStatus)}>{past ? '✓ 발행 완료' : h.rendering ? '◌ 렌더 중' : c.expired ? '인증 만료' : c.gated ? '기록만' : '예약됨'}</span></div>
-                      {!past && <div className={styles.cardActions}><button type="button" className={styles.deleteButton} aria-label={`${h.line1 || h.title} 편성 삭제`} onClick={() => store.removeFrom(rule, c.name, d.i, slot.t, h.id)}>삭제</button></div>}
+                      <div className={styles.videoMeta}><span className={styles.kindBadge}>{h.kind}</span><span className={cx(styles.videoStatus, past && styles.publishedStatus, !past && (h.rendering || c.expired) && styles.warningStatus)}>{past ? '발행 완료' : h.rendering ? '렌더 중' : c.expired ? '인증 만료' : c.gated ? '기록만' : '예약됨'}</span></div>
+                      {!past && <button type="button" className={styles.deleteButton} title="편성 삭제" aria-label={`${h.line1 || h.title} 편성 삭제`} onClick={() => store.removeFrom(rule, c.name, d.i, slot.t, h.id)}><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13M10 10v7M14 10v7" /></svg></button>}
                     </article>
                   })}
                   {!past && <button type="button" className={cx(styles.addVideo, !entries.length && styles.emptySlot)} onClick={(e) => openSlot(e, store, { ch: c.name, day: d.i, t: slot.t }, null)}><span>＋ {entries.length ? '영상 추가' : '영상 배치'}</span>{!entries.length && <small>{cleared ? '비워 둔 시간대' : '영상을 선택하거나 끌어오세요'}</small>}</button>}
