@@ -2,7 +2,9 @@
 .scrim { position: fixed; inset: 0; z-index: 85; background: #090d168f; display: grid; place-items: center; padding: 24px; }
 .dialog { width: min(950px, 100%); max-height: calc(100dvh - 48px); overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 16px; background: var(--bg-card); box-shadow: 0 24px 90px #0004; }
 .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 26px 28px 24px; border-bottom: 1px solid var(--border-subtle); }
-.header h2 { margin: 0 0 8px; font-size: 23px; letter-spacing: -.5px; }
+.header h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; font-size: 21px; letter-spacing: -.5px; }
+.serviceIcon { display: grid; place-items: center; width: 30px; height: 30px; }
+.serviceIcon img { width: 26px; height: 26px; object-fit: contain; }
 .header p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 .close { background: transparent; color: var(--text-muted); font-size: 25px; width: 30px; height: 30px; border-radius: 6px; cursor: pointer; }
 .close:hover { background: var(--bg-card-hover); }

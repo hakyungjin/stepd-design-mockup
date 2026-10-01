@@ -1,0 +1,471 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 56px 28px 72px;
+}
+
+/* ---------------- 인사 + 입력창 ---------------- */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.greeting {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.title {
+  margin: 0 0 14px;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: var(--text-primary);
+}
+
+.composer {
+  width: 100%;
+  max-width: 760px;
+  padding: 16px 16px 13px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  background: var(--bg-card);
+  box-shadow: 0 10px 34px -16px rgba(15, 23, 42, 0.35);
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.composer:focus-within {
+  border-color: var(--text-accent);
+  box-shadow: 0 0 0 3px var(--bg-accent-subtle), 0 10px 34px -16px rgba(15, 23, 42, 0.35);
+}
+
+.input {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  max-height: 180px;
+  padding: 2px 4px 12px;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.composerBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.round {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.round:hover {
+  background: var(--bg-card-hover);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.send {
+  margin-left: auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  background: var(--bg-active);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.14s ease;
+}
+
+.send:hover:not(:disabled) {
+  background: var(--bg-active-hover);
+}
+
+.send:disabled {
+  background: var(--bg-card-hover);
+  color: var(--text-muted);
+  cursor: default;
+}
+
+/* ---------------- 묶음 머리 ---------------- */
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.blockHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.blockHead h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+}
+
+.asOf {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 카드 ---------------- */
+
+.todayGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 20px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cardHead h3 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cardHead > span {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.cardLink {
+  margin-left: auto;
+  background: transparent;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-accent);
+  cursor: pointer;
+}
+
+.cardLink:hover {
+  text-decoration: underline;
+}
+
+/* 예상 수익 — 추이 카드 안 왼쪽 위 */
+
+.revenue {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.revenueLabel {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.revenueValue {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.revenueUp {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--status-success-text);
+}
+
+.revenueNote {
+  margin-left: auto;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* 차트 */
+
+.chartBox {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 120px;
+}
+
+.chart {
+  flex: 1;
+  width: 100%;
+  min-height: 110px;
+}
+
+.chartTicks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* 순위 */
+
+.ranks {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ranks li {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 0;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.ranks li:first-child {
+  border-top: 0;
+}
+
+.rankNo {
+  flex: none;
+  width: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.ranks li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.ranks strong {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ranks li > div > span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ranks b {
+  flex: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* ---------------- 미리 만든 요청 ---------------- */
+
+.promptSection {
+  width: 100%;
+  max-width: 960px;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.promptHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.promptHeading h2 {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.promptHeading > span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.promptGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.promptCard {
+  position: relative;
+  grid-column: span 2;
+  min-width: 0;
+  min-height: 142px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 17px 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease;
+}
+
+.promptCard:nth-child(-n+2) {
+  grid-column: span 3;
+}
+
+.promptCard:hover {
+  border-color: color-mix(in srgb, var(--text-accent) 45%, var(--border-subtle));
+  background: var(--bg-card-hover);
+}
+
+.promptCategory {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 20px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.promptIcon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--text-accent);
+}
+
+.promptCard[data-task='popular'] .promptIcon { color: #d87731; }
+.promptCard[data-task='deploy'] .promptIcon { color: #7e6bd1; }
+.promptCard[data-task='report'] .promptIcon { color: #6188ce; }
+.promptCard[data-task='finance'] .promptIcon { color: #299475; }
+
+.promptCard > strong {
+  margin-top: 15px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -.3px;
+}
+
+.promptDetail {
+  margin-top: 5px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.promptArrow {
+  position: absolute;
+  right: 17px;
+  top: 22px;
+  color: var(--text-muted);
+}
+
+.promptCard:hover .promptArrow {
+  color: var(--text-accent);
+}
+
+.page :is(button, textarea):focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+  .promptGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .promptCard, .promptCard:nth-child(-n+2) { grid-column: span 1; }
+  .promptCard:last-child { grid-column: span 2; }
+}
+
+@media (max-width: 640px) {
+  .promptHeading { flex-wrap: wrap; gap: 5px; }
+  .promptGrid { grid-template-columns: minmax(0, 1fr); gap: 9px; }
+  .promptCard, .promptCard:last-child, .promptCard:nth-child(-n+2) { grid-column: span 1; min-height: 118px; padding: 14px 16px; }
+  .promptCard > strong { margin-top: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .composer, .send, .promptCard { transition: none; }
+}
+
+/* ---------------- 좁은 화면 ---------------- */
+
+@media (max-width: 980px) {
+  .todayGrid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .page { padding: 36px 16px 48px; gap: 30px; }
+  .title { font-size: 24px; }
+  .revenueNote { margin-left: 0; flex-basis: 100%; }
+}

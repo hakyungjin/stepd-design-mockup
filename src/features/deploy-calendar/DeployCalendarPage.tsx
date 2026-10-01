@@ -374,7 +374,7 @@ export function DeployCalendarPage({
             cal.cancelItem(id)
           }}
           onOpenEditor={(video) => {
-            if (onNavigate) onNavigate(video.type === 'hl' ? 'editor-hl' : 'editor-clip')
+            if (onNavigate) onNavigate(video.type === 'hl' ? 'editor-hl' : video.type === 'short' ? 'editor-short' : 'editor-clip')
             else say(`${VIDEO_TYPE[video.type].label} 편집기로 이동할 수 없습니다`)
           }}
         />

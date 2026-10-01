@@ -67,30 +67,6 @@ export const DAYS: DayPoint[] = (() => {
   }))
 })()
 
-export interface ChartEvent {
-  index: number
-  text: string
-  note: string
-}
-
-export const EVENTS: ChartEvent[] = [
-  {
-    index: 2,
-    text: '월초 광고 단가 하락',
-    note: '월초에는 광고주 예산이 적어 RPM이 12~16% 낮습니다',
-  },
-  {
-    index: 23,
-    text: '32회 방영 다음날',
-    note: '본방 다음날 클립·하이라이트 조회가 몰렸습니다',
-  },
-  {
-    index: 28,
-    text: '영호 폭발 숏폼 급등',
-    note: '숏폼 한 개가 이틀간 148만 조회 — 수익의 약 30%',
-  },
-]
-
 export type PerfStatus = '급등' | '성장' | '정상' | '하락'
 
 export interface PerfVideo {

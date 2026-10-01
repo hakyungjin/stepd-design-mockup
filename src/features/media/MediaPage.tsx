@@ -3,6 +3,7 @@ import { Chip } from '@/components/ui/Badge'
 import { Select } from '@/components/ui/Controls'
 import { ConfirmDialog, type ConfirmRequest } from '@/components/ui/ConfirmDialog'
 import type { ScreenKey } from '@/app/screens'
+import { editorRoute } from '@/features/editor/data'
 import {
   CLIPS,
   DIST_STYLE,
@@ -413,7 +414,7 @@ export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, comm
                               )
                             }
                             onOpen={setDetailId}
-                            onEdit={() => onNavigate('editor-clip')}
+                            onEdit={(clip) => onNavigate(editorRoute(clip.kind))}
                             onDelete={remove}
                             onAnalysis={() => onNavigate('analysis')}
                             showAnalysisLink={source === 'ai'}
@@ -555,7 +556,7 @@ export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, comm
             setFilterV(null)
           }}
           onDelete={() => remove(detail)}
-          onEdit={() => onNavigate('editor-clip')}
+          onEdit={() => onNavigate(editorRoute(detail.kind))}
           onRetry={(ch) => say(`${ch} 다시 시도 — 배포 화면에서 진행 상황을 볼 수 있습니다`)}
           onSay={say}
         />

@@ -1,0 +1,45 @@
+.sequence { flex: none; width: 100%; border: 1px solid var(--border-subtle); border-radius: 8px; background: var(--bg-card); overflow: hidden; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 44px; padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); }
+.playback { display: flex; align-items: center; gap: 9px; font-variant-numeric: tabular-nums; font-size: 11px; color: var(--text-muted); }
+.playback time { color: var(--text-primary); font-size: 13px; }
+.sequence .play { width: 30px; height: 28px; padding: 0; font-size: 11px; }
+.sourcePosition { margin-left: 12px; color: var(--text-muted); font-size: 10px; }
+.viewTools { display: flex; gap: 4px; align-items: center; }
+.sequence .viewTools button { font-size: 11px; padding: 4px 8px; }
+.divider { width: 1px; height: 16px; margin: 0 4px; background: var(--border-subtle); }
+.timelineBody { display: flex; padding: 0 12px 8px 0; }
+.labels { width: 76px; flex: none; display: flex; flex-direction: column; font-size: 10px; color: var(--text-muted); }
+.labels > span { display: flex; align-items: center; gap: 6px; padding-left: 12px; }
+.labels > span:nth-child(1) { height: 28px; }
+.labels > span:nth-child(2) { height: 60px; }
+.labels > span:nth-child(3) { height: 34px; }
+.labels b { font-size: 9px; font-weight: 500; color: var(--text-secondary); }
+.tracks { flex: 1; min-width: 0; position: relative; overflow: hidden; cursor: crosshair; touch-action: none; user-select: none; }
+.ruler { height: 28px; position: relative; background: var(--bg-card); }
+.ruler > span { position: absolute; height: 100%; border-left: 1px solid var(--border-subtle); }
+.ruler time { position: relative; top: 5px; left: 5px; font-size: 9px; font-variant-numeric: tabular-nums; color: var(--text-muted); white-space: nowrap; }
+.ruler::after { content: ''; position: absolute; inset: auto 0 0; height: 4px; background: repeating-linear-gradient(90deg, var(--border-subtle) 0 1px, transparent 1px 2.5%); }
+.videoTrack { position: relative; height: 60px; background: #171a21; }
+.filmstrip { height: 100%; display: flex; overflow: hidden; }
+.filmstrip img { min-width: 0; width: calc(100% / 24); height: 100%; flex: 1; object-fit: cover; pointer-events: none; }
+.excluded { position: absolute; top: 0; bottom: 0; background: #12151dc2; pointer-events: none; }
+.selection { position: absolute; top: 0; bottom: 0; border: 2px solid #4d83ef; background: #346bd722; pointer-events: none; overflow: hidden; }
+.selection > span { display: inline-block; color: #fff; font-size: 10px; padding: 3px 6px; margin: 4px 12px; background: #142751c9; white-space: nowrap; }
+.sequence .trimHandle { position: absolute; z-index: 3; top: 0; height: 60px; width: 14px; padding: 0; transform: translateX(-50%); border: 1px solid #a9c9ff; border-radius: 3px; color: #fff; background: #356fd7; cursor: ew-resize; touch-action: none; display: grid; place-items: center; }
+.sequence .trimHandle:hover, .sequence[data-dragging=trimIn] .trimHandle[data-edge=trimIn], .sequence[data-dragging=trimOut] .trimHandle[data-edge=trimOut] { background: #4c89f6; }
+.trimHandle > span { width: 4px; height: 18px; border-left: 1px solid white; border-right: 1px solid white; pointer-events: none; }
+.sequence .trimHandle:focus-visible { outline-offset: -3px; outline-color: #fff; }
+.subtitleTrack { position: relative; height: 34px; margin-top: 5px; background: var(--bg-dark); border-radius: 3px; }
+.sequence .subtitle { position: absolute; height: 27px; top: 3px; border: 1px solid color-mix(in srgb, var(--text-accent) 30%, var(--border-subtle)); border-radius: 3px; background: var(--bg-accent-subtle); color: var(--text-secondary); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; padding: 3px 7px; text-align: left; min-width: 0; }
+.sequence .subtitle[data-selected=true] { border-color: var(--bg-active); color: var(--text-primary); }
+.subtitle[data-outside=true] { opacity: .4; }
+.playhead { position: absolute; z-index: 4; top: 0; bottom: 0; width: 1px; background: #ec5e65; pointer-events: none; }
+.playhead > span { position: absolute; top: 0; left: -5px; width: 11px; height: 12px; background: #ec5e65; clip-path: polygon(0 0, 100% 0, 100% 60%, 50% 100%, 0 60%); }
+@media(max-width:800px) { .sourcePosition { display: none; } }
+@media(max-width:610px) {
+  .toolbar { flex-wrap: wrap; gap: 8px; }
+  .viewTools { margin-left: auto; }
+  .labels { width: 50px; }
+  .labels > span { padding-left: 7px; gap: 4px; }
+  .labels b { display: none; }
+}

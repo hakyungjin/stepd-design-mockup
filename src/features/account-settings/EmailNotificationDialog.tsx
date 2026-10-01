@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ACCOUNT } from './data'
+import { ServiceIcon } from './ServiceIcon'
 import type { EmailNotificationPreferences } from './types'
 import styles from './emailNotifications.module.css'
 
@@ -41,15 +42,15 @@ export function EmailNotificationDialog({ preferences, onSave, onClose }: { pref
   return <div className={styles.scrim} onClick={onClose}>
     <div className={styles.dialog} ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="email-notifications-title" onClick={(e) => e.stopPropagation()}>
       <div className={styles.header}>
-        <div><h2 id="email-notifications-title">이메일 알림</h2><p>자동배포 결과와 확인이 필요한 오류를 메일로 받아보세요.</p></div>
-        <button type="button" className={styles.close} aria-label="이메일 알림 닫기" onClick={onClose}>×</button>
+        <div><h2 id="email-notifications-title"><span className={styles.serviceIcon}><ServiceIcon icon="email" /></span>Gmail 알림</h2><p>Google 이메일로 배포 완료와 오류 알림을 받습니다.</p></div>
+        <button type="button" className={styles.close} aria-label="Gmail 알림 닫기" onClick={onClose}>×</button>
       </div>
       <form onSubmit={save}>
         <div className={styles.content}>
           <div className={styles.settings}>
             <div className={styles.account}><span className={styles.avatar}>{ACCOUNT.name.slice(0, 1)}</span><div><strong>{ACCOUNT.name}</strong><span>{ACCOUNT.organization} · 내 계정</span></div><span className={styles.scope}>계정별 설정</span></div>
-            <label className={styles.master}><span><strong>이메일 알림 받기</strong><small>내 계정의 모든 자동배포에 적용됩니다.</small></span><input type="checkbox" role="switch" checked={draft.enabled} onChange={(e) => { setDraft({ ...draft, enabled: e.target.checked }); setError('') }} /></label>
-            <div className={styles.emailField}><label htmlFor="notification-email">알림 받을 이메일</label><input id="notification-email" type="email" placeholder="name@gmail.com" autoComplete="email" maxLength={254} value={draft.email} required={draft.enabled} disabled={!draft.enabled} onChange={(e) => setDraft({ ...draft, email: e.target.value })} /><p>등록한 주소로 선택한 알림을 받습니다.</p></div>
+            <label className={styles.master}><span><strong>Gmail 알림 받기</strong><small>내 계정의 모든 자동배포에 적용됩니다.</small></span><input type="checkbox" role="switch" checked={draft.enabled} onChange={(e) => { setDraft({ ...draft, enabled: e.target.checked }); setError('') }} /></label>
+            <div className={styles.emailField}><label htmlFor="notification-email">Google 이메일 주소</label><input id="notification-email" type="email" placeholder="name@gmail.com" autoComplete="email" maxLength={254} value={draft.email} required={draft.enabled} disabled={!draft.enabled} onChange={(e) => setDraft({ ...draft, email: e.target.value })} /><p>Gmail 또는 Google Workspace 이메일을 등록하세요.</p></div>
             <fieldset className={styles.events} disabled={!draft.enabled}><legend>받을 알림</legend>
               <label className={styles.event}><input type="checkbox" checked={draft.completed} onChange={(e) => { setDraft({ ...draft, completed: e.target.checked }); setError('') }} /><span><strong>배포 완료</strong><small>영상 발행이 완료되면 결과와 게시물 링크를 받습니다.</small></span></label>
               <label className={styles.event}><input type="checkbox" checked={draft.failed} onChange={(e) => { setDraft({ ...draft, failed: e.target.checked }); setError('') }} /><span><strong>배포 오류</strong><small>발행 실패, 렌더 오류, 채널 연결 문제를 알려드립니다.</small></span></label>

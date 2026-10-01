@@ -50,8 +50,9 @@ export function AppShell({
   children,
 }: AppShellProps) {
   const activeNav = navKeyFor(active)
-  const [inboxLeft, setInboxLeft] = useState<number | null>(null)
-  useEffect(() => { setInboxLeft(null) }, [active])
+  /* 알림은 화면 오른쪽 아래 떠 있는 버튼에서 엽니다 */
+  const [inboxOpen, setInboxOpen] = useState(false)
+  useEffect(() => { setInboxOpen(false) }, [active])
   /** 계정 정보·설정은 계정 메뉴로 들어가는 두 화면입니다 */
   const onAccountScreen = activeNav === 'settings' || activeNav === 'profile'
   const compact = active === 'chat'
@@ -111,19 +112,20 @@ export function AppShell({
 
   /* 계정 메뉴 — 사이드바가 접히면 잘리므로 버튼 위치에 고정해 띄웁니다 */
   const accountRef = useRef<HTMLButtonElement>(null)
+  const accountMenuRef = useRef<HTMLDivElement>(null)
   const [menu, setMenu] = useState<{ left: number; bottom: number } | null>(null)
   const openMenu = () => {
     const r = accountRef.current?.getBoundingClientRect()
     if (!r) return
-    setMenu({ left: r.left, bottom: window.innerHeight - r.top + 6 })
+    const width = Math.min(240, window.innerWidth - 24)
+    setMenu({ left: Math.max(12, Math.min(r.left, window.innerWidth - width - 12)), bottom: window.innerHeight - r.top + 6 })
   }
-  /* 사이드바가 줄면 메뉴를 띄울 버튼 자체가 사라집니다 */
-  useEffect(() => {
-    if (collapsed) setMenu(null)
-  }, [collapsed])
+  const closeMenu = () => { setMenu(null); accountRef.current?.focus() }
+  useEffect(() => { setMenu(null) }, [collapsed, active])
   useEffect(() => {
     if (!menu) return
-    const close = () => setMenu(null)
+    accountMenuRef.current?.querySelector<HTMLButtonElement>('button')?.focus()
+    const close = () => { setMenu(null); accountRef.current?.focus() }
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
     window.addEventListener('keydown', onKey)
     window.addEventListener('resize', close)
@@ -148,36 +150,37 @@ export function AppShell({
         onBlurCapture={() => setTooltip(null)}
         onClickCapture={() => setTooltip(null)}
       >
+        {/*
+          브랜드 줄 — STEPD 본 저장소 사이드바와 같은 구성입니다.
+          왼쪽에 로고, 오른쪽에 유틸리티(알림)와 접기 버튼이 붙습니다.
+          에이전트는 아래 내비 목록의 정식 항목으로 내려갔습니다.
+        */}
         <div className={styles.brand}>
           <span className={styles.brandMark} aria-hidden>
             S
           </span>
           <span className={styles.brandName}>STEP D</span>
+
+          <div className={styles.brandActions}>
+            {/* 채팅·좁은 화면은 이미 접혀 있어 누를 자리가 없습니다 */}
+            {!compact && !narrow && (
+              <button
+                type="button"
+                className={styles.brandBtn}
+                aria-label={folded ? '사이드바 펼치기' : '사이드바 접기'}
+                aria-pressed={folded}
+                {...tooltipProps(folded ? '사이드바 펼치기' : '사이드바 접기')}
+                onClick={() => setFolded((v) => !v)}
+              >
+                <FoldIcon folded={folded} />
+              </button>
+            )}
+          </div>
         </div>
 
-        <div className={styles.primaryNav}>
-          <button type="button" className={styles.primaryItem} aria-current={activeNav === 'chat' ? 'page' : undefined} aria-label="에이전트" {...tooltipProps('에이전트')} onClick={() => onNavigate('chat')}><NavIcon screen="chat" size={18} />{activeNav === 'chat' && <span>에이전트</span>}</button>
-          <button type="button" className={styles.primaryItem} aria-label={`알림${collaboration.unread ? ` · 미읽음 ${collaboration.unread}개` : ''}`} aria-haspopup="dialog" aria-expanded={inboxLeft !== null} {...tooltipProps('알림')} onClick={(event) => setInboxLeft(inboxLeft === null ? event.currentTarget.closest('nav')!.getBoundingClientRect().right + 8 : null)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>{inboxLeft !== null && <span>알림</span>}{collaboration.unread > 0 && <i className={styles.mentionBadge} aria-hidden="true">{collaboration.unread > 9 ? '9+' : collaboration.unread}</i>}</button>
-
-          {/* 채팅·좁은 화면은 이미 접혀 있어 누를 자리가 없습니다 */}
-          {!compact && !narrow && (
-            <button
-              type="button"
-              className={styles.foldBtn}
-              aria-label={folded ? '메뉴 펼치기' : '메뉴 접기'}
-              aria-pressed={folded}
-              {...tooltipProps(folded ? '메뉴 펼치기' : '메뉴 접기')}
-              onClick={() => setFolded((v) => !v)}
-            >
-              <FoldIcon folded={folded} />
-            </button>
-          )}
-        </div>
-
-        {inboxLeft !== null && <MentionInbox store={collaboration} left={inboxLeft} onClose={() => setInboxLeft(null)} onOpen={onOpenMention} />}
+        {/* 묶음 이름(작업 공간·자동화·도구)은 띄우지 않습니다 — 가는 선으로만 가릅니다 */}
         {NAV.map((section, si) => (
-          <div key={section.title ?? si} className={styles.section}>
-            {section.title && <div className={styles.navGroup}>{section.title}</div>}
+          <div key={section.title ?? si} className={styles.section} aria-label={section.title}>
             {section.items.map((item) => {
               const isActive = item.key === activeNav
               const badge = badges?.[item.key]
@@ -212,43 +215,47 @@ export function AppShell({
         ))}
 
         <div className={styles.accountBar}>
-          {/* 사이드바가 줄면 이름이 들어갈 자리가 없어 설정으로 바로 갑니다 */}
+          {/*
+            테마 전환 — STEPD 본 저장소 사이드바(presentation/layout/sidebar.tsx)와 같은 모양입니다.
+            펼쳤을 때는 Dark | Light 두 칸짜리 필, 접었을 때는 동그란 버튼 하나입니다.
+            아이콘은 "지금 상태"를 가리킵니다(어두우면 달) — 본 저장소와 같은 규칙입니다.
+          */}
           {collapsed ? (
             <button
               type="button"
-              className={styles.iconBtn}
-              aria-label="설정"
-              {...tooltipProps('설정')}
-              aria-current={onAccountScreen ? 'page' : undefined}
-              onClick={() => onNavigate('settings')}
+              className={styles.themeRound}
+              data-theme={theme}
+              aria-label="테마 토글"
+              {...tooltipProps('테마 토글')}
+              onClick={toggle}
             >
-              <NavIcon screen="settings" size={16} />
+              {dark ? <MoonIcon size={14} /> : <SunIcon size={14} />}
             </button>
           ) : (
-            <button
-              ref={accountRef}
-              type="button"
-              className={`${styles.accountBtn} ${onAccountScreen ? styles.accountBtnActive : ''}`}
-              {...tooltipProps('계정 메뉴', `${userName} · ${accountMeta}`)}
-              aria-current={onAccountScreen ? 'page' : undefined}
-              aria-haspopup="menu"
-              aria-expanded={!!menu}
-              onClick={() => (menu ? setMenu(null) : openMenu())}
-            >
-              <span className={styles.accountNameText}>{userName}</span>
-              <span className={styles.accountCaret}>⌄</span>
-            </button>
+            <div className={styles.themePill} role="group" aria-label="테마">
+              <button type="button" aria-pressed={dark} onClick={() => { if (!dark) toggle() }}>
+                <MoonIcon /> Dark
+              </button>
+              <button type="button" aria-pressed={!dark} onClick={() => { if (dark) toggle() }}>
+                <SunIcon /> Light
+              </button>
+            </div>
           )}
 
           <button
+            ref={accountRef}
             type="button"
-            className={styles.iconBtn}
-            aria-label={dark ? '화이트 화면으로 바꾸기' : '블랙 화면으로 바꾸기'}
-            {...tooltipProps(dark ? '화이트 화면으로' : '블랙 화면으로')}
-            aria-pressed={!dark}
-            onClick={toggle}
+            className={`${styles.accountBtn} ${onAccountScreen ? styles.accountBtnActive : ''}`}
+            aria-label={`${userName} 프로필 메뉴`}
+            {...tooltipProps('프로필', `${userName} · ${accountMeta}`)}
+            aria-current={onAccountScreen ? 'page' : undefined}
+            aria-haspopup="menu"
+            aria-controls="sidebar-profile-menu"
+            aria-expanded={!!menu}
+            onClick={() => (menu ? closeMenu() : openMenu())}
           >
-            {dark ? <SunIcon /> : <MoonIcon />}
+            <span className={styles.profileAvatar}><ProfileIcon /></span>
+            <span className={styles.accountName}>{userName}</span>
           </button>
         </div>
 
@@ -267,29 +274,56 @@ export function AppShell({
             type="button"
             className={styles.menuScrim}
             aria-label="계정 메뉴 닫기"
-            onClick={() => setMenu(null)}
+            onClick={closeMenu}
           />
           <div
+            ref={accountMenuRef}
+            id="sidebar-profile-menu"
             className={styles.accountMenu}
             role="menu"
             aria-label="계정"
             style={{ left: menu.left, bottom: menu.bottom }}
+            onKeyDown={(event) => {
+              if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
+              event.preventDefault()
+              const items = [...event.currentTarget.querySelectorAll<HTMLButtonElement>('button')]
+              const current = items.indexOf(document.activeElement as HTMLButtonElement)
+              const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length
+              items[next]?.focus()
+            }}
           >
             <div className={styles.accountMenuHead}>
               <strong>{userName}</strong>
               <span>{accountMeta}</span>
             </div>
             <button type="button" role="menuitem" aria-current={activeNav === 'profile' ? 'page' : undefined} onClick={() => go('profile')}>
-              계정 정보
+              <ProfileIcon /> 계정 정보
             </button>
             <button type="button" role="menuitem" aria-current={activeNav === 'settings' ? 'page' : undefined} onClick={() => go('settings')}>
-              설정
+              <NavIcon screen="settings" size={15} /> 설정
             </button>
+            {/* 테마는 바로 아래 Dark|Light 필이 맡습니다 — 토글이 둘이면 서로 어긋납니다 */}
           </div>
         </>
       )}
 
       <div className={styles.main}>{children}</div>
+
+      {/* 알림 — 사이드바를 비우고 화면 오른쪽 아래에 띄웁니다 */}
+      <button
+        type="button"
+        className={styles.inboxFab}
+        aria-label={`알림${collaboration.unread ? ` · 미읽음 ${collaboration.unread}개` : ''}`}
+        title="알림"
+        aria-haspopup="dialog"
+        aria-expanded={inboxOpen}
+        onClick={() => setInboxOpen((open) => !open)}
+      >
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg>
+        {collaboration.unread > 0 && <i className={styles.mentionBadge} aria-hidden="true">{collaboration.unread > 9 ? '9+' : collaboration.unread}</i>}
+      </button>
+
+      {inboxOpen && <MentionInbox store={collaboration} onClose={() => setInboxOpen(false)} onOpen={onOpenMention} />}
     </div>
   )
 }
@@ -314,11 +348,16 @@ function FoldIcon({ folded }: { folded: boolean }) {
   )
 }
 
-function SunIcon() {
+function ProfileIcon() {
+  return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 21v-2a7 7 0 0 1 14 0v2" /></svg>
+}
+
+/* 본 저장소는 필 안에서 12px, 접힌 동그라미에서 14px 을 씁니다 */
+function SunIcon({ size = 12 }: { size?: number }) {
   return (
     <svg
-      width="15"
-      height="15"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
@@ -333,11 +372,11 @@ function SunIcon() {
   )
 }
 
-function MoonIcon() {
+function MoonIcon({ size = 12 }: { size?: number }) {
   return (
     <svg
-      width="15"
-      height="15"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"

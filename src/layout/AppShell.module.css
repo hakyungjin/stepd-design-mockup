@@ -35,8 +35,20 @@
   transition: width 180ms ease;
 }
 
+/* 묶음 이름 대신 가는 선으로 가릅니다 */
 .section {
-  display: contents;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 0;
+}
+
+.section:first-of-type {
+  padding-top: 0;
+}
+
+.section + .section {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .sidebarTooltip {
@@ -56,11 +68,40 @@
   pointer-events: none;
 }
 
+/* 브랜드 줄 — 왼쪽 로고, 오른쪽 유틸리티 (본 저장소 사이드바 머리와 같은 구성) */
 .brand {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 2px 8px 20px;
+  padding: 0 4px 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+
+.brandActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.brandBtn {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border-radius: 6px;
+  color: var(--text-on-dark);
+  cursor: pointer;
+}
+
+.brandBtn:hover,
+.brandBtn[aria-expanded='true'] {
+  background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
 
@@ -86,30 +127,42 @@
   white-space: nowrap;
 }
 
-.primaryNav { display: flex; gap: 5px; padding: 0 4px 12px; border-bottom: 1px solid rgba(255,255,255,.07); margin-bottom: 5px; }
-.primaryItem { position: relative; display: flex; gap: 7px; align-items: center; justify-content: center; min-width: 36px; height: 36px; padding: 9px; background: transparent; border-radius: 6px; color: var(--text-on-dark); font-size: 12px; cursor: pointer; }
-.primaryItem[aria-current=page] { background: rgba(255,255,255,.1); color: white; font-weight: 600; }
-.primaryItem:hover { background: rgba(255,255,255,.07); color: white; }
-.primaryItem[aria-expanded=true] { background: rgba(255,255,255,.1); color: white; }
-
-/* 접기 버튼 — 채팅·알림과 떨어져 오른쪽 끝에 붙습니다 */
-.foldBtn {
-  margin-left: auto;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  background: transparent;
-  border-radius: 6px;
-  color: var(--text-on-dark);
+/* 알림 — 화면 오른쪽 아래에 떠 있는 버튼 */
+.inboxFab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 38;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
   cursor: pointer;
 }
 
-.foldBtn:hover { background: rgba(255,255,255,.07); color: #fff; }
-.foldBtn:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
-.mentionBadge { position: absolute; right: 1px; top: 1px; min-width: 13px; height: 13px; padding: 0 3px; border: 1px solid var(--bg-sidebar); border-radius: 7px; background: var(--bg-active); color: #fff; font-size: 8px; font-weight: 600; font-style: normal; display: grid; place-items: center; }
+.inboxFab:hover,
+.inboxFab[aria-expanded='true'] {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.inboxFab:focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
+}
+
+.inboxFab .mentionBadge {
+  right: 4px;
+  top: 4px;
+  border-color: var(--bg-card);
+}
+
+.mentionBadge { position: absolute; right: 0; top: 0; min-width: 13px; height: 13px; padding: 0 3px; border: 1px solid var(--bg-sidebar); border-radius: 7px; background: var(--bg-active); color: #fff; font-size: 8px; font-weight: 600; font-style: normal; display: grid; place-items: center; }
 .navLabel { flex: 1; }
 .navItem > svg { flex: none; opacity: .8; }
 .sidebar :is(button):focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
@@ -171,33 +224,98 @@
   color: hsl(var(--status-warn));
 }
 
-.navGroup {
-  padding: 18px 10px 8px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  /* 사이드바는 라이트에서도 어두우므로 테마를 타지 않는 색을 씁니다 */
-  color: var(--text-on-dark);
-}
+/* ---------------- 하단 (테마 필 + 계정) ---------------- */
 
-/* ---------------- 하단 계정 바 (한 줄) ---------------- */
-
+/* STEPD 본 저장소 사이드바 하단과 같은 구성입니다 — 테마 필이 위, 계정이 아래 */
 .accountBar {
   margin-top: auto;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 6px 2px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 2px 2px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.accountBtn {
+/* Dark | Light 두 칸 필 — 고른 쪽이 흰 알약으로 떠오릅니다 */
+.themePill {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: #1a1e29;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.themePill button {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.themePill button:hover {
+  color: #e2e8f0;
+}
+
+.themePill button[aria-pressed='true'] {
+  background: #fff;
+  font-weight: 700;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.themePill button:focus-visible,
+.themeRound:focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 2px;
+}
+
+/* 접힌 사이드바에서는 지금 상태만 보여 주는 동그란 버튼 하나 */
+.themeRound {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: #1a1e29;
+  color: var(--text-accent);
+  cursor: pointer;
+}
+
+/* 본 저장소와 같게 — 달은 강조색, 해는 호박색 */
+.themeRound[data-theme='light'] {
+  color: #fbbf24;
+}
+
+.themeRound:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.accountBtn {
+  flex: none;
+  width: 100%;
+  height: 36px;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 7px 8px;
+  justify-content: flex-start;
+  gap: 9px;
+  padding: 0 4px;
   border-radius: 8px;
   background: transparent;
   color: #fff;
@@ -208,67 +326,43 @@
 }
 
 .accountBtn:hover,
-.accountBtnActive {
+.accountBtnActive,
+.accountBtn[aria-expanded=true] {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.accountBtn:focus-visible,
-.iconBtn:focus-visible {
+.accountBtn:focus-visible {
   outline: 2px solid var(--text-accent);
   outline-offset: 2px;
 }
 
-.accountNameText {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.accountCaret {
+.profileAvatar {
   flex: none;
-  font-size: 10px;
-  color: var(--text-on-dark);
-}
-
-.iconBtn {
   width: 30px;
   height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-on-dark);
-  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #354154;
+  color: #e2e8f0;
 }
 
-.iconBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-
-.iconBtn[aria-current='page'] {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
+.accountName { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .sidebarCompact .accountBar {
-  flex-direction: column;
-  gap: 2px;
-  padding: 8px 0 2px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 2px;
 }
 
 .sidebarCompact .accountBtn {
-  flex: none;
+  width: 36px;
   justify-content: center;
-  padding: 7px;
+  padding: 0;
 }
 
-.sidebarCompact .accountNameText,
-.sidebarCompact .accountCaret {
-  display: none;
-}
+.sidebarCompact .accountName { display: none; }
+@media (max-width: 640px) { .accountBar { align-items: center; } .accountName { display: none; } .accountBtn { width: 36px; } }
 
 .main {
   flex: 1;
@@ -298,20 +392,15 @@
 }
 
 @media (max-width: 800px) { .sidebar { width: 176px; } }
-@media (max-width: 640px) { .sidebar { width: 62px; padding: 16px 7px; } .brand { justify-content: center; padding: 0 0 20px; } .brandName { display: none; } .primaryNav { flex-direction: column; padding: 0 0 12px; } .primaryItem { padding: 10px 0; } .primaryItem > span, .navLabel, .navGroup, .accountNameText, .accountCaret, .navBadge { display: none; } .navItem, .navItemActive { padding: 11px; justify-content: center; } .accountBar { flex-direction: column; gap: 2px; padding: 8px 0 2px; } .accountBtn { flex: none; justify-content: center; padding: 7px; } }
+@media (max-width: 640px) { .sidebar { width: 62px; padding: 16px 7px; } .brand { flex-direction: column; gap: 6px; padding: 0 0 12px; } .brandName { display: none; } .brandActions { margin-left: 0; flex-direction: column; } .navLabel, .navBadge { display: none; } .navItem, .navItemActive { padding: 11px; justify-content: center; } .accountBar { align-items: center; } .accountBtn { justify-content: center; padding: 0; } }
 
 .sidebarCompact { width: 76px; padding: 18px 10px; overflow-x: hidden; }
-.sidebarCompact .brand { justify-content: center; padding: 2px 0 20px; }
+/* 접히면 로고와 알림을 세로로 쌓습니다 (접기 버튼은 이때 뜨지 않습니다) */
+.sidebarCompact .brand { flex-direction: column; gap: 6px; padding: 0 0 12px; }
 .sidebarCompact .brandName { display: none; }
-.sidebarCompact .primaryNav { flex-direction: column; align-items: stretch; padding: 0 0 12px; }
-.sidebarCompact .primaryItem { flex: none; flex-direction: column; gap: 5px; padding: 9px 0; }
-.sidebarCompact .primaryItem[aria-current=page] { height: 54px; }
-.sidebarCompact .primaryItem > span { display: block; font-size: 10px; white-space: nowrap; }
-/* 세로로 쌓이면 auto 여백이 버튼을 아래로 밀어냅니다 */
-.sidebarCompact .foldBtn { margin-left: 0; width: 100%; }
-.sidebarCompact .section { display: flex; flex-direction: column; gap: 3px; padding: 8px 0; }
-.sidebarCompact .section + .section { border-top: 1px solid rgba(255,255,255,.07); }
-.sidebarCompact :is(.navLabel,.navGroup,.navBadge) { display: none; }
+.sidebarCompact .brandActions { margin-left: 0; flex-direction: column; }
+.sidebarCompact .section { gap: 3px; }
+.sidebarCompact :is(.navLabel,.navBadge) { display: none; }
 .sidebarCompact .navItem { min-height: 38px; padding: 10px; justify-content: center; }
 @media (max-width: 640px) { .sidebarCompact { width: 62px; padding: 16px 7px; } }
 @media (prefers-reduced-motion: reduce) { .navItem, .sidebar { transition: none; } }
@@ -329,7 +418,7 @@
 .accountMenu {
   position: fixed;
   z-index: 41;
-  min-width: 190px;
+  width: min(240px,calc(100vw - 24px));
   padding: 6px;
   border: 1px solid var(--border-subtle);
   border-radius: 11px;
@@ -358,7 +447,9 @@
 }
 
 .accountMenu button {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 9px;
   width: 100%;
   padding: 9px 10px;
   border-radius: 7px;
@@ -375,6 +466,9 @@
   background: var(--bg-card-hover);
   color: var(--text-primary);
 }
+
+.accountMenu button:focus-visible { outline: 2px solid var(--text-accent); outline-offset: -2px; }
+.accountMenu button > svg { flex: none; }
 
 /* 지금 보고 있는 화면 */
 .accountMenu button[aria-current='page'] {

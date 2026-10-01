@@ -13,8 +13,8 @@ import type { ChatInputHandle } from './ChatSurface.types'
 const WorkBoard = lazy(() => import('./WorkBoard').then((m) => ({ default: m.WorkBoard })))
 import type { ProgramName } from './workspaceMock'
 
-export function ChatPage({ store, tasks, emailAvailable, onNavigate }: { store: ChatMockStore; tasks: ScheduledTasksStore; emailAvailable: boolean; onNavigate: (screen: ScreenKey) => void }) {
-  const [input, setInput] = useState('')
+export function ChatPage({ store, tasks, emailAvailable, onNavigate, initialInput = '', onInitialInputUsed }: { store: ChatMockStore; tasks: ScheduledTasksStore; emailAvailable: boolean; onNavigate: (screen: ScreenKey) => void; /** 홈 입력창에서 넘어온 문장 */ initialInput?: string; onInitialInputUsed?: () => void }) {
+  const [input, setInput] = useState(initialInput)
   const [mobilePanel, setMobilePanel] = useState<'chat' | 'board'>('chat')
   /** 보여 줄 결과가 있을 때만 작업 보드를 띄웁니다 */
   const hasBoard = !!store.activeVersion?.draft
@@ -25,6 +25,13 @@ export function ChatPage({ store, tasks, emailAvailable, onNavigate }: { store: 
   const inputRef = useRef<ChatInputHandle>(null)
   const showingTasks = store.view === 'tasks'
   useEffect(() => { if (!showingTasks) inputRef.current?.focus() }, [showingTasks])
+  /* 홈에서 들고 온 문장은 한 번만 받아 넣고 비웁니다 */
+  useEffect(() => {
+    if (!initialInput) return
+    setInput(initialInput)
+    onInitialInputUsed?.()
+    requestAnimationFrame(() => inputRef.current?.focus())
+  }, [initialInput, onInitialInputUsed])
   useEffect(() => { if (!notice) return; const timer = setTimeout(() => setNotice(''), 3500); return () => clearTimeout(timer) }, [notice])
   const closeMobileHistory = () => { if (window.innerWidth <= 800) setHistoryOpen(false) }
   const newChat = () => { setMobilePanel('chat'); setInput(''); store.newChat(); closeMobileHistory(); inputRef.current?.focus() }

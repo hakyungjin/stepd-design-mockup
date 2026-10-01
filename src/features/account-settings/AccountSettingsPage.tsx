@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { ACCOUNT, PLUGINS } from './data'
+import { PLUGINS } from './data'
 import { EmailNotificationDialog } from './EmailNotificationDialog'
-import type { AccountPlugin } from './types'
+import { ServiceIcon } from './ServiceIcon'
 import type { AccountSettingsStore } from './useAccountSettings'
 import styles from './AccountSettingsPage.module.css'
 
-/** 설정(플러그인) 화면 — 계정 정보는 AccountProfilePage 로 분리돼 있습니다 */
 export function AccountSettingsPage({ store }: { store: AccountSettingsStore }) {
   const [filter, setFilter] = useState('전체')
   const [installedOnly, setInstalledOnly] = useState(false)
@@ -27,40 +26,46 @@ export function AccountSettingsPage({ store }: { store: AccountSettingsStore }) 
   )
 
   return <div className={styles.page}>
-    <div className={styles.pageHead}>
-      <div><h1>설정</h1><p>내 계정과 연결할 기능을 한곳에서 관리하세요.</p></div>
-      <div className={styles.account}><span className={styles.avatar}>{ACCOUNT.name.slice(0, 1)}</span><div><strong>{ACCOUNT.name}</strong><span>{ACCOUNT.organization} · {ACCOUNT.team}</span></div></div>
-    </div>
-
+    <header className={styles.pageHead}>
+      <div><h1>설정</h1><p>내 작업에 필요한 앱과 기능을 연결하세요.</p></div>
+    </header>
     <section aria-label="플러그인">
-      <div className={styles.sectionHead}><div><h2>필요한 기능을 추가하세요</h2><p>알림, 파일 저장, 리포트 등 필요한 플러그인을 내 계정에 추가할 수 있습니다.</p></div><span className={styles.installedCount}>추가한 플러그인 <strong>{store.emailInstalled ? 1 : 0}</strong></span></div>
+      <div className={styles.sectionHead}><h2>플러그인</h2><span>내 계정에 적용</span></div>
       <div className={styles.filters}>
-        <div className={styles.filterTabs}><button type="button" aria-pressed={!installedOnly} onClick={() => setInstalledOnly(false)}>전체 플러그인</button><button type="button" aria-pressed={installedOnly} onClick={() => setInstalledOnly(true)}>내 플러그인</button></div>
-        <div className={styles.search}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg><input type="search" aria-label="플러그인 검색" value={query} placeholder="플러그인 검색" onChange={(e) => setQuery(e.target.value)} /></div>
+        <div className={styles.filterTabs}>
+          <button type="button" aria-pressed={!installedOnly} onClick={() => setInstalledOnly(false)}>전체</button>
+          <button type="button" aria-pressed={installedOnly} onClick={() => setInstalledOnly(true)}>내 플러그인 <span>{store.emailInstalled ? 1 : 0}</span></button>
+        </div>
+        <div className={styles.filterControls}>
+          <select aria-label="플러그인 카테고리" value={filter} onChange={(e) => setFilter(e.target.value)}>{['전체', '알림', '저장', '리포트'].map((category) => <option key={category} value={category}>{category === '전체' ? '모든 기능' : category}</option>)}</select>
+          <div className={styles.search}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg><input type="search" aria-label="플러그인 검색" value={query} placeholder="검색" onChange={(e) => setQuery(e.target.value)} /></div>
+        </div>
       </div>
-      <div className={styles.categories} aria-label="플러그인 카테고리">{['전체', '알림', '저장', '리포트'].map((category) => <button key={category} type="button" aria-pressed={filter === category} onClick={() => setFilter(category)}>{category}</button>)}</div>
-      <div className={styles.pluginGrid}>{plugins.map((plugin) => {
+      <div className={styles.pluginList}>{plugins.map((plugin) => {
         const installed = plugin.id === 'email' && store.emailInstalled
-        return <article key={plugin.id} className={`${styles.plugin} ${installed ? styles.installed : ''}`}>
-          <div className={styles.pluginHead}><PluginIcon icon={plugin.icon} /><span className={styles.categoryLabel}>{plugin.category}</span><span className={styles.pluginState}>{installed ? '추가됨' : plugin.available ? '사용 가능' : '준비 중'}</span></div>
-          <h3>{plugin.name}</h3><p className={styles.description}>{plugin.description}</p>
-          {installed && <div className={styles.configuration}><span className={styles.recipient}>{store.emailNotifications.email || '이메일 미등록'}</span><small>{[store.emailNotifications.completed && '배포 완료', store.emailNotifications.failed && '배포 오류'].filter(Boolean).join(' · ') || '선택한 알림 없음'}</small></div>}
-          <div className={styles.pluginFooter}>
-            {installed ? <><label className={styles.enable}><input type="checkbox" role="switch" aria-label="이메일 알림 사용" checked={store.emailNotifications.enabled} onChange={() => { store.toggleEmailNotifications(); say(store.emailNotifications.enabled ? '이메일 알림을 껐습니다' : '이메일 알림을 켰습니다') }} /><span>{store.emailNotifications.enabled ? '사용 중' : '사용 안 함'}</span></label><div className={styles.actions}><button type="button" className={styles.remove} onClick={() => setRemoving(true)}>제거</button><button type="button" className={styles.configure} onClick={() => setEmailOpen(true)}>설정</button></div></> : <><span className={styles.accountScope}>내 계정에 추가</span><button type="button" className={plugin.available ? styles.add : styles.coming} disabled={!plugin.available} onClick={() => setEmailOpen(true)}>{plugin.available ? '+ 플러그인 추가' : '준비 중'}</button></>}
+        return <article key={plugin.id} className={styles.plugin}>
+          <div className={styles.pluginRow}>
+            <span className={styles.pluginIcon}><ServiceIcon icon={plugin.icon} /></span>
+            <div className={styles.pluginDetails}>
+              <div className={styles.pluginTitle}><h3>{plugin.name}</h3>{installed && <span className={styles.connected}>추가됨</span>}</div>
+              <p className={styles.description}>{installed ? store.emailNotifications.email || 'Gmail 주소를 등록하세요.' : plugin.description}</p>
+              {installed && <small className={styles.events}>{[store.emailNotifications.completed && '배포 완료', store.emailNotifications.failed && '배포 오류'].filter(Boolean).join(' · ') || '선택한 알림 없음'}</small>}
+            </div>
+            <div className={styles.actions}>
+              {installed ? <>
+                <label className={styles.enable}><input type="checkbox" role="switch" aria-label="Gmail 알림 사용" checked={store.emailNotifications.enabled} onChange={() => { store.toggleEmailNotifications(); say(store.emailNotifications.enabled ? 'Gmail 알림을 껐습니다.' : 'Gmail 알림을 켰습니다.') }} /></label>
+                <button type="button" className={styles.configure} onClick={() => setEmailOpen(true)}>설정</button>
+                <button type="button" className={styles.remove} aria-label="Gmail 플러그인 제거" onClick={() => setRemoving(true)}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5m4-5v5" /></svg></button>
+              </> : <button type="button" className={plugin.available ? styles.add : styles.coming} disabled={!plugin.available} onClick={() => setEmailOpen(true)}>{plugin.available ? '추가' : '준비 중'}</button>}
+            </div>
           </div>
-          {installed && removing && <div className={styles.removeConfirm} role="group" aria-label="이메일 알림 플러그인 제거 확인"><span>이메일 알림 플러그인을 제거할까요?</span><div><button type="button" onClick={() => setRemoving(false)}>취소</button><button type="button" onClick={() => { store.removeEmailPlugin(); setRemoving(false); say('이메일 알림 플러그인을 제거했습니다') }}>제거</button></div></div>}
+          {installed && removing && <div className={styles.removeConfirm} role="group" aria-label="Gmail 플러그인 제거 확인"><span>Gmail 알림을 제거할까요?</span><div><button type="button" onClick={() => setRemoving(false)}>취소</button><button type="button" onClick={() => { store.removeEmailPlugin(); setRemoving(false); say('Gmail 플러그인을 제거했습니다.') }}>제거</button></div></div>}
         </article>
       })}</div>
-      {!plugins.length && <div className={styles.empty}><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2" /><rect x="14" y="3" width="7" height="7" rx="2" /><rect x="3" y="14" width="7" height="7" rx="2" /><path d="M14 17.5h7M17.5 14v7" /></svg><h3>{installedOnly && !store.emailInstalled ? '아직 추가한 플러그인이 없습니다' : '조건에 맞는 플러그인이 없습니다'}</h3><p>{installedOnly && !store.emailInstalled ? '전체 플러그인에서 필요한 기능을 추가하세요.' : '검색어나 카테고리를 바꿔보세요.'}</p><button type="button" className={styles.configure} onClick={() => { setInstalledOnly(false); setFilter('전체'); setQuery('') }}>전체 플러그인 보기</button></div>}
-      <div className={styles.footnote}>플러그인은 사용자 계정별로 관리됩니다. UI 목업으로, 실제 외부 서비스 연결이나 알림 발송은 이루어지지 않습니다.</div>
+      {!plugins.length && <div className={styles.empty}><h3>{installedOnly && !store.emailInstalled ? '추가한 플러그인이 없습니다.' : '검색 결과가 없습니다.'}</h3><button type="button" className={styles.configure} onClick={() => { setInstalledOnly(false); setFilter('전체'); setQuery('') }}>전체 보기</button></div>}
+      <p className={styles.footnote}>목업 화면 · 실제 서비스 연결과 알림 발송은 실행되지 않습니다.</p>
     </section>
-    {emailOpen && <EmailNotificationDialog preferences={store.emailNotifications} onClose={() => setEmailOpen(false)} onSave={(preferences) => { const installed = store.emailInstalled; store.saveEmailNotifications(preferences); say(installed ? '이메일 알림 설정을 저장했습니다' : '이메일 알림 플러그인을 추가했습니다') }} />}
+    {emailOpen && <EmailNotificationDialog preferences={store.emailNotifications} onClose={() => setEmailOpen(false)} onSave={(preferences) => { const installed = store.emailInstalled; store.saveEmailNotifications(preferences); say(installed ? 'Gmail 알림 설정을 저장했습니다.' : 'Gmail 플러그인을 추가했습니다.') }} />}
     {notice && <div className={styles.toast} role="status">{notice}</div>}
   </div>
-}
-
-function PluginIcon({ icon }: { icon: AccountPlugin['icon'] }) {
-  return <span className={styles.pluginIcon} data-icon={icon} aria-hidden="true">
-    {icon === 'email' ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="3" y="5" width="18" height="14" rx="3" /><path d="m4 7 8 6 8-6" /></svg> : icon === 'slack' ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round"><path d="M9 3v11M15 10v11M3 15h11M10 9h11" /></svg> : icon === 'drive' ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><path d="m9 3 6 0 7 12-3 5H5l-3-5L9 3Z" /><path d="m9 3 7 12H2m13-12L8 15l-3 5m11-5 3 5" /></svg> : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><rect x="4" y="3" width="16" height="18" rx="3" /><path d="M8 16v-3m4 3V8m4 8v-5" /></svg>}
-  </span>
 }

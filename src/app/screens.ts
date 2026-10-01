@@ -6,6 +6,7 @@
  */
 
 export type ScreenKey =
+  | 'home'
   | 'chat'
   | 'dashboard'
   | 'programs'
@@ -25,6 +26,7 @@ export type ScreenKey =
   | 'editor-hl'
 
 export const SCREEN_KEYS: ScreenKey[] = [
+  'home',
   'chat',
   'dashboard',
   'programs',
@@ -49,6 +51,7 @@ export const isScreenKey = (v: string): v is ScreenKey =>
 
 /** 화면 제목 (상단 바 / 문서 타이틀) */
 export const SCREEN_TITLE: Record<ScreenKey, string> = {
+  home: '홈',
   chat: '에이전트',
   dashboard: '대시보드',
   programs: '프로그램',
@@ -63,9 +66,9 @@ export const SCREEN_TITLE: Record<ScreenKey, string> = {
   search: '영상 검색',
   settings: '설정',
   profile: '계정 정보',
-  'editor-short': '조립 편집기',
-  'editor-clip': '조립 편집기',
-  'editor-hl': '조립 편집기',
+  'editor-short': '숏폼 편집기',
+  'editor-clip': '클립 편집기',
+  'editor-hl': '하이라이트 편집기',
 }
 
 export interface NavItem {
@@ -84,7 +87,9 @@ export const NAV: NavSection[] = [
   {
     title: '작업 공간',
     items: [
-      { key: 'dashboard', label: '대시보드' },
+      /* 대시보드(오늘 수익·오늘 배포)는 홈 안으로 들어갔습니다 */
+      { key: 'home', label: '홈' },
+      { key: 'chat', label: '에이전트' },
       { key: 'programs', label: '프로그램' },
       { key: 'analysis', label: '영상 분석' },
       { key: 'media', label: '미디어' },
@@ -106,9 +111,13 @@ export const NAV: NavSection[] = [
   },
 ]
 
-/** 배포 캘린더는 "배포" 탭 안의 서브 탭이라 좌측 내비에서는 배포로 표시합니다 */
+/**
+ * 좌측 내비에서 켜 둘 항목.
+ * - 배포 캘린더는 "배포" 탭 안의 서브 탭입니다
+ * - 대시보드는 홈 안으로 들어갔습니다
+ */
 export const navKeyFor = (screen: ScreenKey): ScreenKey =>
-  screen === 'schedule' ? 'dist' : screen
+  screen === 'schedule' ? 'dist' : screen === 'dashboard' ? 'home' : screen
 
 /** 편집기는 사이드바 없는 전체 화면입니다 */
 export const isFullScreen = (screen: ScreenKey): boolean => screen.startsWith('editor-')

@@ -1,0 +1,455 @@
+/*
+ * 일간 배포 대기 — STEPD 본 저장소 review 탭의 치수를 그대로 옮겼습니다.
+ * (제목 13px/600, 칩 10.5px/600, 상태 11.5px/600, 메타 12px tabular-nums)
+ */
+
+.queue {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.head strong {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.head span {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 거르개 ---------------- */
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.kindBtn {
+  padding: 6px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-card);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.kindBtn:hover {
+  background: var(--bg-card-hover);
+}
+
+.kindBtn[aria-pressed='true'] {
+  border-color: var(--bg-active);
+  background: var(--bg-accent-subtle);
+  color: var(--text-primary);
+}
+
+.viewSwitch {
+  margin-left: auto;
+  display: flex;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+.viewSwitch button {
+  padding: 6px 12px;
+  border: 0;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.viewSwitch button + button {
+  border-left: 1px solid var(--border-subtle);
+}
+
+.viewSwitch button[aria-pressed='true'] {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+/* ---------------- 날짜 묶음 ---------------- */
+
+.groupHead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.groupLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.groupSub {
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.empty {
+  padding: 48px 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 리스트 ---------------- */
+
+.table {
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+
+/* 제목 · 종류 · 상태 · 길이 · 버튼 — 시각은 시간대 머리글이 들고 있습니다 */
+.tableHead,
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px 92px 52px 152px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tableHead {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row:hover {
+  background: var(--bg-card-hover);
+}
+
+.rowTitle {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rowTitle > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* 같은 영상이 다른 플랫폼으로도 나갈 때 */
+.rowTitle small,
+.alsoOn {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.meta {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.kindChip {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.state {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.ready {
+  color: var(--status-success-text);
+}
+
+.render {
+  color: var(--badge-text);
+}
+
+.hold {
+  color: hsl(var(--status-warn));
+}
+
+.done {
+  color: var(--text-muted);
+}
+
+/* ---------------- 플랫폼 묶음 ---------------- */
+
+.platformGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------------- 시간대 묶음 (하루에 여러 번) ---------------- */
+
+/* 표 안에서 시간대를 가르는 줄 */
+.slotRow {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-card-hover);
+}
+
+.slotRow strong {
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.slotGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-left: 12px;
+  border-left: 2px solid var(--border-subtle);
+}
+
+.slotHead {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.slotHead strong {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.slotCount {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.platformHead {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.platformHead i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.platformHead i[data-platform='YT'] { background: rgba(220, 38, 38, 0.14); color: #b91c1c; }
+.platformHead i[data-platform='NC'] { background: rgba(3, 199, 90, 0.16); color: #15803d; }
+.platformHead i[data-platform='TT'] { background: rgba(15, 23, 42, 0.1); color: #334155; }
+.platformHead i[data-platform='IG'] { background: rgba(193, 53, 132, 0.16); color: #9d174d; }
+
+:global(html.dark) .platformHead i[data-platform='YT'] { background: rgba(220, 38, 38, 0.18); color: #f87171; }
+:global(html.dark) .platformHead i[data-platform='NC'] { background: rgba(3, 199, 90, 0.18); color: #34d399; }
+:global(html.dark) .platformHead i[data-platform='TT'] { background: rgba(255, 255, 255, 0.12); color: #e2e8f0; }
+:global(html.dark) .platformHead i[data-platform='IG'] { background: rgba(193, 53, 132, 0.2); color: #f472b6; }
+
+.platformHead strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.account,
+.platformCount {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.connection {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--status-success-text);
+}
+
+.connectionWarn {
+  color: hsl(var(--status-warn));
+}
+
+/* ---------------- 썸네일 ---------------- */
+
+.cards {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(202px, 1fr));
+}
+
+.card {
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+
+.cardThumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: #1b1f26;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.cardThumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardFlag {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  z-index: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-active);
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.cardFlagWarn {
+  background: rgba(245, 158, 11, 0.95);
+}
+
+.cardChips {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+
+.cardChips span {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px 12px;
+}
+
+.cardChipRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardTitle {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+/* ---------------- 버튼 ---------------- */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.cardBody .actions {
+  justify-content: stretch;
+}
+
+.primaryBtn,
+.ghostBtn {
+  padding: 6px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.primaryBtn {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.primaryBtn:hover,
+.ghostBtn:hover {
+  background: var(--bg-card-hover);
+}
+
+.grow {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .tableHead,
+  .row {
+    grid-template-columns: minmax(0, 1fr) 88px 52px 128px;
+  }
+
+  /* 좁아지면 종류 칩은 상태 옆으로 양보합니다 */
+  .tableHead > span:nth-child(2),
+  .row > span:nth-child(2) {
+    display: none;
+  }
+}

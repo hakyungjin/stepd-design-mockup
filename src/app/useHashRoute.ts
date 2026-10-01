@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { isScreenKey, type ScreenKey } from './screens'
 
-const DEFAULT_SCREEN: ScreenKey = 'chat'
+const DEFAULT_SCREEN: ScreenKey = 'home'
 
 const readHash = (): ScreenKey => {
   const raw = decodeURIComponent((window.location.hash || '').slice(1))
-  if (raw === 'agents' || raw === 'home') return 'chat'
+  if (raw === 'agents') return 'chat'
   return isScreenKey(raw) ? raw : DEFAULT_SCREEN
 }
 

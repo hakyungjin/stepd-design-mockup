@@ -8,7 +8,6 @@ import {
   CHANNEL_SHARE,
   DAYS,
   EDIT_EFFECTS,
-  EVENTS,
   INSIGHTS,
   MAN,
   PERF_VIDEOS,
@@ -57,7 +56,6 @@ interface ChartPoint {
   views: number
   rev: number
   rpm: number
-  event: (typeof EVENTS)[number] | undefined
 }
 
 export function PerformancePage({ role = 'owner', onNavigate }: PerformancePageProps) {
@@ -100,12 +98,11 @@ export function PerformancePage({ role = 'owner', onNavigate }: PerformancePageP
   const unit: Unit = weekAvailable ? unitPick : 'day'
 
   const points: ChartPoint[] = useMemo(() => {
-    const build = (label: string, views: number, rev: number, event?: ChartPoint['event']) => ({
+    const build = (label: string, views: number, rev: number) => ({
       label,
       views,
       rev,
       rpm: views ? (rev / views) * 1000 : 0,
-      event,
     })
     if (unit === 'week') {
       const out: ChartPoint[] = []
@@ -121,9 +118,7 @@ export function PerformancePage({ role = 'owner', onNavigate }: PerformancePageP
       }
       return out
     }
-    return slice.map((d) =>
-      build(d.md, d.views, d.rev, EVENTS.find((e) => e.index === d.index)),
-    )
+    return slice.map((d) => build(d.md, d.views, d.rev))
   }, [slice, unit])
 
   /* ---------------- KPI ---------------- */
@@ -324,7 +319,7 @@ export function PerformancePage({ role = 'owner', onNavigate }: PerformancePageP
           <div className={styles.cardHead}>
             <span className={styles.cardTitle}>수익 추이</span>
             <span className={styles.cardNote}>
-              수익이 왜 올랐고 떨어졌는지 — 점선은 원인이 된 사건
+              그래프에 올리면 날짜별 수익·조회수·RPM 을 봅니다
             </span>
             <div className={styles.headActions}>
               <Segment className={styles.segmentInput}>
@@ -412,26 +407,6 @@ export function PerformancePage({ role = 'owner', onNavigate }: PerformancePageP
               />
             </svg>
 
-            {unit === 'day' &&
-              points.map((p, i) =>
-                p.event ? (
-                  <div key={p.event.text}>
-                    <div className={styles.markLine} style={{ left: `${pct(i)}%` }} />
-                    <div
-                      className={styles.markLabel}
-                      style={{
-                        left: `${pct(i)}%`,
-                        transform: `translateX(${
-                          pct(i) > 80 ? '-100%' : pct(i) < 10 ? '0' : '-50%'
-                        })`,
-                      }}
-                    >
-                      {p.event.text}
-                    </div>
-                  </div>
-                ) : null,
-              )}
-
             {hoverPoint && (
               <>
                 <div className={styles.hoverLine} style={{ left: `${hoverX}%` }} />
@@ -464,9 +439,6 @@ export function PerformancePage({ role = 'owner', onNavigate }: PerformancePageP
                     <span className={styles.tipKey}>RPM</span>
                     <b className={styles.tipVal}>{canSeeRevenue ? WON(hoverPoint.rpm) : '—'}</b>
                   </div>
-                  {hoverPoint.event && (
-                    <div className={styles.tipNote}>{hoverPoint.event.note}</div>
-                  )}
                 </div>
               </>
             )}

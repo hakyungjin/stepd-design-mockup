@@ -4,8 +4,12 @@
  */
 
 import { frameThumb, portraitThumb } from '@/lib/frames'
+import type { ScreenKey } from '@/app/screens'
 
 export type EditorMode = 'short' | 'clip' | 'hl'
+
+export const editorRoute = (kind: '숏폼' | '클립' | '하이라이트'): ScreenKey =>
+  kind === '숏폼' ? 'editor-short' : kind === '하이라이트' ? 'editor-hl' : 'editor-clip'
 
 /** 'f5' 같은 프레임 키를 숫자로 */
 const frameNo = (key: string) => Number(key.replace('f', '')) || 1

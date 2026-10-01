@@ -1,4 +1,5 @@
-.inbox { position: fixed; top: 68px; bottom: auto; right: auto; margin: 0; padding: 0; width: min(400px,calc(100vw - 88px)); max-height: calc(100dvh - 96px); color: var(--text-primary); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; box-shadow: 0 16px 55px #0005; overflow: auto; }
+/* 오른쪽 아래 알림 버튼 바로 위 */
+.inbox { position: fixed; top: auto; left: auto; right: 24px; bottom: 82px; margin: 0; padding: 0; width: min(400px,calc(100vw - 48px)); max-height: min(560px, calc(100dvh - 120px)); color: var(--text-primary); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; box-shadow: 0 16px 55px #0005; overflow: auto; }
 .inbox::backdrop { background: #0002; }
 .header { display: flex; justify-content: space-between; align-items: center; padding: 19px 20px 13px; }
 .header > div { display: flex; align-items: center; gap: 8px; }

@@ -3,7 +3,6 @@ import { AppShell } from './layout/AppShell'
 import { StubScreen } from './components/StubScreen'
 import { SCREEN_TITLE, isFullScreen, type ScreenKey } from './app/screens'
 import { useHashRoute } from './app/useHashRoute'
-import { DashboardPage } from './features/dashboard/DashboardPage'
 import { DeployCalendarPage } from './features/deploy-calendar/DeployCalendarPage'
 import { PerformancePage } from './features/performance/PerformancePage'
 import { VideoSearchPage } from './features/video-search/VideoSearchPage'
@@ -12,12 +11,14 @@ import { ChannelsPage } from './features/channels/ChannelsPage'
 import { ProgramsPage } from './features/programs/ProgramsPage'
 import { AnalysisPage } from './features/analysis/AnalysisPage'
 import { MediaPage } from './features/media/MediaPage'
-import { EditorPage } from './features/editor/EditorPage'
+import { HomePage } from './features/home/HomePage'
+import { ShortformEditorPage } from './features/editor/ShortformEditorPage'
+import { ClipEditorPage } from './features/editor/ClipEditorPage'
+import { HighlightEditorPage } from './features/editor/HighlightEditorPage'
 import { AutoDeployPage } from './features/auto-deploy/AutoDeployPage'
 import { AccountSettingsPage } from './features/account-settings/AccountSettingsPage'
 import { AccountProfilePage } from './features/account-settings/AccountProfilePage'
 import { useAccountSettings, type AccountSettingsStore } from './features/account-settings/useAccountSettings'
-import type { EditorMode } from './features/editor/data'
 import { ChatPage } from './features/chat/ChatPage'
 import { useChatMock, type ChatMockStore } from './features/chat/useChatMock'
 import { useScheduledTasksMock, type ScheduledTasksStore } from './features/chat/useScheduledTasksMock'
@@ -37,12 +38,15 @@ export default function App() {
   const collaboration = useMediaCollaborationMock()
   const [mediaTarget, setMediaTarget] = useState<MediaCommentTarget | null>(null)
   const openMention = (item: MediaMention) => { setMediaTarget({ clipId: item.clipId, commentId: item.commentId, version: item.version }); navigate('media') }
+  /** 홈 입력창에 쓴 문장 — 에이전트 화면이 한 번 받아 가고 비웁니다 */
+  const [askedFromHome, setAskedFromHome] = useState('')
+  const askAgent = (text: string) => { if (!text.trim()) return; chat.newChat(); setAskedFromHome(text.trim()); navigate('chat') }
 
   useEffect(() => {
     document.title = `STEP D · ${SCREEN_TITLE[screen]}`
   }, [screen])
 
-  const body = renderScreen(screen, navigate, accountSettings, chat, tasks, collaboration, mediaTarget, () => setMediaTarget(null))
+  const body = renderScreen(screen, navigate, accountSettings, chat, tasks, collaboration, mediaTarget, () => setMediaTarget(null), askAgent, askedFromHome, () => setAskedFromHome(''))
 
   if (isFullScreen(screen)) return body
 
@@ -53,12 +57,14 @@ export default function App() {
   )
 }
 
-function renderScreen(screen: ScreenKey, navigate: (s: ScreenKey) => void, accountSettings: AccountSettingsStore, chat: ChatMockStore, tasks: ScheduledTasksStore, collaboration: MediaCollaborationStore, mediaTarget: MediaCommentTarget | null, onMediaTargetHandled: () => void) {
+function renderScreen(screen: ScreenKey, navigate: (s: ScreenKey) => void, accountSettings: AccountSettingsStore, chat: ChatMockStore, tasks: ScheduledTasksStore, collaboration: MediaCollaborationStore, mediaTarget: MediaCommentTarget | null, onMediaTargetHandled: () => void, onAsk: (text: string) => void, askedFromHome: string, onAskHandled: () => void) {
   switch (screen) {
-    case 'chat':
-      return <ChatPage store={chat} tasks={tasks} emailAvailable={accountSettings.emailInstalled && accountSettings.emailNotifications.enabled} onNavigate={navigate} />
+    /* 대시보드는 홈 안으로 합쳐졌습니다 — 옛 주소(#dashboard)도 홈을 띄웁니다 */
+    case 'home':
     case 'dashboard':
-      return <DashboardPage onNavigate={navigate} />
+      return <HomePage onNavigate={navigate} onAsk={onAsk} />
+    case 'chat':
+      return <ChatPage store={chat} tasks={tasks} emailAvailable={accountSettings.emailInstalled && accountSettings.emailNotifications.enabled} onNavigate={navigate} initialInput={askedFromHome} onInitialInputUsed={onAskHandled} />
     case 'schedule':
       return <DeployCalendarPage onNavigate={navigate} />
     case 'performance':
@@ -82,15 +88,11 @@ function renderScreen(screen: ScreenKey, navigate: (s: ScreenKey) => void, accou
     case 'profile':
       return <AccountProfilePage />
     case 'editor-short':
+      return <ShortformEditorPage onNavigate={navigate} />
     case 'editor-clip':
+      return <ClipEditorPage onNavigate={navigate} />
     case 'editor-hl':
-      return (
-        <EditorPage
-          mode={screen === 'editor-hl' ? 'hl' : screen === 'editor-short' ? 'short' : 'clip'}
-          onModeChange={(m: EditorMode) => navigate(`editor-${m}` as ScreenKey)}
-          onNavigate={navigate}
-        />
-      )
+      return <HighlightEditorPage onNavigate={navigate} />
     default:
       return <StubScreen title={SCREEN_TITLE[screen]} />
   }
