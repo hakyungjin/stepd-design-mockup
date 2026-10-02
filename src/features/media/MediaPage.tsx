@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Chip } from '@/components/ui/Badge'
+import { ChannelIcon } from '@/components/ui/ChannelIcon'
 import { Select } from '@/components/ui/Controls'
 import { ConfirmDialog, type ConfirmRequest } from '@/components/ui/ConfirmDialog'
 import type { ScreenKey } from '@/app/screens'
@@ -35,6 +36,13 @@ const MENTION_RE = /@[가-힣A-Za-z0-9_]+/g
 
 /** 업로드 모달의 프로그램 고르기 (회차가 등록된 프로그램) */
 const PROGRAMS = [...new Set(EPISODES.map((e) => e.program))]
+
+/** 고른 파일 크기 표기 — 본 저장소 업로드 모달과 같은 단위입니다 */
+const fmtSize = (bytes: number): string => {
+  if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(2)} GB`
+  if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MB`
+  return `${Math.round(bytes / 1024)} KB`
+}
 
 const TOAST_MS = 2600
 /** 업로드 진행 시뮬레이션 간격 */
@@ -95,14 +103,21 @@ export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, comm
   /** 처음 열 때 시드로 채우고, 그 뒤로는 state 를 씁니다 */
   const threadOf = (clip: MediaClip) =>
     threads[clip.id] ?? { versions: versionsOf(clip), comments: commentsOf(clip) }
+  /*
+   * 업로드 모달의 입력 — STEPD 본 저장소 `components/upload-clip-dialog.tsx` 와 같은 칸입니다.
+   * 필수는 프로그램과 파일 둘. 회차는 번호로 적고, 같은 번호의 회차가 있으면 거기에 붙입니다.
+   */
   const [upload, setUpload] = useState<{
-    title: string
-    /** 프로그램 이름 — 빈 문자열이면 미지정 */
+    /** 프로그램 이름 — 필수 */
     program: string
-    /** 회차 키 — 'none' 이면 미지정 */
-    ep: string
+    /** 회차 번호. 비우면 미지정 */
+    episodeNumber: string
     kind: MediaKind
+    title: string
+    file: File | null
   } | null>(null)
+  const fileInput = useRef<HTMLInputElement>(null)
+  const [dragOver, setDragOver] = useState(false)
   const [confirm, setConfirm] = useState<ConfirmRequest | null>(null)
   const [toast, setToast] = useState('')
 
@@ -197,6 +212,15 @@ export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, comm
       },
     })
 
+  /** 편집기는 숏폼만 열립니다 — 클립·하이라이트는 아직 만드는 중입니다 */
+  const openEditor = (clip: MediaClip) => {
+    if (clip.kind !== '숏폼') {
+      say(`${clip.kind} 편집기는 준비 중입니다`)
+      return
+    }
+    onNavigate(editorRoute(clip.kind))
+  }
+
   const detail = clips.find((c) => c.id === detailId) ?? null
   const detailEpisode = detail ? episodeOf(detail.ep) : null
 
@@ -215,7 +239,15 @@ export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, comm
           <button
             type="button"
             className={styles.uploadBtn}
-            onClick={() => setUpload({ title: '', program: '', ep: 'none', kind: '숏폼' })}
+            onClick={() =>
+              setUpload({
+                program: PROGRAMS[0] ?? '',
+                episodeNumber: '',
+                kind: '클립',
+                title: '',
+                file: null,
+              })
+            }
           >
             <svg
               width="15"
@@ -414,7 +446,7 @@ export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, comm
                               )
                             }
                             onOpen={setDetailId}
-                            onEdit={(clip) => onNavigate(editorRoute(clip.kind))}
+                            onEdit={openEditor}
                             onDelete={remove}
                             onAnalysis={() => onNavigate('analysis')}
                             showAnalysisLink={source === 'ai'}
@@ -556,127 +588,168 @@ export function MediaPage({ initialLayout = 'A', onNavigate, collaboration, comm
             setFilterV(null)
           }}
           onDelete={() => remove(detail)}
-          onEdit={() => onNavigate(editorRoute(detail.kind))}
+          onEdit={() => openEditor(detail)}
           onRetry={(ch) => say(`${ch} 다시 시도 — 배포 화면에서 진행 상황을 볼 수 있습니다`)}
           onSay={say}
         />
       )}
 
-      {/* ---------------- 업로드 ---------------- */}
-      {upload && (
+      {/* ---------------- 완성 영상 업로드 ----------------
+          STEPD 본 저장소 `components/upload-clip-dialog.tsx` 를 따릅니다.
+          회차 원본 업로드와 다른 경로입니다 — 분석을 태우지 않고 바로 미디어로 올라옵니다. */}
+      {upload && (() => {
+        /* 프로그램과 파일 둘 다 있어야 올릴 수 있습니다 */
+        const canSubmit = Boolean(upload.program) && Boolean(upload.file)
+        const pick = (f: File | null | undefined) => {
+          if (!f) return
+          setUpload((u) =>
+            u ? { ...u, file: f, title: u.title || f.name.replace(/\.[^.]+$/, '') } : u,
+          )
+        }
+        return (
         <div className={styles.upScrim} onClick={() => setUpload(null)}>
-          <div className={styles.upModal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.upTitle}>영상 업로드</div>
-
-            <div
-              className={styles.dropZone}
-              onClick={() => say('파일 선택 창이 열립니다')}
-            >
-              영상 파일을 끌어다 놓거나 눌러서 고르세요
-              <span className={styles.dropNote}>
-                세로 9:16 은 숏폼, 가로 16:9 는 클립으로 자동 분류됩니다
-              </span>
+          <div className={styles.upModal} onClick={(e) => e.stopPropagation()} role="dialog" aria-modal>
+            <div className={styles.upHead}>
+              <h2 className={styles.upTitle}>완성 영상 업로드</h2>
+              <p className={styles.upSub}>
+                이미 편집을 끝낸 영상을 올려 바로 배포합니다 — 분석 파이프라인을 거치지 않습니다.
+              </p>
             </div>
 
-            <label className={styles.upField}>
-              <span className={styles.upLabel}>제목</span>
-              <input
-                className={styles.input}
-                placeholder="예: 텐트 붕괴 슬로모션"
-                value={upload.title}
-                onChange={(e) => setUpload({ ...upload, title: e.target.value })}
-              />
-            </label>
-
-            <label className={styles.upField}>
-              <span className={styles.upLabel}>프로그램</span>
-              <Select
-                value={upload.program}
-                onChange={(e) =>
-                  // 프로그램을 바꾸면 회차는 다시 고릅니다
-                  setUpload({ ...upload, program: e.target.value, ep: 'none' })
-                }
-              >
-                <option value="">프로그램 미지정</option>
-                {PROGRAMS.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </Select>
-            </label>
-
-            <div className={styles.upGrid}>
-              <label className={styles.upField}>
-                <span className={styles.upLabel}>회차</span>
+            <div className={styles.upBody}>
+              <div className={styles.upField}>
+                <span className={styles.upLabel}>프로그램 <em className={styles.reqMark}>*</em></span>
                 <Select
-                  value={upload.ep}
-                  disabled={!upload.program}
-                  title={upload.program ? undefined : '프로그램을 먼저 고르세요'}
-                  onChange={(e) => setUpload({ ...upload, ep: e.target.value })}
+                  value={upload.program}
+                  onChange={(e) => setUpload({ ...upload, program: e.target.value })}
                 >
-                  <option value="none">회차 미지정</option>
-                  {EPISODES.filter((e) => e.program === upload.program).map((e) => (
-                    <option key={e.key} value={e.key}>
-                      {e.ep}회
-                    </option>
+                  {PROGRAMS.length === 0 && <option value="">등록된 프로그램이 없습니다</option>}
+                  {PROGRAMS.map((p) => (
+                    <option key={p} value={p}>{p}</option>
                   ))}
                 </Select>
-              </label>
-              <label className={styles.upField}>
-                <span className={styles.upLabel}>유형</span>
-                <Select
-                  value={upload.kind}
-                  onChange={(e) => setUpload({ ...upload, kind: e.target.value as MediaKind })}
-                >
-                  <option value="숏폼">숏폼</option>
-                  <option value="클립">클립</option>
-                  <option value="하이라이트">하이라이트</option>
-                </Select>
-              </label>
+              </div>
+
+              <div className={styles.upGrid}>
+                <div className={styles.upField}>
+                  <span className={styles.upLabel}>회차 번호</span>
+                  <input
+                    className={styles.input}
+                    inputMode="numeric"
+                    placeholder="예: 3 (모르면 비움)"
+                    value={upload.episodeNumber}
+                    onChange={(e) =>
+                      setUpload({ ...upload, episodeNumber: e.target.value.replace(/\D/g, '') })
+                    }
+                  />
+                </div>
+                <div className={styles.upField}>
+                  <span className={styles.upLabel}>유형 <em className={styles.reqMark}>*</em></span>
+                  <div className={styles.kindToggle}>
+                    {(['숏폼', '클립', '하이라이트'] as MediaKind[]).map((k) => (
+                      <button
+                        key={k}
+                        type="button"
+                        aria-pressed={upload.kind === k}
+                        className={upload.kind === k ? `${styles.kindBtn} ${styles.kindBtnOn}` : styles.kindBtn}
+                        onClick={() => setUpload({ ...upload, kind: k })}
+                      >
+                        {k}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 드롭 존 — 세로/가로는 고르지 않습니다. 자르지 않으니 원본 비율 그대로입니다 */}
+              <div
+                className={dragOver ? `${styles.dropZone} ${styles.dropZoneOver}` : styles.dropZone}
+                onClick={() => fileInput.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={(e) => { e.preventDefault(); setDragOver(false); pick(e.dataTransfer.files?.[0]) }}
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className={styles.dropIcon} aria-hidden>
+                  <path d="M4 5h16v14H4V5Zm0 5h16M4 15h16M9 5v14m6-14v14" />
+                </svg>
+                {upload.file ? (
+                  <div>
+                    <div className={styles.dropFileName}>{upload.file.name}</div>
+                    <div className={styles.dropSize}>{fmtSize(upload.file.size)}</div>
+                  </div>
+                ) : (
+                  <div>
+                    완성 영상을 끌어다 놓거나 <span className={styles.dropPick}>클릭해서 선택</span>
+                    {/* 게시본은 MP4 가 정본입니다 — 재인코딩 없이 그대로 나갑니다 */}
+                    <div className={styles.dropNote}>
+                      MP4 권장 · MOV · MXF 도 가능(자동으로 MP4 변환) · 세로/가로는 원본대로 유지
+                    </div>
+                  </div>
+                )}
+                <input
+                  ref={fileInput}
+                  type="file"
+                  accept="video/*,.mxf,.mov,.mkv,.avi,.ts,.m2ts,.mpg,.mpeg,.wmv"
+                  hidden
+                  onChange={(e) => pick(e.target.files?.[0])}
+                />
+              </div>
+
+              <div className={styles.upField}>
+                <span className={styles.upLabel}>제목</span>
+                <input
+                  className={styles.input}
+                  placeholder={upload.file?.name ?? '비우면 파일명'}
+                  value={upload.title}
+                  onChange={(e) => setUpload({ ...upload, title: e.target.value })}
+                />
+              </div>
             </div>
 
-            <div className={styles.upActions}>
+            <div className={styles.upFoot}>
               <button type="button" className={styles.footBtn} onClick={() => setUpload(null)}>
                 취소
               </button>
               <button
                 type="button"
                 className={styles.primaryBtn}
-                disabled={!upload.title.trim()}
+                disabled={!canSubmit}
                 onClick={() => {
+                  if (!canSubmit) return
+                  const n = Number(upload.episodeNumber)
+                  // 같은 번호의 회차가 있으면 거기에 붙입니다 — 없으면 미지정으로 둡니다
+                  const ep =
+                    EPISODES.find((e) => e.program === upload.program && e.ep === n)?.key ?? 'none'
                   const id = `up${clips.length + 1}`
                   setClips((list2) => [
                     {
                       id,
-                      ep: upload.ep,
+                      ep,
                       kind: upload.kind,
-                      title: upload.title.trim(),
+                      title: upload.title.trim() || upload.file!.name.replace(/\.[^.]+$/, ''),
                       dur: upload.kind === '숏폼' ? 42 : 240,
                       created: '방금',
                       render: 'uploading',
                       dists: [],
                       source: 'upload',
-                      uploader: '김도윤',
+                      uploader: ME,
                       pct: 0,
-                      thumb:
-                        upload.kind === '숏폼'
-                          ? CLIPS[0].thumb
-                          : CLIPS[4].thumb,
+                      thumb: upload.kind === '숏폼' ? CLIPS[0].thumb : CLIPS[4].thumb,
                     },
                     ...list2,
                   ])
                   setUpload(null)
                   setSource('upload')
-                  say('업로드를 시작했습니다 — 끝나면 렌더가 이어집니다')
+                  say('업로드를 시작했습니다 — 미디어 목록에서 진행 상황을 볼 수 있습니다')
                 }}
               >
-                업로드
+                업로드 시작
               </button>
             </div>
           </div>
         </div>
-      )}
+        )
+      })()}
 
       {toast && <div className={styles.toast}>{toast}</div>}
       <ConfirmDialog request={confirm} onClose={() => setConfirm(null)} />
@@ -726,20 +799,19 @@ function ChannelChips({ clip, small }: { clip: MediaClip; small?: boolean }) {
       {clip.dists.map((d) => {
         const m = DIST_STYLE[d.status]
         const bad = d.status === 'failed'
+        const tip = `${d.ch} · ${m.label}${d.at ? ` · ${d.at}` : ''}${d.err ? `\n${d.err}` : ''}`
+
+        /* 채널은 로고 + 상태 점으로만 보여 줍니다 — 이름과 시각은 툴팁에 있습니다 */
         return (
           <span
             key={d.ch}
-            title={`${d.ch} · ${m.label}${d.at ? ` · ${d.at}` : ''}${d.err ? `\n${d.err}` : ''}`}
-            className={[
-              styles.channelChip,
-              small ? styles.channelChipSm : '',
-              bad ? styles.channelChipBad : '',
-            ]
+            title={tip}
+            className={[styles.channelMark, bad ? styles.channelMarkBad : '']
               .filter(Boolean)
               .join(' ')}
           >
-            <span className={styles.channelDot} style={{ background: m.dot }} />
-            {d.ch}
+            <ChannelIcon channel={d.ch} size={small ? 18 : 20} />
+            <span className={styles.channelMarkDot} style={{ background: m.dot }} />
           </span>
         )
       })}
@@ -1373,9 +1445,10 @@ function DetailModal({
                     return (
                       <div key={d.ch} className={styles.distRow}>
                         <div className={styles.distTop}>
+                          <ChannelIcon channel={d.ch} size={17} />
                           <span className={styles.distCh}>{d.ch}</span>
                           <span
-                            className={styles.channelChip}
+                            className={styles.distState}
                             style={failed ? { color: 'hsl(var(--status-error))' } : undefined}
                           >
                             <span className={styles.channelDot} style={{ background: m.dot }} />

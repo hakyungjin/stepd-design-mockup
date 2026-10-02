@@ -156,9 +156,14 @@ export function AppShell({
           에이전트는 아래 내비 목록의 정식 항목으로 내려갔습니다.
         */}
         <div className={styles.brand}>
-          <span className={styles.brandMark} aria-hidden>
-            S
-          </span>
+          {/* STEPD 본 저장소의 브랜드 마크 그대로 (apps/web/public/brand) */}
+          <img
+            className={styles.brandMark}
+            src={`${import.meta.env.BASE_URL}brand/stepd-icon-192.png`}
+            alt=""
+            aria-hidden
+            draggable={false}
+          />
           <span className={styles.brandName}>STEP D</span>
 
           <div className={styles.brandActions}>
@@ -391,10 +396,22 @@ function MoonIcon({ size = 12 }: { size?: number }) {
 }
 
 /** 화면 상단의 56px 바 (대시보드·성과·영상 검색 등에서 씁니다) */
-export function PageTopBar({ title, right }: { title: string; right?: ReactNode }) {
+export function PageTopBar({
+  title,
+  subtitle,
+  right,
+}: {
+  title: string
+  /** STEPD 본 저장소 Header 와 같은 자리의 보조 문구 */
+  subtitle?: string
+  right?: ReactNode
+}) {
   return (
     <div className={styles.topBar}>
-      <span className={styles.topBarTitle}>{title}</span>
+      <div className={styles.topBarHead}>
+        <span className={styles.topBarTitle}>{title}</span>
+        {subtitle && <span className={styles.topBarSub}>{subtitle}</span>}
+      </div>
       {right}
     </div>
   )

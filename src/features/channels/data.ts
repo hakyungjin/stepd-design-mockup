@@ -16,11 +16,11 @@ export interface Platform {
   method: string
   /** 계정 단위 이름 (채널 / 계정 / Page) */
   unit: string
+  /** 구독자 수를 부르는 이름 — 플랫폼마다 다릅니다. 없으면 지표를 안 보여 줍니다 */
+  audienceLabel?: '구독자' | '팔로워'
   effect: { kind: EffectKind; head: string; text: string }
   tip?: string
   connectLabel: string
-  refreshLabel?: string
-  refreshTitle?: string
   footerLabel?: string
   footerHint?: string
   /** 고정 문구 최대 길이 */
@@ -38,13 +38,14 @@ export const PLATFORMS: Platform[] = [
     color: 'hsl(var(--status-error))',
     method: 'Google 로그인',
     unit: '채널',
+    audienceLabel: '구독자',
     effect: {
       kind: 'up',
       head: '파일이 올라갑니다.',
       text: '가로 · 세로 모두 · 예약 발행과 재생목록 담기를 지원합니다.',
     },
     tip: '같은 채널을 분석과 업로드에 모두 쓰려면 각각 한 번씩 연결하세요 — 권한이 서로 덮어씁니다.',
-    connectLabel: '+ YouTube 채널 연결',
+    connectLabel: '+ 채널 추가',
     footerLabel: '설명 고정 문구',
     footerHint: '설명란 맨 아래에 붙습니다',
     max: 500,
@@ -55,19 +56,18 @@ export const PLATFORMS: Platform[] = [
     color: '#1877F2',
     method: 'Meta 로그인',
     unit: 'Page',
+    audienceLabel: '팔로워',
     effect: {
       kind: 'off',
       head: '파일은 올라가지 않습니다.',
       text: '연결해도 배포 기록만 남습니다.',
     },
     tip: 'Page 관리자 계정으로 로그인하면 관리하는 모든 Page가 저장됩니다.',
-    connectLabel: '+ Meta 계정 연결',
-    refreshLabel: '권한 다시 요청',
-    refreshTitle: '같은 Meta 계정으로 다시 로그인해 Page 목록을 새로 받습니다',
+    connectLabel: '+ Page 추가',
     footerLabel: '설명 고정 문구',
     footerHint: '게시물 맨 아래에 붙습니다',
     max: 300,
-    emptyText: '"+ Meta 계정 연결"을 누르면 관리하는 모든 Page가 저장됩니다.',
+    emptyText: '"+ Page 추가"를 누르면 관리하는 모든 Page가 저장됩니다.',
   },
   {
     key: 'ig',
@@ -75,13 +75,14 @@ export const PLATFORMS: Platform[] = [
     color: '#C13584',
     method: 'Instagram 비즈니스 로그인',
     unit: '계정',
+    audienceLabel: '팔로워',
     effect: {
       kind: 'up',
       head: '릴스로 올라갑니다.',
       text: '프로페셔널(비즈니스 · 크리에이터) 계정만 연결됩니다.',
     },
     tip: '토큰이 약 60일마다 만료됩니다. 만료 7일 전부터 재연결을 권합니다.',
-    connectLabel: '+ Instagram 계정 연결',
+    connectLabel: '+ 계정 추가',
     footerLabel: '캡션 고정 문구',
     footerHint: '캡션 맨 아래에 붙습니다',
     max: 200,
@@ -92,13 +93,14 @@ export const PLATFORMS: Platform[] = [
     color: '#111111',
     method: 'TikTok 로그인',
     unit: '계정',
+    audienceLabel: '팔로워',
     effect: {
       kind: 'warn',
       head: '초안으로 올라갑니다.',
       text: 'TikTok 앱 받은함에 들어가며, 게시는 앱에서 직접 누릅니다.',
     },
     tip: '접근 토큰은 약 24시간 · 갱신 토큰은 약 1년입니다. 업로드 전에 자동으로 갱신합니다.',
-    connectLabel: '+ TikTok 계정 연결',
+    connectLabel: '+ 계정 추가',
     footerLabel: '캡션 고정 문구',
     footerHint: '설명란이 없어 캡션 끝에 붙습니다 — 짧게',
     max: 80,
@@ -109,13 +111,14 @@ export const PLATFORMS: Platform[] = [
     color: '#03C75A',
     method: '로그인 세션',
     unit: '계정',
+    audienceLabel: '구독자',
     effect: {
       kind: 'up',
       head: '파일이 올라갑니다.',
       text: '세로 9:16 숏폼만 · 설명 10자 이상 · 카테고리 1·2차가 필요합니다.',
     },
     tip: 'OAuth가 없어 워커 PC의 로그인 세션으로 발행합니다. 세션이 끊기면 자동으로 다시 로그인합니다.',
-    connectLabel: '+ 네이버 계정 추가',
+    connectLabel: '+ 계정 추가',
     footerLabel: '설명 고정 문구',
     footerHint: '설명 맨 아래에 붙습니다',
     max: 300,
@@ -134,7 +137,7 @@ export const COMMERCE: Platform = {
     head: '상품 링크를 만듭니다.',
     text: '영상 설명에 붙는 쿠팡 파트너스 링크를 이 계정으로 발급합니다.',
   },
-  connectLabel: '+ 계정 연결',
+  connectLabel: '+ 계정 추가',
   noSettings: true,
 }
 
@@ -153,6 +156,10 @@ export interface Account {
   since: string
   /** 이 계정으로 자동배포하는 프로그램 */
   rules: string[]
+  /** 구독자(팔로워) 수 — 플랫폼이 부르는 이름은 Platform.audienceLabel */
+  audience?: number
+  /** 최근 영상 평균 조회수 */
+  avgViews?: number
   last: string
   lastBad?: boolean
   /** 토큰 만료일 */
@@ -177,6 +184,8 @@ const spareYoutube: Account[] = [
   status: 'ok' as AccountStatus,
   since: '2026. 7. 1.',
   rules: [],
+  audience: 12_000 + i * 7_400,
+  avgViews: 1_800 + i * 950,
   last: '',
   privacy: 'unlisted' as const,
   footer: '',
@@ -188,10 +197,12 @@ export const ACCOUNTS: Account[] = [
     id: 'y1',
     platform: 'yt',
     name: 'ENA 예능',
-    sub: '구독자 128만 · UC8xT…3fQ',
+    sub: 'UC8xT…3fQ',
     status: 'ok',
     since: '2026. 3. 4.',
     rules: ['주말 캠핑 클럽', '오늘의 식탁', '동네 한 바퀴'],
+    audience: 1_280_000,
+    avgViews: 42_000,
     last: '09/28 09:40 게시 중',
     privacy: 'unlisted',
     footer: '본방송은 매주 토요일 밤 9시, ENA에서 만나요.',
@@ -200,10 +211,12 @@ export const ACCOUNTS: Account[] = [
     id: 'y2',
     platform: 'yt',
     name: 'ENA 음악',
-    sub: '구독자 42만 · UC2mK…a8W',
+    sub: 'UC2mK…a8W',
     status: 'ok',
     since: '2026. 5. 12.',
     rules: ['여름 음악회'],
+    audience: 420_000,
+    avgViews: 18_500,
     last: '09/21 22:30 실패 2건',
     lastBad: true,
     privacy: 'public',
@@ -213,10 +226,12 @@ export const ACCOUNTS: Account[] = [
     id: 'y3',
     platform: 'yt',
     name: 'ENA 아카이브',
-    sub: '구독자 3.1만 · UC9pL…0vE',
+    sub: 'UC9pL…0vE',
     status: 'revoked',
     since: '2025. 11. 20.',
     rules: [],
+    audience: 31_000,
+    avgViews: 2_400,
     last: '08/30 이후 배포 없음',
     privacy: 'private',
     footer: '',
@@ -230,6 +245,8 @@ export const ACCOUNTS: Account[] = [
     statusNote: '세션 유효 · 끊기면 자동 복구',
     since: '2026. 6. 2.',
     rules: ['주말 캠핑 클럽', '오늘의 식탁', '동네 한 바퀴'],
+    audience: 86_000,
+    avgViews: 12_300,
     last: '09/28 09:40 게시 중',
     footer: '',
   },
@@ -241,6 +258,8 @@ export const ACCOUNTS: Account[] = [
     status: 'bad',
     since: '2026. 4. 8.',
     rules: ['주말 캠핑 클럽', '오늘의 식탁', '여름 음악회'],
+    audience: 254_000,
+    avgViews: 61_000,
     last: '실패 3건이 재연결을 기다립니다',
     lastBad: true,
     footer: '#ENA #예능',
@@ -253,6 +272,8 @@ export const ACCOUNTS: Account[] = [
     status: 'ok',
     since: '2026. 8. 14.',
     rules: ['주말 캠핑 클럽', '여름 음악회'],
+    audience: 312_000,
+    avgViews: 28_000,
     last: '09/28 09:30 게시 중',
     expires: '11/12',
     footer: '',
@@ -265,6 +286,8 @@ export const ACCOUNTS: Account[] = [
     status: 'warn',
     since: '2026. 8. 2.',
     rules: ['오늘의 식탁'],
+    audience: 47_000,
+    avgViews: 9_100,
     last: '09/25 19:00 게시됨',
     expires: '10/01',
     footer: '',
@@ -282,6 +305,13 @@ export const ACCOUNTS: Account[] = [
     footer: '',
   },
 ]
+
+/** 구독자·조회수 같은 큰 수 — 1만부터는 "만" 으로 줄입니다 */
+export const countText = (n: number): string => {
+  if (n < 10_000) return n.toLocaleString('ko-KR')
+  const man = n / 10_000
+  return `${man >= 100 ? Math.round(man) : Math.round(man * 10) / 10}만`
+}
 
 /** 카드에 표시하는 마지막 토큰 갱신 시각 */
 export const TOKEN_REFRESHED: Record<string, string> = {

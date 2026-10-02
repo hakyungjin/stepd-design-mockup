@@ -12,13 +12,16 @@ export const isPast = (p: { day: number; t: string }): boolean => p.day === 0 &&
 /**
  * 순방이 채운 기본 계획.
  * 채널마다 그 플랫폼에 올릴 수 있는 영상만 골라 요일 × 시각 칸을 채웁니다.
- * 마지막 발행일의 마지막 시각은 "아직 못 채운 칸"으로 비워 둡니다.
+ *
+ * 전부 채우지는 않습니다 — 대기열이 뒤로 갈수록 모자라서 빈 자리가 남습니다.
+ * 편집자가 손으로 채우거나 "자동배치"로 한 번에 채우는 자리입니다.
  */
 export const buildPlan = (rule: Rule): PlanEntry[] => {
   const out: PlanEntry[] = []
   const sl = rule.slots
   const pubDays = DAYS7.filter((d) => rule.weekdays.includes(d.wd))
   const lastDay = pubDays.length ? pubDays[pubDays.length - 1].i : -1
+  const lastChannel = rule.channels.length - 1
 
   rule.channels.forEach((c, ci) => {
     const P = platOf(c.icon)
@@ -28,8 +31,12 @@ export const buildPlan = (rule: Rule): PlanEntry[] => {
     pubDays.forEach((d) =>
       sl.forEach((x, si) => {
         for (let j = 0; j < (x.n || 1); j++) {
-          // 아직 못 채운 칸
+          /* 아직 못 채운 칸 — 마지막 발행일의 마지막 시간대 */
           if (d.i === lastDay && si === sl.length - 1) continue
+          /* 사흘 뒤부터는 시간대마다 한 칸만 차 있습니다 */
+          if (d.i >= 2 && j > 0) continue
+          /* 오늘은 마지막 채널의 마지막 시간대 한 자리가 비어 있습니다 */
+          if (d.i === 0 && ci === lastChannel && si === sl.length - 1) continue
           for (let q = 0; q < pool.length; q++) {
             const h = pool[k++ % pool.length]
             if (!out.some((p) => p.ch === c.name && p.hid === h.id)) {

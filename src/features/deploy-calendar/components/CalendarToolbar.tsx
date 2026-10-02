@@ -9,19 +9,11 @@ const VIEWS: Array<{ key: CalendarView; label: string }> = [
   { key: 'month', label: '월간' },
 ]
 
-export interface SubTab {
-  key: string
-  label: string
-  active: boolean
-  onSelect: () => void
-}
-
 export interface CalendarToolbarProps {
   view: CalendarView
   onViewChange: (v: CalendarView) => void
-  subTabs: SubTab[]
   rangeLabel: string
-  /** 주 단위 앞뒤로 넘기기 — 주간 뷰에서만 넘어옵니다 */
+  /** 한 칸씩 앞뒤로 넘기기 — 주간은 한 주, 월간은 한 달 */
   onStepRange?: (delta: number) => void
   onOpenAdd: () => void
 }
@@ -29,11 +21,12 @@ export interface CalendarToolbarProps {
 export function CalendarToolbar({
   view,
   onViewChange,
-  subTabs,
   rangeLabel,
   onStepRange,
   onOpenAdd,
 }: CalendarToolbarProps) {
+  /* 달을 버튼으로 늘어놓으면 해가 쌓일수록 줄이 끝없이 길어집니다 — 화살표로 넘깁니다 */
+  const unit = view === 'month' ? '달' : '주'
   return (
     <div className={styles.toolbar}>
       <Segment>
@@ -44,23 +37,13 @@ export function CalendarToolbar({
         ))}
       </Segment>
 
-      {subTabs.length > 0 && (
-        <Segment>
-          {subTabs.map((t) => (
-            <Pill key={t.key} active={t.active} onClick={t.onSelect}>
-              {t.label}
-            </Pill>
-          ))}
-        </Segment>
-      )}
-
       {onStepRange ? (
         <div className={styles.stepper}>
           <button
             type="button"
             className={styles.stepBtn}
-            aria-label="이전 주"
-            title="이전 주"
+            aria-label={`이전 ${unit}`}
+            title={`이전 ${unit}`}
             onClick={() => onStepRange(-1)}
           >
             ‹
@@ -69,8 +52,8 @@ export function CalendarToolbar({
           <button
             type="button"
             className={styles.stepBtn}
-            aria-label="다음 주"
-            title="다음 주"
+            aria-label={`다음 ${unit}`}
+            title={`다음 ${unit}`}
             onClick={() => onStepRange(1)}
           >
             ›

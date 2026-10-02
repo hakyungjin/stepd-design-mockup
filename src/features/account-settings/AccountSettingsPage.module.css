@@ -11,11 +11,6 @@
 .filterTabs button { display: flex; gap: 7px; align-items: center; padding: 12px 0 15px; border-bottom: 2px solid transparent; background: transparent; color: var(--text-muted); font-size: 12px; cursor: pointer; }
 .filterTabs button[aria-pressed=true] { color: var(--text-primary); border-bottom-color: var(--text-primary); font-weight: 600; }
 .filterTabs button > span { min-width: 17px; height: 17px; padding: 0 4px; display: grid; place-items: center; background: var(--bg-card-hover); color: var(--text-muted); border-radius: 4px; font-size: 10px; }
-.filterControls { display: flex; gap: 12px; align-items: center; padding-bottom: 8px; }
-.filterControls select { border: 0; background: var(--bg-input); color: var(--text-secondary); padding: 7px 8px; border-radius: 5px; font-size: 11px; cursor: pointer; }
-.search { display: flex; align-items: center; gap: 8px; width: 164px; color: var(--text-muted); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 7px 10px; }
-.search input { width: 100%; min-width: 0; background: transparent; border: 0; outline: none; color: var(--text-primary); font-size: 11px; }
-.search:focus-within { border-color: var(--text-accent); }
 .pluginList { display: flex; flex-direction: column; }
 .plugin { border-bottom: 1px solid var(--border-subtle); }
 .pluginRow { display: flex; align-items: center; gap: 18px; padding: 25px 2px; min-height: 100px; }
@@ -58,8 +53,6 @@
   .page { padding: 26px 20px; }
   .pageHead { margin-bottom: 32px; }
   .filters { flex-wrap: wrap; gap: 0; }
-  .filterControls { width: 100%; justify-content: space-between; padding: 10px 0; }
-  .search { flex: 1; max-width: 230px; }
   .pluginRow { flex-wrap: wrap; gap: 12px; padding: 20px 0; }
   .pluginDetails { flex-basis: calc(100% - 56px); }
   .actions { margin-left: 56px; }

@@ -1,4 +1,3 @@
-import type { MouseEvent } from 'react'
 import { Btn } from '@/components/ui/Btn'
 import { CheckBox, CheckMark, Chip, Thumb } from '@/components/ui/Controls'
 import { durationText, timestampOf } from '@/lib/date'
@@ -18,7 +17,6 @@ import {
 } from '../constants'
 import { countByProgram, platformKeysOf } from '../domain/rules'
 import type { DeployItem, DeployStatus, HistoryEntry, PlatformKey, Video } from '../types'
-import type { SwapAnchor } from './ScheduleCard'
 import styles from './overlays.module.css'
 
 const ONE_HOUR_MS = 3_600_000
@@ -31,7 +29,6 @@ export interface ItemDrawerProps {
   now: Date
   isPast: (date: DateStr, time: TimeStr) => boolean
   onClose: () => void
-  onOpenSwap: (id: string, anchor: SwapAnchor) => void
   onMove: (id: string, date: DateStr, time: TimeStr) => void
   onTogglePlatform: (id: string, key: PlatformKey) => void
   onSetStatus: (id: string, status: DeployStatus) => void
@@ -50,7 +47,6 @@ export function ItemDrawer({
   now,
   isPast,
   onClose,
-  onOpenSwap,
   onMove,
   onTogglePlatform,
   onSetStatus,
@@ -92,12 +88,6 @@ export function ItemDrawer({
 
   const itemHistory = history.filter((h) => h.id === item.id).slice().reverse()
 
-  const openSwapFromButton = (e: MouseEvent<HTMLButtonElement>) => {
-    if (published) return
-    const r = e.currentTarget.getBoundingClientRect()
-    onOpenSwap(item.id, { x: r.right - 360, y: r.bottom + 4 })
-  }
-
   return (
     <>
       <div className={styles.scrim} onClick={onClose} />
@@ -123,20 +113,13 @@ export function ItemDrawer({
             </div>
           )}
 
+          {/* 영상 교체는 두지 않습니다 — 바꾸려면 이 배포를 취소하고 다시 넣습니다 */}
           <div className={styles.field}>
             <span className={styles.fieldLabel}>영상</span>
             <div className={styles.inlineBox}>
               <span className={`${styles.inlineText} ${styles.ellipsis}`}>
                 {video.title} · {durationText(video.dur)}
               </span>
-              <button
-                type="button"
-                className={styles.miniBtn}
-                disabled={published}
-                onClick={openSwapFromButton}
-              >
-                교체 ▼
-              </button>
             </div>
           </div>
 

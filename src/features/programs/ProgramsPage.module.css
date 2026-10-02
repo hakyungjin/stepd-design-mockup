@@ -1,715 +1,790 @@
-/* ---------------- 공통 ---------------- */
+/*
+ * 프로그램 — 목록·홈은 STEPD 본 저장소 치수를 그대로 옮겼습니다.
+ * (알약 h40 / 칩 h32 / 태그 h22·11px / 카드 포스터 160px / 로고 86px 원형)
+ * 설정은 우리 디자인(축소 필드)입니다.
+ */
 
-.crumbs {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 15px 30px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-subtle);
-  font-size: 14px;
-}
-
-.crumbLink {
-  border: 0;
-  background: none;
-  padding: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  cursor: pointer;
-}
-
-.crumbMuted {
-  composes: crumbLink;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-
-.crumbSep {
-  color: var(--text-muted);
-}
-
-.crumbCurrent {
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
+/*
+ * overflow-y 는 두지 않습니다 — 스크롤은 창이 하고 있어서 어차피 걸리지 않는데,
+ * 스크롤 컨테이너가 하나 생기는 바람에 설정 머리글의 sticky 가 풀립니다.
+ */
 .page {
   flex: 1;
   min-width: 0;
-  padding: 26px 30px 60px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .stack {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
-.headerRow {
+/* ---------------- 목록: 거르개 줄 ---------------- */
+
+.filterBar {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.h1 {
-  margin: 0;
-  font-size: 27px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-}
-
-.primaryBtn {
-  height: 38px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 9px;
-  background: var(--bg-active);
-  font-size: 13px;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-}
-
-.primaryBtn:hover {
-  background: var(--bg-active-hover);
-}
-
-.secondaryBtn {
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 9px;
-  background: var(--bg-card);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  cursor: pointer;
-}
-
-.secondaryBtn:hover {
-  background: var(--bg-card-hover);
-}
-
-.pill {
-  flex: none;
-  height: 22px;
-  padding: 0 8px;
-  border-radius: 11px;
-  font-size: 11.5px;
-  font-weight: 600;
-  display: inline-flex;
   align-items: center;
-  white-space: nowrap;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 12px;
 }
 
-/* ---------------- 목록 ---------------- */
-
-.listBar {
+.filterLeft {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-.bigTabs {
+.filterRight {
   display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
+  align-items: center;
+  gap: 12px;
 }
 
-.bigTab {
-  height: 42px;
-  min-width: 120px;
-  padding: 0 22px;
+.searchInput {
+  width: 240px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 16px;
   border: 0;
-  border-radius: 9px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 15px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  font-size: 12px;
   font-weight: 500;
-  cursor: pointer;
+  color: var(--text-primary);
+  outline: none;
 }
 
-.bigTabOn {
+.searchInput::placeholder {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.searchInput:focus {
+  box-shadow: 0 0 0 1px var(--bg-active);
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  margin: 0 4px;
+  flex: none;
+  align-self: center;
+  background: var(--border-subtle);
+}
+
+.pillGroup {
+  height: 40px;
+  box-sizing: border-box;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 섹션이 3개를 넘으면 줄바꿈 — 칩이 잘려 나가면 못 찾습니다 */
+.pillGroupWrap {
+  height: auto;
+  flex-wrap: wrap;
+}
+
+.chip {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chip:hover {
+  color: var(--text-primary);
+}
+
+.chipOn {
   background: var(--bg-active);
   color: #fff;
   font-weight: 700;
 }
 
-.tabCount {
-  margin-left: 6px;
-  font-weight: 600;
-  opacity: 0.55;
+.summary {
+  font-size: 11px;
+  color: var(--text-muted);
 }
 
-.tabCountOn {
-  opacity: 0.8;
-}
-
-.spacer {
-  flex: 1;
-}
-
-.segment {
-  display: flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 9px;
-}
-
-.seg {
-  height: 30px;
-  padding: 0 12px;
+.newBtn {
+  height: 40px;
+  padding: 0 20px 0 16px;
   border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 12.5px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.segOn {
+  border-radius: 999px;
   background: var(--bg-active);
+  font-size: 12px;
+  font-weight: 700;
   color: #fff;
-  font-weight: 600;
-}
-
-.cardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
-}
-
-.programCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
   cursor: pointer;
   display: flex;
-  flex-direction: column;
-  padding: 0;
-  text-align: left;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  align-items: center;
+  gap: 4px;
 }
 
-.programCard:hover {
-  border-color: var(--text-accent);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+.newBtn:hover {
+  background: var(--bg-active-hover);
 }
 
-.poster {
-  height: 128px;
+.noteCard {
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.emptyBox {
+  height: 320px;
+  padding: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ---------------- 목록: 카드 ---------------- */
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 1280px) { .cardGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 960px) { .cardGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.programCard {
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.programCard:hover {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+.cardPoster {
+  height: 160px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
 }
 
 .cardBody {
-  padding: 14px 16px 16px;
+  flex: 1;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.cardTitleRow {
+.cardTop {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 8px;
 }
 
 .cardTitle {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.cardMeta {
-  font-size: 12.5px;
-  color: var(--text-muted);
-}
-
-.cardAlert {
-  align-self: flex-start;
-  margin-top: 4px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.table {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-}
-
-.tableGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) 90px minmax(0, 1.4fr) 70px 90px minmax(0, 1.6fr);
-  gap: 14px;
-}
-
-.tableHead {
-  composes: tableGrid;
-  padding: 11px 18px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-input);
-}
-
-.tableRow {
-  composes: tableGrid;
-  align-items: center;
-  padding: 12px 18px;
-  border-top: 1px solid var(--bg-card-hover);
-  cursor: pointer;
-  font-size: 13px;
-  background: transparent;
-  text-align: left;
-  width: 100%;
-}
-
-.tableRow:hover {
-  background: var(--bg-card-hover);
-}
-
-.tableTitleCell {
+.tagRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 0;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.tableThumb {
-  width: 34px;
-  height: 34px;
-  border-radius: 7px;
-  flex: none;
-}
-
-.tableTitle {
+.tag {
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: var(--bg-card-hover);
+  font-size: 10px;
   font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.cellMuted {
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
-.emptyCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  padding: 56px 20px;
-  text-align: center;
+.tagAiring {
+  background: var(--status-success-bg);
+  color: var(--status-success-text);
 }
 
-.emptyTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 6px;
+.tagDanger {
+  background: rgba(239, 68, 68, 0.15);
+  color: hsl(var(--status-error));
 }
 
 /* ---------------- 홈 ---------------- */
 
-.homeHeader {
-  display: flex;
-  align-items: center;
-  gap: 18px;
+.backLink {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
 }
 
-.homeAvatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 14px;
+.backLink:hover {
+  color: var(--text-primary);
+}
+
+.notFound {
+  max-width: 640px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.notFound h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.notFound p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.inlineLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 12px;
+  color: var(--text-accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.homeHead {
+  padding: 12px 0;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.homeIdentity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.homeLogo {
+  width: 86px;
+  height: 86px;
   flex: none;
-}
-
-.homeTitleRow {
+  box-sizing: border-box;
+  padding: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-input);
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-muted);
+  overflow: hidden;
+}
+
+.homeMeta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .homeTitle {
   margin: 0;
-  font-size: 25px;
+  font-size: 24px;
   font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.homeSched {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.homePills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  height: 24px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--bg-card-hover);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pillOk {
+  background: var(--status-success-bg);
+  color: var(--status-success-text);
+  font-weight: 700;
+}
+
+.pillDanger {
+  background: rgba(239, 68, 68, 0.1);
+  color: hsl(var(--status-error));
+  font-weight: 700;
+}
+
+.homeActions {
+  flex: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.outlineBtn,
+.dangerBtn {
+  height: 40px;
+  padding: 0 16px 0 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.outlineBtn:hover {
+  background: var(--bg-card-hover);
+}
+
+.dangerBtn {
+  border-color: rgba(239, 68, 68, 0.35);
+  color: hsl(var(--status-error));
+}
+
+.dangerBtn:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* 지표 카드 3장 */
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.summaryCard {
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.summaryIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  color: var(--text-primary);
+}
+
+.summaryRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.summaryLabel {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-secondary);
+}
+
+.summaryValue {
+  font-size: 30px;
+  font-weight: 800;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
-.homeLine {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-top: 6px;
-}
+/* 상태 배너 */
 
-.castStack {
+.banner {
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
   display: flex;
   align-items: center;
-  cursor: pointer;
-  border: 0;
-  background: none;
-  padding: 0;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12px;
 }
 
-.castAvatar {
-  border-radius: 50%;
-  font-weight: 700;
+.bannerLeft {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex: none;
-}
-
-.castCount {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  white-space: nowrap;
-  border: 0;
-  background: none;
-  padding: 0;
-}
-
-.castEmpty {
-  border: 0;
-  background: none;
-  padding: 0;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-accent);
-  cursor: pointer;
-}
-
-.notice {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 13px 18px;
-  border-radius: 11px;
-  border: 1px solid;
-}
-
-.noticeTitle {
-  flex: none;
-  font-size: 13.5px;
-  font-weight: 700;
-}
-
-.noticeDesc {
-  flex: 1;
+  gap: 8px;
+  flex-wrap: wrap;
   min-width: 0;
-  font-size: 12.5px;
-  color: var(--text-secondary);
 }
 
-.noticeBarTrack {
-  width: 140px;
+.bannerText {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.bannerNote {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.bannerRight {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barTrack {
+  width: 130px;
   height: 6px;
   border-radius: 3px;
-  background: var(--bg-accent-subtle);
+  background: var(--bg-input);
   overflow: hidden;
-  flex: none;
 }
 
-.noticeBar {
+.bar {
   display: block;
   height: 100%;
-  background: var(--bg-active);
   border-radius: 3px;
+  background: var(--bg-active);
 }
 
-.noticeAction {
-  flex: none;
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+.barPct {
+  width: 34px;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.upcoming {
+  padding: 40px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-primary);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  cursor: pointer;
+  gap: 10px;
 }
 
-.panel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-}
-
-.panelHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 16px 20px 12px;
-}
-
-.panelTitle {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.panelCount {
-  font-weight: 500;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.epGrid {
-  display: grid;
-  grid-template-columns: 70px 110px minmax(0, 1fr) 100px;
-  gap: 12px;
-}
-
-.epHead {
-  composes: epGrid;
-  padding: 9px 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  border-top: 1px solid var(--border-subtle);
-  border-bottom: 1px solid var(--border-subtle);
+.upcomingMark {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   background: var(--bg-input);
 }
 
-.epRow {
-  composes: epGrid;
-  align-items: center;
-  padding: 11px 20px;
-  border-top: 1px solid var(--bg-card-hover);
-  font-size: 13px;
-}
-
-.epLabel {
+.upcomingTitle {
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.epState {
+.upcomingNote {
+  margin: 0;
+  max-width: 440px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+/* 섹션 카드 */
+
+.sectionCard {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sectionHead {
+  min-height: 40px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sectionHeadLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
   min-width: 0;
 }
 
-.epStateText {
-  flex: none;
-  font-size: 12.5px;
+.sectionHeadRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.epBarTrack {
-  width: 90px;
-  height: 5px;
-  border-radius: 3px;
-  background: var(--bg-accent-subtle);
-  overflow: hidden;
-  flex: none;
+.sectionHeading {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-.epErr {
+.sectionHint {
   font-size: 12px;
   color: var(--text-muted);
+}
+
+.sectionBtn {
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--bg-input);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.sectionBtn:hover {
+  background: var(--bg-card-hover);
+}
+
+.uploadBtn {
+  height: 40px;
+  padding: 0 20px 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--bg-active);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.uploadBtn:hover {
+  background: var(--bg-active-hover);
+}
+
+.emptyRow {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* 회차 · 미디어 카드 */
+
+.tileGrid5 {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tileGrid6 {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 1280px) {
+  .tileGrid5 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .tileGrid6 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (max-width: 960px) {
+  .tileGrid5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tileGrid6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.tile {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: var(--bg-card);
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.tile:hover {
+  border-color: var(--bg-active);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
+  transform: translateY(-2px);
+}
+
+.tileThumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  flex: none;
+  background: #14161b center / cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.tileThumbFull {
+  width: 100%;
+  height: 100%;
+  background: center / cover no-repeat;
+}
+
+/* 숏폼은 9:16 원본을 16:9 칸 안에 세로로 담습니다 */
+.tileThumbPortrait {
+  height: 100%;
+  aspect-ratio: 9 / 16;
+  background: center / cover no-repeat;
+}
+
+.tileBody {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tileTop {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tileTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tileTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.epAction {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.linkBtn {
-  border: 0;
-  background: none;
-  padding: 0;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-accent);
-  cursor: pointer;
-}
-
-.linkBtn:hover {
-  color: var(--bg-active-hover);
-}
-
-.smallBtn {
-  height: 28px;
-  padding: 0 10px;
-  border: 1px solid var(--border-subtle);
-  border-radius: 7px;
-  background: var(--bg-card);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-  cursor: pointer;
-}
-
-.moreBtn {
-  display: block;
-  width: 100%;
-  height: 42px;
-  border: 0;
-  border-top: 1px solid var(--border-subtle);
-  background: var(--bg-input);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-
-.moreBtn:hover {
-  color: var(--text-primary);
-}
-
-.mediaPanel {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  padding: 16px 20px 20px;
-}
-
-.mediaHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.mediaTabs {
-  display: flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--bg-card-hover);
-  border-radius: var(--radius-md);
-}
-
-.mediaTab {
-  height: 26px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--text-muted);
+.tileSub {
   font-size: 12px;
   font-weight: 500;
-  cursor: pointer;
+  color: var(--text-muted);
 }
 
-.mediaTabOn {
-  background: var(--bg-card);
+.tileClipTitle {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  min-height: 2rem;
   color: var(--text-primary);
-  font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.mediaGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-  gap: 14px;
-}
-
-.mediaItem {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-  border: 0;
-  background: none;
-  padding: 0;
-  text-align: left;
-  cursor: pointer;
-  color: inherit;
-}
-
-.mediaThumb {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  border-radius: 9px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mediaFrame {
-  height: 100%;
-  aspect-ratio: 9 / 16;
-}
-
-.mediaKind {
-  position: absolute;
-  left: 7px;
-  top: 7px;
-  height: 20px;
-  padding: 0 7px;
-  border-radius: 5px;
-  background: rgba(17, 17, 17, 0.72);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-}
-
-.mediaDur {
-  position: absolute;
-  right: 7px;
-  bottom: 7px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 5px;
-  background: rgba(17, 17, 17, 0.72);
-  color: #fff;
-  font-size: 11px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-}
-
-.mediaTitle {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -717,92 +792,132 @@
   overflow: hidden;
 }
 
-.mediaMeta {
+.tileTags {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 4px;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  flex: none;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--bg-card-hover);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badgeProgress {
+  background: var(--bg-accent-subtle);
+  color: var(--badge-text);
+}
+
+.badgeError {
+  background: rgba(239, 68, 68, 0.15);
+  color: hsl(var(--status-error));
+}
+
+.tileGo {
+  align-self: flex-end;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tile:hover .tileGo {
+  background: var(--bg-accent-subtle);
+  color: var(--text-accent);
+}
+
+/* 출연자 */
+
+.castRow {
+  padding: 8px 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.castItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.castPhoto {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--border-subtle);
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.castName {
   font-size: 12px;
-  color: var(--text-muted);
-}
-
-.mediaEmpty {
-  padding: 28px 0;
-  text-align: center;
-  font-size: 12.5px;
-  color: var(--text-muted);
-}
-
-.bigEmpty {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  padding: 52px 20px;
-  text-align: center;
-}
-
-.bigEmptyTitle {
-  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 6px;
 }
 
-.bigEmptyNote {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 16px;
+/* ---------------- 설정 (우리 디자인 · 축소 필드) ---------------- */
+
+/*
+ * 항목이 네 묶음뿐이라 섹션 내비 + 760px 한 단은 화면이 남고 스크롤만 길었습니다.
+ * 머리글(제목·저장·삭제)을 홈과 같은 모양으로 올리고, 카드를 두 단으로 펼칩니다.
+ */
+.settingsHead {
+  composes: homeHead;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-dark);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-/* ---------------- 설정 ---------------- */
-
-.settingsLayout {
+.settingsGrid {
   display: grid;
-  grid-template-columns: 180px minmax(0, 760px);
-  gap: 28px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
   align-items: start;
 }
 
-.secNav {
-  position: sticky;
-  top: 16px;
+.settingsCol {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 20px;
 }
 
-.secNavBtn {
-  height: 34px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: var(--radius-md);
-  text-align: left;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.secNavBtnOn {
-  background: var(--bg-card);
-  color: var(--text-primary);
-  font-weight: 600;
-  box-shadow: 0 0 0 1px var(--border-subtle);
-}
-
-.secNavFoot {
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border-subtle);
+/* 한 단이 420px 아래로 좁아지면 필드 두 칸이 깨집니다 */
+@media (max-width: 1180px) {
+  .settingsGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .saveBtn {
-  width: 100%;
-  height: 38px;
+  height: 40px;
+  padding: 0 20px;
   border: 0;
-  border-radius: 9px;
-  font-size: 13px;
+  border-radius: var(--radius-lg);
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -818,50 +933,39 @@
   cursor: default;
 }
 
-.deleteBtn {
-  width: 100%;
-  height: 36px;
-  margin-top: 8px;
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 9px;
-  background: var(--bg-card);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: hsl(var(--status-error));
-  cursor: pointer;
-}
-
-.deleteBtn:hover {
-  background: rgba(239, 68, 68, 0.08);
-}
-
-.section {
+.settingsCard {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
-  padding: 22px 24px;
+  padding: 24px 26px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  scroll-margin-top: 16px;
+  gap: 20px;
+  /* 머리글이 고정이라 그 높이만큼 띄워야 제목이 가려지지 않습니다 */
+  scroll-margin-top: 92px;
 }
 
-.sectionTitle {
+.settingsCardTight {
+  gap: 14px;
+}
+
+.cardTitle2 {
   font-size: 16px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
-.sectionNote {
+.cardNote {
+  margin-top: 4px;
   font-size: 12.5px;
   color: var(--text-muted);
-  margin-top: 4px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .fieldLabel {
@@ -873,6 +977,11 @@
 .fieldHint {
   font-weight: 400;
   color: var(--text-muted);
+}
+
+.required {
+  font-style: normal;
+  color: hsl(var(--status-error));
 }
 
 .input {
@@ -921,10 +1030,40 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px 16px;
+  /* 라벨이 두 줄이 돼도 옆 칸과 입력칸 높이는 맞춥니다 */
+  align-items: end;
 }
 
 .formGridFull {
   grid-column: 1 / -1;
+}
+
+.segment {
+  align-self: flex-start;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+}
+
+.seg {
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.segOn {
+  background: var(--bg-active);
+  color: #fff;
+  font-weight: 600;
 }
 
 .posterRow {
@@ -937,11 +1076,11 @@
   width: 96px;
   height: 128px;
   border-radius: 9px;
+  border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid var(--border-subtle);
   font-size: 11.5px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.55);
@@ -951,20 +1090,20 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
+  border: 1px solid var(--border-subtle);
   font-size: 22px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid var(--border-subtle);
 }
 
 .posterNote {
+  max-width: 260px;
+  padding-bottom: 4px;
   font-size: 12px;
   color: var(--text-muted);
-  padding-bottom: 4px;
-  max-width: 260px;
 }
 
 .castHead {
@@ -972,6 +1111,23 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+}
+
+.smallBtn {
+  flex: none;
+  height: 34px;
+  padding: 0 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  background: var(--bg-card);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.smallBtn:hover {
+  background: var(--bg-card-hover);
 }
 
 .castGrid {
@@ -983,20 +1139,23 @@
 
 .castHeadRow {
   composes: castGrid;
+  padding: 0 2px;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
-  padding: 0 2px;
 }
 
 .castAvatarBtn {
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  flex: none;
   border: 0;
+  border-radius: 50%;
+  font-size: 13px;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: none;
   cursor: pointer;
 }
 
@@ -1029,6 +1188,19 @@
   cursor: pointer;
 }
 
+.ytBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ytBlockHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .blockLabel {
   font-size: 13px;
   font-weight: 700;
@@ -1036,9 +1208,9 @@
 }
 
 .blockHint {
+  font-size: 12.5px;
   font-weight: 400;
   color: var(--text-muted);
-  font-size: 12.5px;
 }
 
 .ytRow {
@@ -1053,9 +1225,9 @@
 .ytDot {
   width: 8px;
   height: 8px;
+  flex: none;
   border-radius: 50%;
   background: hsl(var(--status-error));
-  flex: none;
 }
 
 .ytChannel {
@@ -1063,6 +1235,10 @@
   font-size: 13px;
   color: var(--text-secondary);
   white-space: nowrap;
+}
+
+.ytSep {
+  color: var(--text-muted);
 }
 
 .ytPlaylist {
@@ -1104,9 +1280,9 @@
   text-align: left;
   padding: 12px 14px;
   border-radius: var(--radius-lg);
-  cursor: pointer;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
+  cursor: pointer;
 }
 
 .trackBtnOn {
@@ -1123,17 +1299,17 @@
 
 .trackSub {
   display: block;
+  margin-top: 3px;
   font-size: 12px;
   color: var(--text-muted);
-  margin-top: 3px;
 }
 
 .checkboxRow {
+  align-self: end;
+  height: 38px;
   display: flex;
   align-items: center;
   gap: 8px;
-  align-self: end;
-  height: 38px;
   font-size: 13px;
   color: var(--text-primary);
   cursor: pointer;
@@ -1150,25 +1326,37 @@
 .modalScrim {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  z-index: 50;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
-  padding: 24px;
 }
 
 .modal {
   width: 440px;
   max-width: 100%;
-  background: var(--bg-card);
+  box-sizing: border-box;
+  padding: 24px;
   border: 1px solid var(--border-card);
-  border-radius: 14px;
-  padding: 22px 24px;
+  border-radius: 16px;
+  background: var(--bg-card);
   display: flex;
   flex-direction: column;
   gap: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.modalWide {
+  width: 512px;
+}
+
+.modalHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .modalTitle {
@@ -1182,38 +1370,87 @@
   color: hsl(var(--status-error));
 }
 
+.modalClose {
+  padding: 2px 6px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modalClose:hover {
+  color: var(--text-primary);
+}
+
+.modalBody {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
 .modalNote {
-  font-size: 12px;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.7;
   color: var(--text-muted);
 }
 
 .modalActions {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
   gap: 8px;
 }
 
+.modalActionsRuled {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
 .modalBtn {
   height: 36px;
-  padding: 0 14px;
+  padding: 0 16px;
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: 999px;
   background: var(--bg-card);
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--text-primary);
   cursor: pointer;
 }
 
+.modalBtn:hover {
+  background: var(--bg-input);
+}
+
 .modalBtnPrimary {
   height: 36px;
-  padding: 0 16px;
+  padding: 0 20px;
   border: 0;
-  border-radius: var(--radius-md);
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 999px;
+  background: var(--bg-active);
+  font-size: 12px;
+  font-weight: 700;
   color: #fff;
   cursor: pointer;
+}
+
+.modalBtnPrimary:hover:not(:disabled) {
+  background: var(--bg-active-hover);
+}
+
+.modalBtnDanger {
+  composes: modalBtnPrimary;
+  background: hsl(var(--status-error));
+}
+
+.modalBtnPrimary:disabled,
+.modalBtnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .deleteInput {
@@ -1232,9 +1469,9 @@
 .photoModal {
   width: 380px;
   max-width: 100%;
-  background: var(--bg-card);
   border-radius: 14px;
   overflow: hidden;
+  background: var(--bg-card);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
@@ -1268,16 +1505,16 @@
 }
 
 .photoSub {
+  margin-top: 3px;
   font-size: 12.5px;
   color: var(--text-muted);
-  margin-top: 3px;
 }
 
 .photoNav {
+  flex: none;
   display: flex;
   align-items: center;
   gap: 6px;
-  flex: none;
 }
 
 .photoNavBtn {
@@ -1292,10 +1529,10 @@
 }
 
 .photoPos {
-  font-size: 12px;
-  color: var(--text-muted);
   min-width: 34px;
   text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
 .photoActions {
@@ -1327,12 +1564,12 @@
   left: 50%;
   bottom: 28px;
   transform: translateX(-50%);
-  background: #111;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 500;
+  z-index: 60;
   padding: 11px 18px;
   border-radius: var(--radius-lg);
-  z-index: 60;
+  background: #111;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
 }

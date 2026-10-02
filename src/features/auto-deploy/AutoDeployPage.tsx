@@ -8,6 +8,7 @@
 import { useEffect, useRef } from 'react'
 import { Btn } from '@/components/ui/Btn'
 import { Select } from '@/components/ui/Controls'
+import { ChannelIcon } from '@/components/ui/ChannelIcon'
 import type { ScreenKey } from '@/app/screens'
 import { CHANNEL_FILTERS, WD } from './constants'
 import { useAutoDeploy } from './hooks/useAutoDeploy'
@@ -87,8 +88,6 @@ export function AutoDeployPage({
             <span>
               일시정지 <b>{store.pausedCount}</b>
             </span>
-            <span className={styles.dim}>·</span>
-            <span className={styles.dim}>{store.heartbeat}</span>
           </div>
         </div>
 
@@ -164,10 +163,17 @@ export function AutoDeployPage({
                   <div className={styles.rowTitle}>{r.name}</div>
                 </div>
 
+                {/* 여러 채널로 나가는 계획이 많아 아이콘을 다 보여 줍니다 */}
                 <div className={styles.rowChannel}>
-                  <span className={styles.platformMark} data-platform={r.channels[0].icon} aria-hidden="true">{r.channels[0].icon === 'YT' ? '▶' : r.channels[0].icon === 'NC' ? 'N' : r.channels[0].icon === 'TT' ? '♪' : '◎'}</span>
-                  <span>{r.channels[0].name.split(' · ')[0]}</span>
-                  {extra > 0 && <span className={styles.extra}>+{extra}</span>}
+                  <span className={styles.channelIcons}>
+                    {r.channels.slice(0, 4).map((c) => (
+                      <ChannelIcon key={c.name} channel={c.icon} size={16} className={styles.platformMark} />
+                    ))}
+                  </span>
+                  <span>
+                    {r.channels[0].name.split(' · ')[0]}
+                    {extra > 0 && ` 외 ${extra}곳`}
+                  </span>
                 </div>
 
                 <div className={styles.rowState}>

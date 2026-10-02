@@ -47,6 +47,16 @@
   opacity: 0.4;
 }
 
+/* 플랫폼 표식 — STEPD 공식 채널 아이콘을 담는 자리 */
+.platformMark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+}
+
 /* ---------------- 재연결 필요 패널 ---------------- */
 
 .issues {
@@ -162,22 +172,17 @@
 }
 
 .cardName {
-  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 19px;
   font-weight: 700;
+  letter-spacing: -0.3px;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.cardMethod {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 2px;
-  font-size: 11.5px;
-  color: var(--text-muted);
-  white-space: nowrap;
 }
 
 .cardTag {
@@ -195,23 +200,6 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
-}
-
-.effect {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-secondary);
-}
-
-.effectDot {
-  flex: none;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  margin-top: 6px;
 }
 
 .cardBody {
@@ -355,38 +343,21 @@
   border-top: 1px solid var(--border-subtle);
 }
 
+/* 카드에서 할 일이 이것 하나라 눈에 띄는 파랑으로 둡니다 */
 .connectBtn {
   flex: 1;
   height: 32px;
-  border: 1px solid var(--border-subtle);
+  border: 0;
   border-radius: var(--radius-md);
-  background: var(--bg-card);
+  background: var(--bg-active);
   font-size: 12.5px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #fff;
   cursor: pointer;
 }
 
 .connectBtn:hover {
-  border-color: var(--bg-active);
-  color: var(--bg-active);
-}
-
-.refreshBtn {
-  flex: none;
-  height: 32px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: none;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-
-.refreshBtn:hover {
-  background: var(--bg-card-hover);
+  background: var(--bg-active-hover);
 }
 
 /* ---------------- 설정 패널 ---------------- */
@@ -605,15 +576,6 @@
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
-}
-
-.detailMethod {
-  padding: 2px 8px;
-  border-radius: 5px;
-  background: var(--bg-card-hover);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-secondary);
 }
 
 .detailTip {

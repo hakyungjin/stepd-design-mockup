@@ -28,9 +28,8 @@ export interface MonthViewProps {
   items: DeployItem[]
   videos: Record<string, Video>
   archiveFor: (date: DateStr) => ArchiveItem[]
-  /** 날짜를 누르면 그 주의 주간 캘린더로 */
-  onPickWeek: (date: DateStr) => void
-  onOpenDrawer: (id: string) => void
+  /** 날짜 칸을 누르면 그 날 보기를 엽니다 — 칸 안의 줄은 읽기 전용입니다 */
+  onPickDay: (date: DateStr) => void
 }
 
 interface Line {
@@ -52,8 +51,7 @@ export function MonthView({
   items,
   videos,
   archiveFor,
-  onPickWeek,
-  onOpenDrawer,
+  onPickDay,
 }: MonthViewProps) {
   const first = parseDate(month)
   const gridStart = addDays(first, -first.getDay())
@@ -87,10 +85,14 @@ export function MonthView({
             const isToday = inMonth && date === today
             const dow = cellDate.getDay()
 
-            const lines: Line[] = [
+            /* 세는 단위는 배포 건수입니다 — 주간 보기·하루 보기와 같은 숫자가 나옵니다 */
+            const entries: CalendarEntry[] = [
               ...items.filter((x) => x.date === date),
               ...(inMonth ? archiveFor(date) : []),
             ]
+
+            /* 줄은 플랫폼별로 한 줄씩 — 한 배포가 여러 줄이 될 수 있습니다 */
+            const lines: Line[] = entries
               .flatMap((entry) =>
                 (Object.entries(entry.pl) as Array<[PlatformKey, DeployStatus]>).map(
                   ([key, status]) => ({ entry, key, status }),
@@ -103,6 +105,11 @@ export function MonthView({
                   PLATFORM_ORDER[p.key] - PLATFORM_ORDER[q.key],
               )
 
+            const visible = lines.slice(0, VISIBLE_LINES)
+            /* "+N건" 은 칸에 한 줄도 못 올라간 배포 수 — 머리의 건수와 합이 맞습니다 */
+            const shown = new Set(visible.map((line) => line.entry.id))
+            const hidden = entries.length - shown.size
+
             const cls = [
               styles.monthCell,
               inMonth ? '' : styles.monthCellOut,
@@ -112,15 +119,26 @@ export function MonthView({
               .join(' ')
 
             return (
-              <div
+              <button
                 key={date}
+                type="button"
                 className={cls}
-                title={inMonth ? `${cellDate.getMonth() + 1}/${cellDate.getDate()} 주간 보기` : undefined}
-                onClick={() => inMonth && onPickWeek(date)}
+                disabled={!inMonth}
+                aria-label={
+                  inMonth
+                    ? `${cellDate.getMonth() + 1}월 ${cellDate.getDate()}일 · ${entries.length}건 — 하루 보기`
+                    : undefined
+                }
+                title={
+                  inMonth
+                    ? `${cellDate.getMonth() + 1}/${cellDate.getDate()} · ${entries.length}건 — 눌러서 하루 보기`
+                    : undefined
+                }
+                onClick={() => inMonth && onPickDay(date)}
               >
                 {inMonth && (
                   <>
-                    <div className={styles.monthCellHead}>
+                    <span className={styles.monthCellHead}>
                       <span
                         className={
                           isToday
@@ -136,28 +154,22 @@ export function MonthView({
                       >
                         {cellDate.getDate()}
                       </span>
-                      {lines.length > 0 && (
-                        <span className={styles.monthCount}>{lines.length}건</span>
+                      {entries.length > 0 && (
+                        <span className={styles.monthCount}>{entries.length}건</span>
                       )}
-                    </div>
+                    </span>
 
-                    {lines.slice(0, VISIBLE_LINES).map((line, idx) => {
+                    {visible.map((line, idx) => {
                       const entry = line.entry
                       const title = isArchive(entry)
                         ? entry.title
                         : (videos[entry.vid]?.title ?? '제목 없음')
                       const genre: '예능' | '드라마' = isArchive(entry) ? entry.genre : '예능'
                       return (
-                        <button
+                        <span
                           key={`${entry.id}-${line.key}-${idx}`}
-                          type="button"
                           className={styles.monthEntry}
                           title={`${entry.time} · ${PLATFORM_NAME[line.key]} · ${line.status} · ${title}`}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (isArchive(entry)) onPickWeek(date)
-                            else onOpenDrawer(entry.id)
-                          }}
                         >
                           <span
                             className={styles.monthEntryPl}
@@ -180,18 +192,14 @@ export function MonthView({
                           >
                             {title}
                           </span>
-                        </button>
+                        </span>
                       )
                     })}
 
-                    {lines.length > VISIBLE_LINES && (
-                      <span className={styles.monthMore}>
-                        +{lines.length - VISIBLE_LINES}건
-                      </span>
-                    )}
+                    {hidden > 0 && <span className={styles.monthMore}>+{hidden}건</span>}
                   </>
                 )}
-              </div>
+              </button>
             )
           })}
         </div>

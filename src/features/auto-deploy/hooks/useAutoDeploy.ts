@@ -95,7 +95,6 @@ export function useAutoDeploy(initialRules?: Rule[]) {
   /* 전역 */
   const [paused, setPaused] = useState(false)
   const [credit] = useState(INITIAL_CREDIT)
-  const [sinceCycleMin, setSinceCycleMin] = useState(4)
   const [toast, setToast] = useState<string | null>(null)
   const [confirm, setConfirm] = useState<ConfirmCfg | null>(null)
   const [player, setPlayer] = useState<PlayerCfg | null>(null)
@@ -236,6 +235,47 @@ export function useAutoDeploy(initialRules?: Rule[]) {
       say(`${P.name} ${DAYS7[day].short} ${t}에서 뺐습니다 — 다른 플랫폼은 그대로입니다`)
     },
     [say, setCleared, setPlan],
+  )
+
+  /**
+   * 자동 배치 — 그 날 비어 있는 자리를 아직 안 쓴 영상으로 채웁니다.
+   * 편집자가 손으로 채워도 되고, 이 버튼을 누르면 한 번에 채워집니다.
+   *
+   * TODO(api): POST /auto-rules/:id/plan/autofill
+   */
+  const autoFill = useCallback(
+    (rule: Rule, day: number) => {
+      const plan = planOf(rule)
+      const added: PlanEntry[] = []
+
+      rule.channels.forEach((channel) => {
+        rule.slots.forEach((slot) => {
+          if (isPast({ day, t: slot.t })) return
+          const here = [...plan, ...added].filter(
+            (p) => p.ch === channel.name && p.day === day && p.t === slot.t,
+          )
+          /* 이 채널에 이미 올라간 영상은 또 넣지 않습니다 */
+          const onChannel = new Set([...plan, ...added].filter((p) => p.ch === channel.name).map((p) => p.hid))
+          for (let i = here.length; i < slot.n; i++) {
+            const hold = rule.holds.find(
+              (h) => !onChannel.has(h.id) && canPlace(rule, [...plan, ...added], h, channel.name, day, slot.t).ok,
+            )
+            if (!hold) break
+            added.push({ hid: hold.id, ch: channel.name, day, t: slot.t })
+            onChannel.add(hold.id)
+          }
+        })
+      })
+
+      if (!added.length) {
+        say('빈 자리가 없거나 넣을 영상이 남아 있지 않습니다')
+        return
+      }
+      setPlan(rule, (a) => [...a, ...added])
+      added.forEach((p) => setCleared(rule, `${p.ch}|${p.day}|${p.t}`, false))
+      say(`${DAYS7[day].short} 빈 자리 ${added.length}개를 채웠습니다`)
+    },
+    [planOf, say, setCleared, setPlan],
   )
 
   /* ---------------- 드로어 ---------------- */
@@ -640,7 +680,6 @@ export function useAutoDeploy(initialRules?: Rule[]) {
   )
 
   const runOnce = useCallback(() => {
-    setSinceCycleMin(0)
     say('지금 확인했습니다 — 계획을 한 번 점검했습니다')
   }, [say])
 
@@ -738,7 +777,6 @@ export function useAutoDeploy(initialRules?: Rule[]) {
     activeCount: rules.filter((r) => r.state === '운영 중').length,
     pausedCount: rules.filter((r) => r.state === '일시정지').length,
     reviewTotal: rules.reduce((n, r) => n + upcomingCount(r), 0),
-    heartbeat: `마지막 확인 ${sinceCycleMin}분 전 · 다음 예정 ~${Math.max(cycleEveryMin - sinceCycleMin, 0)}분 후`,
     runOnce,
     credit,
     paused,
@@ -774,6 +812,7 @@ export function useAutoDeploy(initialRules?: Rule[]) {
     place,
     replaceIn,
     removeFrom,
+    autoFill,
     cleared,
     cellHover,
     setCellHover,

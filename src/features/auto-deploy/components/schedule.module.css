@@ -195,53 +195,17 @@
   color: var(--text-primary);
 }
 
-.toolbarRight {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.channelSelect,
 .moveSelect {
+  width: 100%;
+  margin-top: 4px;
   padding: 6px 9px;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
   background: var(--bg-card);
   font-family: inherit;
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-primary);
   cursor: pointer;
-}
-
-.moveSelect {
-  width: 100%;
-  margin-top: 4px;
-  font-size: 11.5px;
-}
-
-.viewSwitch {
-  display: flex;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.viewSwitch button {
-  padding: 6px 12px;
-  background: var(--bg-card);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-}
-
-.viewSwitch button + button {
-  border-left: 1px solid var(--border-subtle);
-}
-
-.viewSwitch button[aria-pressed='true'] {
-  background: var(--bg-accent-subtle);
-  color: var(--bg-active);
 }
 
 .dayPicker {
@@ -272,6 +236,26 @@
   font-size: 10.5px;
   font-weight: 400;
   color: var(--text-muted);
+}
+
+/* 자동배치 — 날짜 줄 오른쪽 끝 */
+.dayPicker .autoFillBtn {
+  margin-left: auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+  padding: 8px 14px;
+  border-color: var(--bg-active);
+  background: var(--bg-accent-subtle);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-accent);
+}
+
+.dayPicker .autoFillBtn:hover {
+  background: var(--bg-active);
+  color: #fff;
 }
 
 .dayPicker button[aria-pressed='true'] {
@@ -422,55 +406,12 @@
   padding: 9px 14px;
 }
 
+/* 공식 채널 아이콘(PNG) — 색은 그림이 들고 있어 배경을 입히지 않습니다 */
 .platformIcon {
   flex: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--border-subtle);
-  font-size: 11px;
-  color: var(--text-secondary);
 }
 
 /* 밝은 화면에서는 옅은 배경 위라 글자색을 한 단계 진하게 씁니다 */
-.platformIcon[data-platform='YT'] {
-  background: rgba(220, 38, 38, 0.14);
-  color: #b91c1c;
-}
-
-.platformIcon[data-platform='NC'] {
-  background: rgba(3, 199, 90, 0.16);
-  color: #15803d;
-}
-
-.platformIcon[data-platform='TT'] {
-  background: rgba(148, 163, 184, 0.2);
-  color: var(--text-secondary);
-}
-
-.platformIcon[data-platform='IG'] {
-  background: rgba(193, 53, 132, 0.16);
-  color: #9d174d;
-}
-
-:global(html.dark) .platformIcon[data-platform='YT'] {
-  background: rgba(220, 38, 38, 0.18);
-  color: #f87171;
-}
-
-:global(html.dark) .platformIcon[data-platform='NC'] {
-  background: rgba(3, 199, 90, 0.18);
-  color: #34d399;
-}
-
-:global(html.dark) .platformIcon[data-platform='IG'] {
-  background: rgba(193, 53, 132, 0.2);
-  color: #f472b6;
-}
-
 .platformHead strong {
   font-size: 13px;
   font-weight: 700;

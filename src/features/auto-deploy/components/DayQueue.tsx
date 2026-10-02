@@ -6,16 +6,18 @@
  * 그리고 같은 열 구성(제목 · 종류 · 상태 · 길이 · 버튼).
  *
  * 한 가지를 더했습니다. 본 저장소는 계획 하나가 채널 묶음 전체로 함께 나가지만
- * 이 목업은 채널마다 시각이 달라서, 날짜 묶음 아래를 플랫폼별로 한 번 더 나눕니다.
+ * 이 목업은 채널마다 시각이 달라서, 날짜 묶음 아래를 한 번 더 나눕니다.
+ * 나가는 순서대로 읽히도록 **시간대가 먼저**, 그 아래가 플랫폼입니다.
  * 같은 영상이 다른 채널로도 나가면 그 줄에 작게 적어 둡니다.
  */
 
-import { Fragment, useState } from 'react'
+import { useState, type DragEvent } from 'react'
 import { DAYS7, KIND_TONE, NOW_T, platOf } from '../constants'
 import type { Hold, HoldKind, PlanEntry, Rule, RuleChannel } from '../types'
 import type { AutoDeployStore } from '../hooks/useAutoDeploy'
 import { frameThumb, portraitThumb } from '@/lib/frames'
 import { cx } from './shared'
+import { ChannelIcon } from '@/components/ui/ChannelIcon'
 import styles from './dayQueue.module.css'
 
 type ViewMode = 'list' | 'grid'
@@ -32,18 +34,20 @@ interface QueueItem {
   alsoOn: string[]
 }
 
-/** 한 플랫폼의 한 시간대 — 하루에 두 번 이상 나갈 수 있어 시간대로 한 번 더 나눕니다 */
-interface SlotGroup {
-  time: string
-  /** 이 시간대에 넣기로 한 개수 (설정값) */
+/** 한 시간대에 한 플랫폼으로 나갈 몫 */
+interface ChannelSlot {
+  channel: RuleChannel
+  /** 이 시간대에 이 플랫폼으로 넣기로 한 개수 (설정값) */
   cap: number
   items: QueueItem[]
 }
 
-interface PlatformGroup {
-  channel: RuleChannel
+/** 시간대 하나 — 그 아래를 플랫폼별로 나눕니다 */
+interface TimeGroup {
+  time: string
+  cap: number
   items: QueueItem[]
-  slots: SlotGroup[]
+  channels: ChannelSlot[]
 }
 
 export function DayQueue({
@@ -60,6 +64,30 @@ export function DayQueue({
   const [kind, setKind] = useState<(typeof KINDS)[number]>('전체')
   const [view, setView] = useState<ViewMode>('list')
 
+  /*
+   * 보관함에서 끌어온 영상을 빈 자리에 놓습니다.
+   * 어느 자리 위에 있는지는 store.cellHover 한 곳에만 적어 둡니다.
+   */
+  const dropKey = (ch: string, t: string) => `${ch}|${day}|${t}`
+  const dropProps = (ch: string, t: string) => ({
+    onDragOver: (e: DragEvent<HTMLElement>) => {
+      if (!store.dragRef.current) return
+      e.preventDefault()
+      e.dataTransfer.dropEffect = 'move'
+      store.setCellHover(dropKey(ch, t))
+    },
+    onDragLeave: (e: DragEvent<HTMLElement>) => {
+      if (!e.currentTarget.contains(e.relatedTarget as Node)) store.setCellHover(null)
+    },
+    onDrop: (e: DragEvent<HTMLElement>) => {
+      e.preventDefault()
+      const drag = store.dragRef.current
+      store.dragRef.current = null
+      store.setCellHover(null)
+      if (drag) store.place(rule, drag.hid, ch, day, t, drag.from)
+    },
+  })
+
   const d = DAYS7[day]
   const publishes = rule.weekdays.includes(d.wd) && rule.slots.length > 0
   const today = plan.filter((p) => p.day === day)
@@ -68,8 +96,9 @@ export function DayQueue({
   const slotTimes = [...new Set([...rule.slots.map((s) => s.t), ...today.map((p) => p.t)])].sort()
   const capOf = (t: string) => rule.slots.find((s) => s.t === t)?.n ?? 0
 
-  const groups: PlatformGroup[] = rule.channels.map((channel) => {
-    const items = today
+  const byChannel = rule.channels.map((channel) => ({
+    channel,
+    items: today
       .filter((p) => p.ch === channel.name)
       .sort((a, b) => a.t.localeCompare(b.t))
       .flatMap((entry) => {
@@ -80,21 +109,27 @@ export function DayQueue({
           .filter((p) => p.hid === entry.hid && p.ch !== entry.ch)
           .map((p) => platOf(rule.channels.find((c) => c.name === p.ch)?.icon ?? 'YT').name)
         return [{ entry, hold, past, alsoOn, ...faceOf(hold, channel, past) }]
-      })
-    return { channel, items, slots: [] }
-  })
+      }),
+  }))
 
   const matches = (x: QueueItem) => kind === '전체' || x.hold.kind === kind
-  const all = groups.flatMap((g) => g.items)
-  const visibleGroups = groups
-    .map((g) => {
-      const items = g.items.filter(matches)
-      const slots = slotTimes
-        .map((time) => ({ time, cap: capOf(time), items: items.filter((x) => x.entry.t === time) }))
-        .filter((s) => s.items.length > 0)
-      return { ...g, items, slots }
+  const all = byChannel.flatMap((g) => g.items)
+
+  /* 시간대가 먼저, 그 아래가 플랫폼입니다 — 빈 자리도 보여 줍니다(자동배치로 채울 자리) */
+  const timeGroups: TimeGroup[] = slotTimes
+    .map((time) => {
+      const cap = capOf(time)
+      const channels = byChannel
+        .map((g) => ({
+          channel: g.channel,
+          cap,
+          items: g.items.filter((x) => matches(x) && x.entry.t === time),
+        }))
+        .filter((c) => c.items.length > 0 || (publishes && cap > 0 && !isPastSlot(day, time)))
+      return { time, cap, channels, items: channels.flatMap((c) => c.items) }
     })
-    .filter((g) => g.items.length > 0)
+    .filter((g) => g.channels.length > 0)
+
   const waiting = all.filter((x) => !x.past).length
   const countOf = (k: (typeof KINDS)[number]) =>
     k === '전체' ? all.length : all.filter((x) => x.hold.kind === k).length
@@ -131,124 +166,178 @@ export function DayQueue({
         <span className={styles.groupSub}>{publishes ? slotSub : '이 날은 발행이 없습니다'}</span>
       </div>
 
-      {!visibleGroups.length ? (
+      {!timeGroups.length ? (
         <div className={styles.empty}>
           {publishes ? `${kind} 영상은 대기 중인 게 없습니다` : '이 날은 발행 요일이 아닙니다'}
         </div>
       ) : (
-        visibleGroups.map((g) => (
-          <div key={g.channel.name} className={styles.platformGroup}>
-            <div className={styles.platformHead}>
-              <i data-platform={g.channel.icon}>{markOf(g.channel.icon)}</i>
-              <strong>{platOf(g.channel.icon).name}</strong>
-              <span className={styles.account}>{g.channel.name.split(' · ')[1] ?? g.channel.name}</span>
-              <span className={styles.platformCount}>{g.items.filter((x) => !x.past).length}개 예정</span>
-              <span className={cx(styles.connection, (g.channel.expired || g.channel.gated) && styles.connectionWarn)}>
-                {g.channel.expired ? '● 재연결 필요' : g.channel.gated ? '● 기록만' : '● 연결됨'}
-              </span>
-            </div>
-
-            {/* 표 머리글은 플랫폼마다 한 번, 시간대는 그 안에서 줄로 나눕니다 */}
-            {view === 'list' && (
-              <div className={styles.table}>
-                <div className={styles.tableHead}>
-                  <span>제목</span>
-                  <span>종류</span>
-                  <span>상태</span>
-                  <span>길이</span>
-                  <span />
-                </div>
-                {g.slots.map((slot) => (
-                  <Fragment key={slot.time}>
-                    <div className={styles.slotRow}>
-                      <strong>{slot.time}</strong>
-                      <span className={styles.slotCount}>
-                        {slot.items.length}개
-                        {slot.cap > slot.items.length && ` · ${slot.cap - slot.items.length}자리 남음`}
-                      </span>
-                    </div>
-                    {slot.items.map((x) => (
-                      <div key={`${x.entry.t}|${x.hold.id}`} className={styles.row}>
-                        <div className={styles.rowTitle}>
-                          <span title={titleOf(x.hold)}>{titleOf(x.hold)}</span>
-                          {x.alsoOn.length > 0 && <small>{x.alsoOn.join(' · ')} 에도 나감</small>}
-                        </div>
-                        <span>
-                          <span className={styles.kindChip} style={toneOf(x.hold.kind)}>
-                            {x.hold.kind}
-                          </span>
-                        </span>
-                        <span className={cx(styles.state, styles[x.tone])}>{x.state}</span>
-                        <span className={styles.meta}>{x.hold.dur}</span>
-                        <div className={styles.actions}>{actions(x, rule, store, day, g.channel.name)}</div>
-                      </div>
-                    ))}
-                  </Fragment>
-                ))}
+        timeGroups.map((tg, ti) => {
+          const open = tg.channels.reduce((n, c) => n + openSeats(day, tg.time, c), 0)
+          return (
+            <div key={tg.time} className={styles.timeGroup}>
+              <div className={styles.timeHead}>
+                <strong>{tg.time}</strong>
+                <span className={styles.timeCount}>{tg.items.length}개</span>
+                {open > 0 && <span className={styles.timeOpen}>{open}자리 남음</span>}
+                {isPastSlot(day, tg.time) && <span className={styles.timeDone}>지난 시간대</span>}
               </div>
-            )}
 
-            {view === 'grid' && g.slots.map((slot) => (
-              <div key={slot.time} className={styles.slotGroup}>
-                <div className={styles.slotHead}>
-                  <strong>{slot.time}</strong>
-                  <span className={styles.slotCount}>
-                    {slot.items.length}개{slot.cap > slot.items.length && ` · ${slot.cap - slot.items.length}자리 남음`}
-                  </span>
-                </div>
-              <div className={styles.cards}>
-                {slot.items.map((x) => (
-                  <article key={`${x.entry.t}|${x.hold.id}`} className={styles.card}>
-                    <button
-                      type="button"
-                      className={styles.cardThumb}
-                      style={{ aspectRatio: x.hold.kind === '숏폼' ? '9 / 16' : '16 / 9' }}
-                      aria-label={`${titleOf(x.hold)} 재생`}
-                      onClick={() =>
-                        store.setPlayer({
-                          title: titleOf(x.hold),
-                          kind: x.hold.kind,
-                          meta: `${platOf(g.channel.icon).name} · ${d.label} ${x.entry.t}`,
-                        })
-                      }
-                    >
-                      <img src={x.hold.kind === '숏폼' ? portraitThumb(x.hold.img) : frameThumb(x.hold.img)} alt="" draggable={false} />
-                      {x.hold.rendering && <span className={styles.cardFlag}>인코딩 중…</span>}
-                      {!x.hold.rendering && x.hold.cueStale && (
-                        <span className={cx(styles.cardFlag, styles.cardFlagWarn)}>수정 반영 전</span>
+              {tg.channels.map((c, ci) => {
+                const upcoming = c.items.filter((x) => !x.past).length
+                const seats = openSeats(day, tg.time, c)
+                return (
+                  <div key={c.channel.name} className={styles.platformGroup}>
+                    <div className={styles.platformHead}>
+                      <ChannelIcon channel={c.channel.icon} size={18} />
+                      <strong>{platOf(c.channel.icon).name}</strong>
+                      <span className={styles.account}>
+                        {c.channel.name.split(' · ')[1] ?? c.channel.name}
+                      </span>
+                      <span className={styles.platformCount}>
+                        {upcoming > 0
+                          ? `${upcoming}개 예정`
+                          : c.items.length > 0
+                            ? `${c.items.length}개 발행됨`
+                            : '아직 없음'}
+                        {seats > 0 && ` · ${seats}자리 남음`}
+                      </span>
+                      {/* 정상 연결은 적지 않습니다 — 손봐야 할 때만 보입니다 */}
+                      {(c.channel.expired || c.channel.gated) && (
+                        <span className={cx(styles.connection, styles.connectionWarn)}>
+                          {c.channel.expired ? '● 재연결 필요' : '● 기록만'}
+                        </span>
                       )}
-                      <span className={styles.cardChips}>
-                        <span>{x.hold.dur}</span>
-                        <span>{x.entry.t}</span>
-                      </span>
-                    </button>
-                    <div className={styles.cardBody}>
-                      <div className={styles.cardChipRow}>
-                        <span className={styles.kindChip} style={toneOf(x.hold.kind)}>
-                          {x.hold.kind}
-                        </span>
-                        <span className={cx(styles.state, styles[x.tone])}>{x.state}</span>
-                      </div>
-                      <div className={styles.cardTitle}>{titleOf(x.hold)}</div>
-                      {x.alsoOn.length > 0 && <div className={styles.alsoOn}>{x.alsoOn.join(' · ')} 에도 나감</div>}
-                      <div className={styles.actions}>{actions(x, rule, store, day, g.channel.name, true)}</div>
                     </div>
-                  </article>
-                ))}
-              </div>
-              </div>
-            ))}
-          </div>
-        ))
+
+                    {/* 열 이름은 맨 위 한 번만 — 묶음마다 되풀이하지 않습니다 */}
+                    {view === 'list' && (
+                      <div className={styles.table}>
+                        {ti === 0 && ci === 0 && (
+                          <div className={styles.tableHead}>
+                            <span>제목</span>
+                            <span>종류</span>
+                            <span>상태</span>
+                            <span>길이</span>
+                            <span />
+                          </div>
+                        )}
+                        {c.items.map((x) => (
+                          <div key={`${x.entry.t}|${x.hold.id}`} className={styles.row}>
+                            <div className={styles.rowTitle}>
+                              <span title={titleOf(x.hold)}>{titleOf(x.hold)}</span>
+                              {x.alsoOn.length > 0 && <small>{x.alsoOn.join(' · ')} 에도 나감</small>}
+                            </div>
+                            <span>
+                              <span className={styles.kindChip} style={toneOf(x.hold.kind)}>
+                                {x.hold.kind}
+                              </span>
+                            </span>
+                            <span className={cx(styles.state, styles[x.tone])}>{x.state}</span>
+                            <span className={styles.meta}>{x.hold.dur}</span>
+                            <div className={styles.actions}>
+                              {actions(x, rule, store, day, c.channel.name)}
+                            </div>
+                          </div>
+                        ))}
+                        {/* 아직 비어 있는 자리 — 끌어다 놓거나 자동배치로 채웁니다 */}
+                        {Array.from({ length: seats }, (_, i) => (
+                          <div
+                            key={`empty-${i}`}
+                            className={cx(
+                              styles.emptyRow,
+                              store.cellHover === dropKey(c.channel.name, tg.time) && styles.dropTarget,
+                            )}
+                            {...dropProps(c.channel.name, tg.time)}
+                          >
+                            <span>비어 있는 자리 — 보관함에서 끌어다 놓으세요</span>
+                            <button type="button" onClick={() => store.autoFill(rule, day)}>
+                              자동배치로 채우기
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {view === 'grid' && (
+                      <div className={styles.cards}>
+                        {c.items.map((x) => (
+                          <article key={`${x.entry.t}|${x.hold.id}`} className={styles.card}>
+                            <button
+                              type="button"
+                              className={styles.cardThumb}
+                              style={{ aspectRatio: x.hold.kind === '숏폼' ? '9 / 16' : '16 / 9' }}
+                              aria-label={`${titleOf(x.hold)} 재생`}
+                              onClick={() =>
+                                store.setPlayer({
+                                  title: titleOf(x.hold),
+                                  kind: x.hold.kind,
+                                  meta: `${platOf(c.channel.icon).name} · ${d.label} ${x.entry.t}`,
+                                })
+                              }
+                            >
+                              <img src={x.hold.kind === '숏폼' ? portraitThumb(x.hold.img) : frameThumb(x.hold.img)} alt="" draggable={false} />
+                              {x.hold.rendering && <span className={styles.cardFlag}>인코딩 중…</span>}
+                              {!x.hold.rendering && x.hold.cueStale && (
+                                <span className={cx(styles.cardFlag, styles.cardFlagWarn)}>수정 반영 전</span>
+                              )}
+                              <span className={styles.cardChips}>
+                                <span>{x.hold.dur}</span>
+                                <span>{x.entry.t}</span>
+                              </span>
+                            </button>
+                            <div className={styles.cardBody}>
+                              <div className={styles.cardChipRow}>
+                                <span className={styles.kindChip} style={toneOf(x.hold.kind)}>
+                                  {x.hold.kind}
+                                </span>
+                                <span className={cx(styles.state, styles[x.tone])}>{x.state}</span>
+                              </div>
+                              <div className={styles.cardTitle}>{titleOf(x.hold)}</div>
+                              {x.alsoOn.length > 0 && (
+                                <div className={styles.alsoOn}>{x.alsoOn.join(' · ')} 에도 나감</div>
+                              )}
+                              <div className={styles.actions}>
+                                {actions(x, rule, store, day, c.channel.name, true)}
+                              </div>
+                            </div>
+                          </article>
+                        ))}
+                        {/* 빈 자리도 같은 칸으로 — 리스트와 같은 자리에 놓을 수 있습니다 */}
+                        {Array.from({ length: seats }, (_, i) => (
+                          <div
+                            key={`empty-${i}`}
+                            className={cx(
+                              styles.emptyCard,
+                              store.cellHover === dropKey(c.channel.name, tg.time) && styles.dropTarget,
+                            )}
+                            {...dropProps(c.channel.name, tg.time)}
+                          >
+                            <span>비어 있는 자리</span>
+                            <small>보관함에서 끌어다 놓으세요</small>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })
       )}
     </section>
   )
 }
 
+/** 오늘의 지난 시간대인지 — 지난 자리는 빈 칸으로 보여 주지 않습니다 */
+const isPastSlot = (day: number, time: string) => day === 0 && time < NOW_T
+
+/** 이 플랫폼의 이 시간대에 아직 비어 있는 자리 수 */
+const openSeats = (day: number, time: string, slot: { cap: number; items: unknown[] }) =>
+  isPastSlot(day, time) ? 0 : Math.max(0, slot.cap - slot.items.length)
+
 const titleOf = (h: Hold) => h.line1 || h.title
 const toneOf = (kind: HoldKind) => ({ background: KIND_TONE[kind].bg, color: KIND_TONE[kind].fg })
-const markOf = (icon: string | undefined) =>
-  icon === 'NC' ? 'N' : icon === 'TT' ? '♪' : icon === 'IG' ? '◎' : '▶'
 
 /** "9.30 (수)" → "9월 30일 (수) · 오늘" */
 function dayLabel(day: number) {
@@ -278,10 +367,10 @@ function actions(x: QueueItem, rule: Rule, store: AutoDeployStore, day: number, 
         <button
           type="button"
           className={styles.ghostBtn}
-          title={`${platOf(rule.channels.find((c) => c.name === channel)?.icon ?? 'YT').name} 편성에서만 뺍니다`}
+          title={`${platOf(rule.channels.find((c) => c.name === channel)?.icon ?? 'YT').name} 편성에서만 뺍니다 — 영상은 보관함에 남습니다`}
           onClick={() => store.removeFrom(rule, channel, day, x.entry.t, x.hold.id)}
         >
-          빼기
+          삭제
         </button>
       )}
     </>

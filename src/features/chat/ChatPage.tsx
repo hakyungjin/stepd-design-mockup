@@ -3,6 +3,7 @@ import type { ScreenKey } from '@/app/screens'
 import { NavIcon } from '@/components/ui/NavIcon'
 import type { ChatMockStore } from './useChatMock'
 import type { ScheduledTask, ScheduledTasksStore } from './useScheduledTasksMock'
+import { AgentWelcome } from './AgentWelcome'
 import { ScheduledTasksPanel } from './ScheduledTasksPanel'
 import { TaskEditor, type TaskEditorState } from './TaskEditor'
 import { scheduleLabel } from './useScheduledTasksMock'
@@ -11,7 +12,6 @@ import { ChatSurface } from './ChatSurface'
 import type { ChatInputHandle } from './ChatSurface.types'
 /* 작업 보드는 결과가 생길 때 처음 불러옵니다 */
 const WorkBoard = lazy(() => import('./WorkBoard').then((m) => ({ default: m.WorkBoard })))
-import type { ProgramName } from './workspaceMock'
 
 export function ChatPage({ store, tasks, emailAvailable, onNavigate, initialInput = '', onInitialInputUsed }: { store: ChatMockStore; tasks: ScheduledTasksStore; emailAvailable: boolean; onNavigate: (screen: ScreenKey) => void; /** 홈 입력창에서 넘어온 문장 */ initialInput?: string; onInitialInputUsed?: () => void }) {
   const [input, setInput] = useState(initialInput)
@@ -61,7 +61,7 @@ export function ChatPage({ store, tasks, emailAvailable, onNavigate, initialInpu
   }
   return <div className={styles.page}>
     <header className={styles.topBar}>
-      <div><button type="button" className={styles.iconButton} aria-label={historyOpen ? '채팅 메뉴 접기' : '채팅 메뉴 펼치기'} aria-expanded={historyOpen} aria-controls="chat-workspace-menu" onClick={() => setHistoryOpen(!historyOpen)}><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg></button><strong>{showingTasks ? '예약 작업' : 'STEP D AI 에이전트'}</strong></div>
+      <div><button type="button" className={styles.iconButton} aria-label={historyOpen ? '채팅 메뉴 접기' : '채팅 메뉴 펼치기'} aria-expanded={historyOpen} aria-controls="chat-workspace-menu" onClick={() => setHistoryOpen(!historyOpen)}><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M9 4v16" /></svg></button><span className={styles.agentMark} aria-hidden>✦</span><strong>{showingTasks ? '예약 작업' : 'STEP D 에이전트'}</strong>{showingTasks ? <span className={styles.agentState}>{tasks.tasks.length}건 저장됨</span> : <span className={styles.agentState} data-busy={store.busy || undefined}><i /> {store.busy ? '답변을 작성하는 중' : '대기 중'}</span>}</div>
       {showingTasks ? <button type="button" className={styles.newTop} onClick={() => onNavigate('settings')} aria-label="플러그인 관리"><NavIcon screen="settings" size={14} /> 플러그인 관리</button> : store.selected && <button type="button" className={styles.newTop} onClick={saveConversation} disabled={store.busy} aria-label="예약 작업으로 저장"><NavIcon screen="schedule" size={14} /> 예약 작업으로 저장</button>}
     </header>
     {!showingTasks && <div className={styles.mobilePanels} aria-label="에이전트 화면"><button type="button" aria-pressed={mobilePanel === 'chat'} onClick={() => setMobilePanel('chat')}>대화</button>{hasBoard && <button type="button" aria-pressed={mobilePanel === 'board'} onClick={() => setMobilePanel('board')}>작업 보드<span>1</span></button>}</div>}
@@ -70,15 +70,15 @@ export function ChatPage({ store, tasks, emailAvailable, onNavigate, initialInpu
         <button type="button" className={styles.mobileScrim} aria-label="에이전트 메뉴 닫기" onClick={() => setHistoryOpen(false)} />
         <aside id="chat-workspace-menu" className={styles.history} aria-label="대화와 예약 작업">
           <button type="button" className={styles.newChat} onClick={newChat}>＋ 새 대화</button>
-          <button type="button" className={styles.workspaceLink} aria-current={showingTasks ? 'page' : undefined} onClick={openTasks}><NavIcon screen="schedule" size={16} /><span>예약 작업</span><small>{tasks.tasks.length}</small></button>
-          <div className={styles.historyHead}>최근 대화 <span>{store.threads.length}</span></div>
-          {store.threads.length ? store.threads.map((thread) => <div className={styles.threadRow} key={thread.id}><button type="button" className={styles.thread} aria-current={!showingTasks && store.selectedId === thread.id ? 'true' : undefined} onClick={() => openConversation(thread.id)} title={thread.title}><NavIcon screen="chat" size={14} /><span>{thread.title}</span></button><button type="button" className={styles.deleteThread} aria-label={`${thread.title} 대화 삭제`} onClick={() => store.remove(thread.id)}>×</button></div>) : <p className={styles.emptyHistory}>새 대화를 시작하면<br />여기에 대화가 쌓입니다.</p>}
-          <div className={styles.historyHead}>저장한 작업 <span>{tasks.tasks.length}</span></div>
+          <button type="button" className={styles.workspaceLink} aria-current={showingTasks ? 'page' : undefined} onClick={openTasks}><NavIcon screen="schedule" size={16} /><span>예약 작업</span></button>
+          <div className={styles.historyHead}>최근 대화</div>
+          {store.threads.length ? store.threads.map((thread) => <div className={styles.threadRow} key={thread.id}><button type="button" className={styles.thread} aria-current={!showingTasks && store.selectedId === thread.id ? 'true' : undefined} onClick={() => openConversation(thread.id)} title={thread.title}><span>{thread.title}</span></button><button type="button" className={styles.deleteThread} aria-label={`${thread.title} 대화 삭제`} onClick={() => store.remove(thread.id)}>×</button></div>) : <p className={styles.emptyHistory}>새 대화를 시작하면<br />여기에 대화가 쌓입니다.</p>}
+          <div className={styles.historyHead}>저장한 작업</div>
           {tasks.tasks.map((task) => <button key={task.id} type="button" className={`${styles.thread} ${styles.taskThread}`} onClick={() => editTask(task)} title={task.name}><span className={task.enabled ? styles.taskDot : styles.taskDotPaused} aria-label={task.enabled ? '사용 중' : '일시정지'} /><span>{task.name}</span></button>)}
           <button type="button" className={styles.addTask} onClick={addTaskByChat}>＋ 대화로 작업 추가</button>
         </aside>
       </>}
-      {showingTasks ? <ScheduledTasksPanel store={tasks} threads={store.threads} emailAvailable={emailAvailable} onCreate={addTaskByChat} onEdit={editTask} onOpenConversation={openConversation} /> : <div className={styles.agentSpace} data-panel={mobilePanel}><div className={styles.conversationPane}><div className={styles.contextBar}><label><span>프로그램</span><select aria-label="대화할 프로그램" value={store.program} disabled={store.busy} onChange={(e) => { store.changeProgram(e.target.value as ProgramName); setInput(''); setMobilePanel('chat') }}><option>나는 SOLO</option><option>나미브</option></select></label><span>전체 회차 · 분석 완료</span></div><ChatSurface onRevealBoard={() => setMobilePanel('board')} store={store} input={input} onInputChange={setInput} onSend={send} inputRef={inputRef} renderTaskSuggestion={(message) => <TaskSuggestion message={{ ...message, createdTaskId: tasks.tasks.some((task) => task.id === message.createdTaskId) ? message.createdTaskId : undefined }} onCreate={() => {
+      {showingTasks ? <ScheduledTasksPanel store={tasks} threads={store.threads} emailAvailable={emailAvailable} onCreate={addTaskByChat} onEdit={editTask} onOpenConversation={openConversation} /> : <div className={styles.agentSpace} data-panel={mobilePanel}><div className={styles.conversationPane}><ChatSurface onRevealBoard={() => setMobilePanel('board')} store={store} input={input} onInputChange={setInput} onSend={send} inputRef={inputRef} welcome={<AgentWelcome onPrompt={prompt} />} renderTaskSuggestion={(message) => <TaskSuggestion message={{ ...message, createdTaskId: tasks.tasks.some((task) => task.id === message.createdTaskId) ? message.createdTaskId : undefined }} onCreate={() => {
         const id = tasks.save({ ...message.suggestion!, sourceThreadId: store.selectedId ?? undefined })
         store.markCreated(message.id, id)
         setNotice('예약 작업을 추가했습니다.')

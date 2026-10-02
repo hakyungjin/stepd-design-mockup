@@ -26,7 +26,8 @@ import type {
 } from './types'
 import { isArchive } from './types'
 import { AddDeployDialog } from './components/AddDeployDialog'
-import { CalendarToolbar, type SubTab } from './components/CalendarToolbar'
+import { CalendarToolbar } from './components/CalendarToolbar'
+import { DayPanel } from './components/DayPanel'
 import { ItemDrawer } from './components/ItemDrawer'
 import { MonthView } from './components/MonthView'
 import { SummaryBar } from './components/SummaryBar'
@@ -95,10 +96,13 @@ export function DeployCalendarPage({
   const [swap, setSwap] = useState<{ id: string; anchor: SwapAnchor } | null>(null)
   const [drawer, setDrawer] = useState<string | null>(null)
   const [add, setAdd] = useState<{ date: DateStr; time: TimeStr; fromCell: boolean } | null>(null)
+  /** 월간에서 날짜 칸을 눌러 연 하루 보기 */
+  const [day, setDay] = useState<DateStr | null>(null)
 
   const closeOverlays = () => {
     setSwap(null)
     setDrawer(null)
+    setDay(null)
   }
 
   const openSwap = (id: string, anchor: SwapAnchor) => {
@@ -106,8 +110,10 @@ export function DeployCalendarPage({
     setSwap({ id, anchor })
   }
 
+  /* 하루 보기 위에 서랍을 겹치지 않습니다 — 고른 다음 창을 닫습니다 */
   const openDrawer = (id: string) => {
     setSwap(null)
+    setDay(null)
     setDrawer(id)
   }
 
@@ -177,24 +183,15 @@ export function DeployCalendarPage({
     return `${monthStart.getFullYear()}년 ${monthStart.getMonth() + 1}월`
   })()
 
-  /** 주간 뷰는 화살표로 한 주씩 넘깁니다 */
+  /*
+   * 주간·월간 모두 화살표로 넘깁니다.
+   * 달을 버튼으로 늘어놓으면 해가 쌓일수록 줄이 끝없이 길어집니다.
+   */
   const stepWeek = (delta: number) =>
     cal.setWeek(iso(addDays(parseDate(cal.week), delta * 7)))
 
-  const subTabs: SubTab[] = useMemo(() => {
-    // 주간은 화살표로 넘기므로 하위 탭이 없습니다
-    if (isToday || isWeek) return []
-    return [0, 1].map((delta) => {
-      const d = new Date(now.getFullYear(), now.getMonth() + delta, 1)
-      const key = iso(d)
-      return {
-        key,
-        label: `${d.getMonth() + 1}월`,
-        active: month === key,
-        onSelect: () => cal.setMonth(key),
-      }
-    })
-  }, [cal, isToday, isWeek, month, now])
+  const stepMonth = (delta: number) =>
+    cal.setMonth(iso(new Date(monthStart.getFullYear(), monthStart.getMonth() + delta, 1)))
 
   const summary = useMemo(() => {
     const weekLabel =
@@ -273,9 +270,8 @@ export function DeployCalendarPage({
       <CalendarToolbar
         view={view}
         onViewChange={cal.setView}
-        subTabs={subTabs}
         rangeLabel={rangeLabel}
-        onStepRange={isWeek ? stepWeek : undefined}
+        onStepRange={isWeek ? stepWeek : isToday ? undefined : stepMonth}
         onOpenAdd={() => openAdd()}
       />
 
@@ -323,11 +319,25 @@ export function DeployCalendarPage({
           items={items}
           videos={videos}
           archiveFor={archiveFor}
-          onPickWeek={(date) => {
+          onPickDay={setDay}
+        />
+      )}
+
+      {day && (
+        <DayPanel
+          date={day}
+          items={items}
+          videos={videos}
+          archiveFor={archiveFor}
+          isPast={isPast}
+          onClose={() => setDay(null)}
+          onOpenItem={openDrawer}
+          onOpenWeek={() => {
+            setDay(null)
             cal.setView('week')
-            cal.setWeek(iso(mondayOf(parseDate(date))))
+            cal.setWeek(iso(mondayOf(parseDate(day))))
           }}
-          onOpenDrawer={openDrawer}
+          onAdd={() => openAdd(day)}
         />
       )}
 
@@ -335,16 +345,16 @@ export function DeployCalendarPage({
         <SwapPopover
           item={swapItem}
           videos={videos}
-          items={items}
           anchor={swap.anchor}
           onClose={() => setSwap(null)}
-          onSwap={(id, vid) => {
-            setSwap(null)
-            cal.swapVideo(id, vid)
-          }}
+          /* 확인·수정은 편집기로 — 숏폼만 열리고 나머지는 아직 만드는 중입니다 */
           onEdit={(id) => {
             setSwap(null)
-            setDrawer(id)
+            const video = videos[findItem(id)?.vid ?? '']
+            if (!video) return
+            if (video.type !== 'short') return say(`${VIDEO_TYPE[video.type].label} 편집기는 준비 중입니다`)
+            if (onNavigate) onNavigate('editor-short')
+            else say('숏폼 편집기로 이동할 수 없습니다')
           }}
           onRemove={(id) => {
             setSwap(null)
@@ -362,7 +372,6 @@ export function DeployCalendarPage({
           now={now}
           isPast={isPast}
           onClose={closeOverlays}
-          onOpenSwap={openSwap}
           onMove={cal.moveItem}
           onTogglePlatform={cal.togglePlatform}
           onSetStatus={cal.setItemStatus}
@@ -374,8 +383,10 @@ export function DeployCalendarPage({
             cal.cancelItem(id)
           }}
           onOpenEditor={(video) => {
-            if (onNavigate) onNavigate(video.type === 'hl' ? 'editor-hl' : video.type === 'short' ? 'editor-short' : 'editor-clip')
-            else say(`${VIDEO_TYPE[video.type].label} 편집기로 이동할 수 없습니다`)
+            /* 숏폼 편집기만 열립니다 — 클립·하이라이트는 아직 만드는 중입니다 */
+            if (video.type !== 'short') return say(`${VIDEO_TYPE[video.type].label} 편집기는 준비 중입니다`)
+            if (onNavigate) onNavigate('editor-short')
+            else say('숏폼 편집기로 이동할 수 없습니다')
           }}
         />
       )}

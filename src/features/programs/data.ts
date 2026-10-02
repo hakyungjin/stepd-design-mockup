@@ -1,22 +1,144 @@
 /*
  * 프로그램 화면 목 데이터.
- * STEPD 연동 시 이 파일을 API 응답으로 교체하세요.
+ *
+ * 필드 이름을 STEPD 본 저장소(`apps/web/src/lib/types.ts`)에 맞췄습니다 —
+ * section · owner · pipelineGenre · schedule · broadcaster · currentInfo ·
+ * firstAiredDate · endedDate · episodeCount · rightsUntil · rightsNote ·
+ * hasPosterImage. 그래야 화면을 그대로 들고 가 스토어만 바꿔 끼울 수 있습니다.
+ *
+ * STEPD 연동 시 PROGRAMS / EPISODES / CLIPS 를 API 응답으로 교체하세요.
  */
+
+import { frameFor } from '@/lib/frames'
 
 export const TODAY = new Date(2026, 8, 29)
 export const ME = '김도윤'
 
-export type ProgramStatus = 'airing' | 'upcoming' | 'ended'
+export type ProgramStatus = 'airing' | 'ended' | 'upcoming'
 
-export const STATUS_STYLE: Record<ProgramStatus, { label: string; bg: string; fg: string }> = {
-  airing: { label: '방영 중', bg: 'rgba(22,163,74,.12)', fg: 'var(--status-success-text)' },
-  upcoming: { label: '편성 예정', bg: 'rgba(28,96,255,.1)', fg: 'var(--bg-active)' },
-  ended: { label: '종영', bg: 'var(--bg-card-hover)', fg: 'var(--text-secondary)' },
+/** 본 저장소의 섹션 목록(= 장르) */
+export const SECTIONS = [
+  '드라마/영화',
+  '예능',
+  '뮤직',
+  '시사',
+  '교양',
+  '라이프',
+  '스포츠',
+  '게임',
+  '어린이',
+  '뉴스',
+  '애니',
+]
+
+export const TARGET_AGES = [0, 7, 12, 15, 19] as const
+export type TargetAge = (typeof TARGET_AGES)[number]
+export const targetAgeLabel = (age: TargetAge) => (age === 0 ? '전체' : `${age}세`)
+export const TARGET_AGE_LABELS = TARGET_AGES.map(targetAgeLabel)
+
+/** 분석 트랙 (본 저장소의 program.pipelineGenre) */
+export type PipelineGenre = 'variety' | 'drama'
+export const TRACK_LABEL: Record<PipelineGenre, string> = {
+  variety: '예능 트랙',
+  drama: '드라마 트랙',
 }
 
-export const GENRES = ['예능', '드라마', '교양', '뮤직', '시사', '라이프', '스포츠', '어린이']
+/* ---------------- 파이프라인 ---------------- */
 
-export const YT_CHANNELS = ['ENA 예능', 'ENA 음악']
+export type PipelineStage =
+  | 'source'
+  | 'merge'
+  | 'split'
+  | 'analyze'
+  | 'recommend'
+  | 'edit'
+  | 'encode'
+  | 'publish'
+
+export const PIPELINE_STAGE_LABELS: Record<PipelineStage, string> = {
+  source: '소스',
+  merge: '병합',
+  split: '분할',
+  analyze: '분석',
+  recommend: '추천',
+  edit: '편집',
+  encode: '인코딩',
+  publish: '배포',
+}
+
+export type StageStatus = 'idle' | 'progress' | 'done' | 'error'
+
+export interface Pipeline {
+  stage: PipelineStage
+  stageStatus: StageStatus
+  /** 0-100. 서버 값 그대로 그립니다 — 화면에서 타이머로 올리지 않습니다 */
+  progress: number
+  note?: string
+}
+
+/* ---------------- 회차 · 미디어 ---------------- */
+
+export interface Episode {
+  id: string
+  programId: string
+  episodeNumber: number
+  /** YYYY-MM-DD. 비면 "방영일 미등록" */
+  broadDate: string
+  pipeline?: Pipeline
+}
+
+export interface Clip {
+  id: string
+  episodeId: string
+  title: string
+  durationSec: number
+  /** '16:9' 또는 '9:16-…' */
+  aspectRatio: string
+  /** 한 군데라도 발행됐는지 */
+  published: boolean
+}
+
+/* ---------------- 프로그램 ---------------- */
+
+/** 설정에서 다루는 출연자 한 명 — [이름, 극중 이름, 영어 표기] */
+export type CastMember = [name: string, role: string, en: string]
+
+export interface Program {
+  id: string
+  title: string
+  status: ProgramStatus
+  /** 섹션(= 장르). 목록 섹션 칩이 이 값으로 갈립니다 */
+  section: string
+  owner: string
+  targetAge: TargetAge
+  /** 분석 트랙. 비면 "분석 트랙 미지정" */
+  pipelineGenre?: PipelineGenre
+  /** 편성 한 줄 (예: 매주 토 오후 7:40) */
+  schedule?: string
+  broadcaster?: string
+  /** 방영 중일 때만 편성 줄에 덧붙는 현재 정보 */
+  currentInfo?: string
+  firstAiredDate?: string
+  endedDate?: string
+  episodeCount: number
+  rightsUntil?: string
+  rightsNote?: string
+  /** 포스터가 등록돼 있는지 — 없으면 "포스터 이미지" 자리를 그립니다 */
+  hasPosterImage: boolean
+  /** 포스터 플레이스홀더 색상 hue (목업 전용) */
+  hue: number
+  cast: CastMember[]
+  /** YouTube 재생목록 [채널, 재생목록][] */
+  yt: Array<[string, string]>
+  /** 자막·메타데이터 언어 */
+  lang: string
+  hideKo: boolean
+  intro: string
+  /** 이 프로그램에만 적용하는 추가 지시 */
+  prompt: string
+}
+
+export const YT_CHANNELS = ['ENA 예능', 'ENA 음악', 'ENA 아카이브']
 
 export const PLAYLISTS: Record<string, string[]> = {
   'ENA 예능': [
@@ -29,50 +151,147 @@ export const PLAYLISTS: Record<string, string[]> = {
   'ENA 아카이브': ['봄날의 레시피 다시보기'],
 }
 
-/** 회차 분석 상태 */
-export type EpisodeState = 'done' | 'run' | 'fail'
+export const PROGRAMS: Program[] = [
+  {
+    id: 'camp',
+    title: '주말 캠핑 클럽',
+    status: 'airing',
+    section: '예능',
+    owner: '김도윤',
+    targetAge: 12,
+    pipelineGenre: 'variety',
+    schedule: '매주 토 오후 7:40',
+    broadcaster: 'ENA',
+    currentInfo: '12회 방영 중',
+    episodeCount: 12,
+    rightsUntil: '2027-03-31',
+    hasPosterImage: true,
+    hue: 150,
+    cast: [
+      ['이준호', '', 'Lee Junho'],
+      ['박세라', '', ''],
+      ['최민', '', 'Choi Min'],
+      ['정하늘', '', ''],
+    ],
+    yt: [['ENA 예능', '주말 캠핑 클럽 모음']],
+    lang: 'ko',
+    hideKo: true,
+    intro: '연예인들이 매주 다른 캠핑장에서 1박 2일을 보내는 리얼리티.',
+    prompt: '',
+  },
+  {
+    id: 'food',
+    title: '오늘의 식탁',
+    status: 'airing',
+    section: '교양',
+    owner: '이서현',
+    targetAge: 0,
+    pipelineGenre: 'variety',
+    schedule: '매주 금 오후 8:00',
+    broadcaster: 'ENA',
+    episodeCount: 88,
+    rightsUntil: '2026-10-20',
+    rightsNote: '재계약 협의 중',
+    hasPosterImage: true,
+    hue: 40,
+    cast: [
+      ['홍지민', '', ''],
+      ['김태오', '', ''],
+    ],
+    yt: [['ENA 예능', '오늘의 식탁 레시피']],
+    lang: 'ko',
+    hideKo: true,
+    intro: '',
+    prompt: '',
+  },
+  {
+    id: 'dong',
+    title: '동네 한 바퀴',
+    status: 'airing',
+    section: '교양',
+    owner: '김도윤',
+    targetAge: 0,
+    pipelineGenre: 'variety',
+    schedule: '매주 목 오후 9:00',
+    broadcaster: 'ENA',
+    episodeCount: 42,
+    hasPosterImage: true,
+    hue: 220,
+    cast: [['윤도현', '', 'Yoon Dohyun']],
+    yt: [],
+    lang: 'ko',
+    hideKo: true,
+    intro: '',
+    prompt: '',
+  },
+  {
+    id: 'music',
+    title: '여름 음악회',
+    status: 'airing',
+    section: '뮤직',
+    owner: '박지훈',
+    targetAge: 0,
+    pipelineGenre: 'variety',
+    schedule: '매주 월 오후 10:30',
+    broadcaster: 'ENA 음악',
+    episodeCount: 6,
+    rightsUntil: '2027-08-31',
+    hasPosterImage: false,
+    hue: 300,
+    cast: [
+      ['한소리', '', ''],
+      ['밴드 파랑', '', 'Band Parang'],
+    ],
+    yt: [['ENA 음악', '여름 음악회 LIVE']],
+    lang: 'ko',
+    hideKo: true,
+    intro: '',
+    prompt: '',
+  },
+  {
+    id: 'spring',
+    title: '봄날의 레시피',
+    status: 'ended',
+    section: '교양',
+    owner: '이서현',
+    targetAge: 0,
+    pipelineGenre: 'variety',
+    endedDate: '2026-06-28',
+    broadcaster: 'ENA',
+    episodeCount: 24,
+    rightsUntil: '2026-12-31',
+    hasPosterImage: true,
+    hue: 20,
+    cast: [['정다은', '', '']],
+    yt: [],
+    lang: 'ko',
+    hideKo: true,
+    intro: '',
+    prompt: '',
+  },
+  {
+    id: 'night',
+    title: '밤의 서점',
+    status: 'upcoming',
+    section: '드라마/영화',
+    owner: '김도윤',
+    targetAge: 15,
+    pipelineGenre: 'drama',
+    firstAiredDate: '2026-10-31',
+    broadcaster: 'ENA',
+    episodeCount: 0,
+    hasPosterImage: false,
+    hue: 265,
+    cast: [],
+    yt: [],
+    lang: 'ko',
+    hideKo: true,
+    intro: '',
+    prompt: '',
+  },
+]
 
-export interface EpisodeRow {
-  n: number
-  air: string
-  state: EpisodeState
-  /** 추천 구간 수 */
-  recs: number
-  /** 배포된 수 */
-  dist: number
-}
-
-export type CastMember = [name: string, role: string, en: string]
-
-export interface Program {
-  id: string
-  title: string
-  status: ProgramStatus
-  genre: string
-  sched?: string
-  first?: string
-  ended?: string
-  owner: string
-  eps: number
-  last?: string
-  /** 포스터/아바타 색상 hue */
-  hue: number
-  /** 디지털 권리 만료일 */
-  rights: string
-  auto: boolean
-  track: 'variety' | 'drama'
-  cast: CastMember[]
-  /** [플랫폼키, 계정명, 문제] */
-  chans: Array<[string, string, string?]>
-  /** YouTube 재생목록 [채널, 재생목록][] */
-  yt: Array<[string, string]>
-  intro: string
-  /** 분석 진행 중인 회차 */
-  run?: { ep: number; stage: string; pct: number }
-  /** 분석 실패한 회차 */
-  fail?: { ep: number; err: string } | null
-  epList: EpisodeRow[]
-}
+/* ---------------- 회차 ---------------- */
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -87,176 +306,53 @@ export const monthDay = (d: Date) => `${pad(d.getMonth() + 1)}/${pad(d.getDate()
 export const daysUntil = (s: string) =>
   Math.round((parseDate(s).getTime() - TODAY.getTime()) / 86_400_000)
 
-/** 회차 목록을 마지막 방영일에서 역산해 만듭니다 */
-export const buildEpisodes = (p: Omit<Program, 'epList'>): EpisodeRow[] => {
-  if (!p.eps || !p.last) return []
-  const out: EpisodeRow[] = []
-  const last = parseDate(p.last)
-  for (let n = p.eps, i = 0; n >= 1; n--, i++) {
-    const d = new Date(last)
+/** 마지막 방영일에서 주 단위로 역산해 회차를 만듭니다 */
+const buildEpisodes = (
+  programId: string,
+  count: number,
+  last: string,
+  running?: Pipeline & { ep: number },
+  failed?: Pipeline & { ep: number },
+): Episode[] => {
+  if (!count) return []
+  const out: Episode[] = []
+  const lastDate = parseDate(last)
+  for (let n = count, i = 0; n >= 1; n--, i++) {
+    const d = new Date(lastDate)
     d.setDate(d.getDate() - 7 * i)
-    let state: EpisodeState = 'done'
-    if (p.run && p.run.ep === n) state = 'run'
-    if (p.fail && p.fail.ep === n) state = 'fail'
-    const recs = 6 + ((n * 7) % 6)
-    d.setHours(23, 10 + ((n * 7) % 40))
-    out.push({
-      n,
-      air: `${monthDay(d)} ${pad(d.getHours())}:${pad(d.getMinutes())}`,
-      state,
-      recs,
-      dist: Math.max(0, recs - (n % 3) - (p.chans.length ? 0 : recs)),
-    })
+    const iso = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+    let pipeline: Pipeline | undefined = { stage: 'publish', stageStatus: 'done', progress: 100 }
+    if (running && running.ep === n) pipeline = running
+    else if (failed && failed.ep === n) pipeline = failed
+    out.push({ id: `${programId}-e${n}`, programId, episodeNumber: n, broadDate: iso, pipeline })
   }
   return out
 }
 
-type ProgramSeed = Omit<Program, 'epList'>
-
-const SEED: ProgramSeed[] = [
-  {
-    id: 'camp',
-    title: '주말 캠핑 클럽',
-    status: 'airing',
-    genre: '예능',
-    sched: '매주 토 오후 7:40',
-    owner: '김도윤',
-    eps: 12,
-    last: '2026-09-26',
-    hue: 150,
-    rights: '2027-03-31',
-    auto: true,
-    track: 'variety',
-    cast: [
-      ['이준호', '', 'Lee Junho'],
-      ['박세라', '', ''],
-      ['최민', '', 'Choi Min'],
-      ['정하늘', '', ''],
-    ],
-    chans: [
-      ['yt', 'ENA 예능'],
-      ['nc', 'ENA 클립'],
-      ['tt', '@ena_official', '재연결 필요'],
-      ['ig', '@ena.official'],
-    ],
-    yt: [['ENA 예능', '주말 캠핑 클럽 모음']],
-    intro: '연예인들이 매주 다른 캠핑장에서 1박 2일을 보내는 리얼리티.',
-    run: { ep: 12, stage: '구간 추천', pct: 64 },
-  },
-  {
-    id: 'food',
-    title: '오늘의 식탁',
-    status: 'airing',
-    genre: '교양',
-    sched: '매주 금 오후 8:00',
-    owner: '이서현',
-    eps: 88,
-    last: '2026-09-25',
-    hue: 40,
-    rights: '2026-10-20',
-    auto: true,
-    track: 'variety',
-    cast: [
-      ['홍지민', '', ''],
-      ['김태오', '', ''],
-    ],
-    chans: [
-      ['yt', 'ENA 예능'],
-      ['nc', 'ENA 클립'],
-      ['tt', '@ena_official', '재연결 필요'],
-      ['ig', '@ena_food', '토큰 10/01 만료'],
-    ],
-    yt: [['ENA 예능', '오늘의 식탁 레시피']],
-    intro: '',
-  },
-  {
-    id: 'dong',
-    title: '동네 한 바퀴',
-    status: 'airing',
-    genre: '교양',
-    sched: '매주 목 오후 9:00',
-    owner: '김도윤',
-    eps: 42,
-    last: '2026-09-24',
-    hue: 220,
-    rights: '',
-    auto: false,
-    track: 'variety',
-    cast: [['윤도현', '', 'Yoon Dohyun']],
-    chans: [
-      ['yt', 'ENA 예능'],
-      ['nc', 'ENA 클립'],
-    ],
-    yt: [],
-    intro: '',
-  },
-  {
-    id: 'music',
-    title: '여름 음악회',
-    status: 'airing',
-    genre: '뮤직',
-    sched: '매주 월 오후 10:30',
-    owner: '박지훈',
-    eps: 6,
-    last: '2026-09-21',
-    hue: 300,
-    rights: '2027-08-31',
-    auto: true,
-    track: 'variety',
-    cast: [
-      ['한소리', '', ''],
-      ['밴드 파랑', '', 'Band Parang'],
-    ],
-    chans: [
-      ['yt', 'ENA 음악'],
-      ['tt', '@ena_official', '재연결 필요'],
-      ['ig', '@ena.official'],
-    ],
-    yt: [['ENA 음악', '여름 음악회 LIVE']],
-    intro: '',
-    fail: { ep: 6, err: '원본에 음성 트랙이 없습니다' },
-  },
-  {
-    id: 'spring',
-    title: '봄날의 레시피',
-    status: 'ended',
-    genre: '교양',
-    ended: '2026-06-28',
-    owner: '이서현',
-    eps: 24,
-    last: '2026-06-28',
-    hue: 20,
-    rights: '2026-12-31',
-    auto: false,
-    track: 'variety',
-    cast: [['정다은', '', '']],
-    chans: [['yt', 'ENA 아카이브', '연결 해제됨']],
-    yt: [],
-    intro: '',
-  },
-  {
-    id: 'night',
-    title: '밤의 서점',
-    status: 'airing',
-    genre: '교양',
-    sched: '매주 목 오후 11:00',
-    owner: '김도윤',
-    eps: 0,
-    hue: 265,
-    rights: '',
-    auto: false,
-    track: 'drama',
-    cast: [],
-    chans: [],
-    yt: [],
-    intro: '',
-  },
+export const EPISODES: Episode[] = [
+  ...buildEpisodes('camp', 12, '2026-09-26', {
+    ep: 12,
+    stage: 'recommend',
+    stageStatus: 'progress',
+    progress: 64,
+    note: '구간 42/68',
+  }),
+  ...buildEpisodes('food', 88, '2026-09-25'),
+  ...buildEpisodes('dong', 42, '2026-09-24'),
+  ...buildEpisodes('music', 6, '2026-09-21', undefined, {
+    ep: 6,
+    stage: 'analyze',
+    stageStatus: 'error',
+    progress: 18,
+    note: '원본에 음성 트랙이 없습니다',
+  }),
+  ...buildEpisodes('spring', 24, '2026-06-28'),
 ]
 
-export const PROGRAMS: Program[] = SEED.map((p) => ({ ...p, epList: buildEpisodes(p) }))
+/* ---------------- 미디어 ---------------- */
 
 /** 프로그램별 미디어 제목 풀 */
-export const MEDIA_TITLES: Record<string, string[]> = {
+const CLIP_TITLES: Record<string, string[]> = {
   camp: [
     '새벽 4시 텐트가 무너졌다',
     '불멍하다 터진 진심',
@@ -286,27 +382,62 @@ export const MEDIA_TITLES: Record<string, string[]> = {
   spring: ['봄나물 비빔밥', '딸기 타르트 만들기', '정다은의 도시락 반찬', '마지막 회 비하인드'],
 }
 
+/** 분석이 끝난 회차에서 채택한 구간만 미디어로 올라옵니다 */
+const buildClips = (): Clip[] => {
+  const out: Clip[] = []
+  for (const [programId, titles] of Object.entries(CLIP_TITLES)) {
+    const done = EPISODES.filter(
+      (e) => e.programId === programId && e.pipeline?.stageStatus === 'done',
+    ).slice(0, 4)
+    done.forEach((e, ei) => {
+      for (let j = 0; j < 3; j++) {
+        const k = ei * 3 + j
+        const short = k % 3 !== 2
+        out.push({
+          id: `${e.id}-c${j}`,
+          episodeId: e.id,
+          title: titles[k % titles.length],
+          durationSec: short ? 28 + ((k * 11) % 32) : 95 + ((k * 37) % 180),
+          aspectRatio: short ? '9:16-crop-full' : '16:9',
+          published: !(ei === 0 && j >= 1),
+        })
+      }
+    })
+  }
+  return out
+}
+
+export const CLIPS: Clip[] = buildClips()
+
 /* ---------------- 스타일 헬퍼 ---------------- */
 
 export const posterColor = (hue: number) => `oklch(0.34 0.045 ${hue})`
 export const posterTextColor = (hue: number) => `oklch(0.86 0.07 ${hue})`
-/* 원본은 밝은 테마 기준이라 다크 UI에 맞게 낮춘 값입니다 */
-export const mediaThumbColor = (hue: number) => `oklch(0.30 0.04 ${hue})`
-export const mediaFrameColor = (hue: number) => `oklch(0.42 0.055 ${hue})`
 
-/** 설정 폼 */
+/** 회차·미디어 썸네일 — 목업은 생성된 SVG 플레이스홀더를 씁니다 */
+export const thumbOf = (id: string) => frameFor(id)
+
+/* ---------------- 설정 폼 (우리 디자인의 축소 필드) ---------------- */
+
+/**
+ * 본 저장소 설정 화면은 카드 10장(소개 · 방영 정보 · 편성·담당·권리 · 크레딧 ·
+ * 분위기 태그 · 출연진 · 해외 배포 · 유튜브 재생목록 · 썸네일 엔진 · 기본 정보)입니다.
+ * 이 목업은 **네 묶음으로 줄인 축소 필드**만 둡니다 — 거기가 우리 디자인입니다.
+ */
 export interface ProgramForm {
   title: string
-  genre: string
+  section: string
   owner: string
+  targetAge: TargetAge
   status: ProgramStatus
-  sched: string
-  first: string
-  ended: string
+  schedule: string
+  firstAiredDate: string
+  endedDate: string
+  rightsUntil: string
   lang: string
   hideKo: boolean
   yt: Array<[string, string]>
-  track: 'variety' | 'drama'
+  pipelineGenre: PipelineGenre
   intro: string
   prompt: string
   cast: CastMember[]
@@ -314,17 +445,19 @@ export interface ProgramForm {
 
 export const formOf = (p: Program): ProgramForm => ({
   title: p.title,
-  genre: p.genre,
+  section: p.section,
   owner: p.owner,
+  targetAge: p.targetAge,
   status: p.status,
-  sched: p.sched ?? '',
-  first: p.first ?? '',
-  ended: p.ended ?? '',
-  lang: 'ko',
-  hideKo: true,
+  schedule: p.schedule ?? '',
+  firstAiredDate: p.firstAiredDate ?? '',
+  endedDate: p.endedDate ?? '',
+  rightsUntil: p.rightsUntil ?? '',
+  lang: p.lang,
+  hideKo: p.hideKo,
   yt: p.yt.map((x) => [...x] as [string, string]),
-  track: p.track,
+  pipelineGenre: p.pipelineGenre ?? 'variety',
   intro: p.intro,
-  prompt: '',
+  prompt: p.prompt,
   cast: p.cast.map((c) => [...c] as CastMember),
 })

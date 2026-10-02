@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Chip } from '@/components/ui/Badge'
 import { Pill, Segment, Select } from '@/components/ui/Controls'
+import { ChannelIcon } from '@/components/ui/ChannelIcon'
 import type { ScreenKey } from '@/app/screens'
 import {
   CAUSES,
@@ -267,7 +268,7 @@ export function DeployPage({ showAttention = true, onNavigate }: DeployPageProps
                       style={{ height: 34 }}
                       onClick={() =>
                         key === 'copyright'
-                          ? onNavigate('editor-clip')
+                          ? say('클립 편집기는 준비 중입니다')
                           : say(`설명 편집 — ${hits[0].row.title}`)
                       }
                     >
@@ -331,9 +332,10 @@ export function DeployPage({ showAttention = true, onNavigate }: DeployPageProps
           <div className={styles.matrixHead}>
             <span />
             <span className={styles.headLabel}>영상</span>
+            {/* 채널은 공식 로고로만 — 이름은 툴팁에 있습니다 */}
             {CHANNELS.map((c) => (
-              <span key={c.key} className={styles.headChannel}>
-                <span className={styles.headLabel}>{c.name}</span>
+              <span key={c.key} className={styles.headChannel} title={c.name}>
+                <ChannelIcon channel={c.name} size={20} />
               </span>
             ))}
             <span />
@@ -507,6 +509,7 @@ function DetailDrawer({
                     }
                   >
                     <div className={styles.channelTop}>
+                      <ChannelIcon channel={ch.name} size={17} />
                       <span className={styles.channelName}>{ch.name}</span>
 
                       {cell && style && (
@@ -569,7 +572,7 @@ function DetailDrawer({
                               className={styles.errorBtn}
                               onClick={() =>
                                 cell?.cause === 'copyright'
-                                  ? onNavigate('editor-clip')
+                                  ? onSay('클립 편집기는 준비 중입니다')
                                   : onSay('설명 편집')
                               }
                             >

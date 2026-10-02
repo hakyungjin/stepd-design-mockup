@@ -151,24 +151,7 @@ export function useDeployCalendar({
     [findItem, isPast, items, log, patch, say, videos],
   )
 
-  /** 이 자리에 배치할 영상 교체 */
-  const swapVideo = useCallback(
-    (id: string, vid: string) => {
-      const it = findItem(id)
-      if (!it || vid === it.vid) return
-      const before = videos[it.vid]
-      const after = videos[vid]
-
-      // TODO(api): PATCH /deploys/:id { videoId }
-      patch(id, (x) => ({ ...x, vid }))
-      log(
-        `영상 교체 · ${shortDate(it.date)} ${it.time} · ${before.title} → ${after.title}`,
-        id,
-      )
-      say(`교체했습니다: ${after.title}`)
-    },
-    [findItem, log, patch, say, videos],
-  )
+  /* 예약된 영상을 다른 영상으로 바꿔 끼우는 동작은 두지 않습니다 — 취소하고 다시 넣습니다 */
 
   /** 플랫폼 추가/제외 */
   const togglePlatform = useCallback(
@@ -456,7 +439,6 @@ export function useDeployCalendar({
 
     // 동작
     moveItem,
-    swapVideo,
     togglePlatform,
     setItemStatus,
     setTemplate,

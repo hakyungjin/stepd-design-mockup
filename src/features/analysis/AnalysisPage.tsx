@@ -23,9 +23,19 @@ import {
   type Person,
   type Unknown,
 } from './data'
+import { AnalysisRequest } from './AnalysisRequest'
 import styles from './AnalysisPage.module.css'
 
 const TOAST_MS = 2600
+
+/** 원본 파일 정보 — STEPD 연동 시 회차 응답으로 교체 */
+const SOURCE = {
+  duration: '1:32:40',
+  file: '주말_캠핑_클럽_12회_원본.mp4',
+  size: '4.2GB',
+  spec: '1920×1080 · 29.97fps · H.264',
+  uploaded: '09/26 09:58',
+}
 
 type View = 'history' | 'analyzing' | 'result'
 type Tab = ItemKind | '등장 인물'
@@ -53,6 +63,10 @@ export function AnalysisPage({ onNavigate }: AnalysisPageProps) {
   const [detailId, setDetailId] = useState<string | null>(null)
   const [deployed, setDeployed] = useState<Record<string, boolean>>({})
   const [toast, setToast] = useState('')
+  /** 원본 영상 창 */
+  const [sourceOpen, setSourceOpen] = useState(false)
+  /** 분석 요청 창 — 프로그램·회차를 고르고 원본을 올립니다 */
+  const [newJob, setNewJob] = useState<{ program: string } | null>(null)
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current) }, [])
@@ -103,7 +117,19 @@ export function AnalysisPage({ onNavigate }: AnalysisPageProps) {
         {/* ---------------- 분석 목록 ---------------- */}
         {view === 'history' && (
           <div>
-            <h1 className={styles.h1}>영상 분석</h1>
+            <div className={styles.headRow}>
+              <h1 className={styles.h1}>영상 분석</h1>
+              <button
+                type="button"
+                className={styles.uploadBtn}
+                onClick={() => setNewJob({ program: PROGRAM_OPTIONS[0].name })}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 16V4m-4 4 4-4 4 4M4 17v3h16v-3" />
+                </svg>
+                <span>영상 분석</span>
+              </button>
+            </div>
 
             <div className={styles.filterGrid}>
               <label className={styles.field}>
@@ -270,19 +296,44 @@ export function AnalysisPage({ onNavigate }: AnalysisPageProps) {
             </button>
 
             <div className={styles.resultHead}>
-              <div style={{ minWidth: 0 }}>
-                <div className={styles.resultTitle}>{job.name}</div>
-                <div className={styles.resultMeta}>
-                  원본 1:32:40 · 분석 완료 {job.doneAt ?? ''} · 장면 16개 · 인물 4명
+              <div className={styles.resultIdentity}>
+                <button
+                  type="button"
+                  className={styles.sourceThumb}
+                  aria-label="원본 영상 보기"
+                  onClick={() => setSourceOpen(true)}
+                >
+                  <img src={ITEMS[0]?.thumb} alt="" />
+                  <span className={styles.sourcePlay} aria-hidden>▶</span>
+                </button>
+                <div style={{ minWidth: 0 }}>
+                  <div className={styles.resultTitle}>{job.name}</div>
+                  <div className={styles.resultMeta}>
+                    <span>원본 {SOURCE.duration}</span>
+                    <span>장면 16개 · 인물 4명</span>
+                    <span>분석 완료 {job.doneAt ?? ''}</span>
+                  </div>
+                  <div className={styles.resultActions}>
+                    <button type="button" className={styles.sourceBtn} onClick={() => setSourceOpen(true)}>
+                      <span aria-hidden>▶</span> 원본 보기
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.sourceGhost}
+                      onClick={() => say(`원본 내려받기 — ${SOURCE.file} (${SOURCE.size})`)}
+                    >
+                      원본 내려받기
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className={styles.kindStats}>
                 {KINDS.map((k) => (
                   <div key={k} className={styles.kindStat}>
-                    <div className={styles.kindStatLabel}>{k}</div>
                     <div className={styles.kindStatValue}>
                       {ITEMS.filter((x) => x.kind === k).length}
                     </div>
+                    <div className={styles.kindStatLabel}>{k}</div>
                   </div>
                 ))}
               </div>
@@ -581,6 +632,77 @@ export function AnalysisPage({ onNavigate }: AnalysisPageProps) {
             </div>
           </aside>
         </>
+      )}
+
+      {/* ---------------- 원본 영상 ---------------- */}
+      {sourceOpen && (
+        <>
+          <button
+            type="button"
+            className={styles.sourceScrim}
+            aria-label="원본 영상 닫기"
+            onClick={() => setSourceOpen(false)}
+          />
+          <div className={styles.sourceModal} role="dialog" aria-label="원본 영상" aria-modal="true">
+            <div className={styles.sourceHead}>
+              <div style={{ minWidth: 0 }}>
+                <strong>{job.name} 원본</strong>
+                <span>{SOURCE.file}</span>
+              </div>
+              <button
+                type="button"
+                className={styles.closeBtn}
+                aria-label="닫기"
+                onClick={() => setSourceOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className={styles.sourceStage}>
+              <img src={ITEMS[0]?.thumb} alt="" />
+              <button
+                type="button"
+                className={styles.sourcePlayBig}
+                aria-label="재생"
+                onClick={() => say('목업 화면이라 실제 재생은 되지 않습니다')}
+              >
+                ▶
+              </button>
+              <div className={styles.sourceBar}>
+                <span className={styles.sourceTime}>0:00</span>
+                <span className={styles.sourceTrack}>
+                  <span className={styles.sourceFill} />
+                </span>
+                <span className={styles.sourceTime}>{SOURCE.duration}</span>
+              </div>
+            </div>
+
+            <div className={styles.sourceFoot}>
+              <dl className={styles.sourceSpecs}>
+                <div><dt>길이</dt><dd>{SOURCE.duration}</dd></div>
+                <div><dt>규격</dt><dd>{SOURCE.spec}</dd></div>
+                <div><dt>용량</dt><dd>{SOURCE.size}</dd></div>
+                <div><dt>올린 때</dt><dd>{SOURCE.uploaded}</dd></div>
+              </dl>
+              <button
+                type="button"
+                className={styles.sourceDownload}
+                onClick={() => say(`원본 내려받기 — ${SOURCE.file} (${SOURCE.size})`)}
+              >
+                ↓ 원본 내려받기
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {newJob && (
+        <AnalysisRequest
+          program={newJob.program}
+          onClose={() => setNewJob(null)}
+          onDone={say}
+        />
       )}
 
       {toast && <div className={styles.toast}>{toast}</div>}

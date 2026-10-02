@@ -6,9 +6,7 @@ import type { AccountSettingsStore } from './useAccountSettings'
 import styles from './AccountSettingsPage.module.css'
 
 export function AccountSettingsPage({ store }: { store: AccountSettingsStore }) {
-  const [filter, setFilter] = useState('전체')
   const [installedOnly, setInstalledOnly] = useState(false)
-  const [query, setQuery] = useState('')
   const [emailOpen, setEmailOpen] = useState(false)
   const [removing, setRemoving] = useState(false)
   const [notice, setNotice] = useState('')
@@ -19,26 +17,19 @@ export function AccountSettingsPage({ store }: { store: AccountSettingsStore }) 
     if (noticeTimer.current) clearTimeout(noticeTimer.current)
     noticeTimer.current = setTimeout(() => setNotice(''), 3500)
   }
-  const plugins = PLUGINS.filter((plugin) =>
-    (filter === '전체' || plugin.category === filter) &&
-    (!installedOnly || (plugin.id === 'email' && store.emailInstalled)) &&
-    `${plugin.name} ${plugin.description}`.toLowerCase().includes(query.trim().toLowerCase()),
-  )
+  const plugins = PLUGINS.filter((plugin) => !installedOnly || (plugin.id === 'email' && store.emailInstalled))
 
   return <div className={styles.page}>
     <header className={styles.pageHead}>
-      <div><h1>설정</h1><p>내 작업에 필요한 앱과 기능을 연결하세요.</p></div>
+      <div><h1>설정</h1><p>내 작업에 필요한 서비스를 연결하세요.</p></div>
     </header>
     <section aria-label="플러그인">
       <div className={styles.sectionHead}><h2>플러그인</h2><span>내 계정에 적용</span></div>
+      {/* 연결할 서비스가 두 개뿐이라 검색·분류는 두지 않습니다 */}
       <div className={styles.filters}>
         <div className={styles.filterTabs}>
           <button type="button" aria-pressed={!installedOnly} onClick={() => setInstalledOnly(false)}>전체</button>
           <button type="button" aria-pressed={installedOnly} onClick={() => setInstalledOnly(true)}>내 플러그인 <span>{store.emailInstalled ? 1 : 0}</span></button>
-        </div>
-        <div className={styles.filterControls}>
-          <select aria-label="플러그인 카테고리" value={filter} onChange={(e) => setFilter(e.target.value)}>{['전체', '알림', '저장', '리포트'].map((category) => <option key={category} value={category}>{category === '전체' ? '모든 기능' : category}</option>)}</select>
-          <div className={styles.search}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" /><path d="m16 16 4.5 4.5" /></svg><input type="search" aria-label="플러그인 검색" value={query} placeholder="검색" onChange={(e) => setQuery(e.target.value)} /></div>
         </div>
       </div>
       <div className={styles.pluginList}>{plugins.map((plugin) => {
@@ -62,7 +53,7 @@ export function AccountSettingsPage({ store }: { store: AccountSettingsStore }) 
           {installed && removing && <div className={styles.removeConfirm} role="group" aria-label="Gmail 플러그인 제거 확인"><span>Gmail 알림을 제거할까요?</span><div><button type="button" onClick={() => setRemoving(false)}>취소</button><button type="button" onClick={() => { store.removeEmailPlugin(); setRemoving(false); say('Gmail 플러그인을 제거했습니다.') }}>제거</button></div></div>}
         </article>
       })}</div>
-      {!plugins.length && <div className={styles.empty}><h3>{installedOnly && !store.emailInstalled ? '추가한 플러그인이 없습니다.' : '검색 결과가 없습니다.'}</h3><button type="button" className={styles.configure} onClick={() => { setInstalledOnly(false); setFilter('전체'); setQuery('') }}>전체 보기</button></div>}
+      {!plugins.length && <div className={styles.empty}><h3>추가한 플러그인이 없습니다.</h3><button type="button" className={styles.configure} onClick={() => setInstalledOnly(false)}>전체 보기</button></div>}
       <p className={styles.footnote}>목업 화면 · 실제 서비스 연결과 알림 발송은 실행되지 않습니다.</p>
     </section>
     {emailOpen && <EmailNotificationDialog preferences={store.emailNotifications} onClose={() => setEmailOpen(false)} onSave={(preferences) => { const installed = store.emailInstalled; store.saveEmailNotifications(preferences); say(installed ? 'Gmail 알림 설정을 저장했습니다.' : 'Gmail 플러그인을 추가했습니다.') }} />}

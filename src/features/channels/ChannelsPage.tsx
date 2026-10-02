@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ConfirmDialog, type ConfirmRequest } from '@/components/ui/ConfirmDialog'
+import { ChannelIcon } from '@/components/ui/ChannelIcon'
 import {
   ACCOUNTS,
   ALL_PLATFORMS,
   COMMERCE,
-  EFFECT_COLOR,
-  EFFECT_TEXT_COLOR,
   PLATFORMS,
   PRIVACY_OPTIONS,
   STATUS_STYLE,
   TOKEN_REFRESHED,
+  countText,
   initialOf,
   needsAttention,
   statusNoteOf,
@@ -229,16 +229,10 @@ export function ChannelsPage({
                 >
                   <div className={styles.cardTop}>
                     <div className={styles.cardTitleRow}>
-                      <span
-                        className={styles.avatar}
-                        style={{ width: 36, height: 36, background: p.color, fontSize: 14 }}
-                      >
-                        {initialOf(p.name)}
-                      </span>
+                      <PlatformMark platform={p} size={44} />
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div className={styles.cardName}>{p.name}</div>
-                        <div className={styles.cardMethod}>
-                          {p.method}
+                        <div className={styles.cardName}>
+                          {p.name}
                           {p.key === 'cp' && <span className={styles.cardTag}>상품 링크</span>}
                         </div>
                       </div>
@@ -256,18 +250,6 @@ export function ChannelsPage({
                       </span>
                     </div>
 
-                    <div className={styles.effect}>
-                      <span
-                        className={styles.effectDot}
-                        style={{ background: EFFECT_COLOR[p.effect.kind] }}
-                      />
-                      <span>
-                        <b style={{ color: EFFECT_TEXT_COLOR[p.effect.kind] }}>
-                          {p.effect.head}
-                        </b>{' '}
-                        {p.effect.text}
-                      </span>
-                    </div>
                   </div>
 
                   <div className={styles.cardBody}>
@@ -315,16 +297,6 @@ export function ChannelsPage({
                     >
                       {p.connectLabel}
                     </button>
-                    {p.refreshLabel && (
-                      <button
-                        type="button"
-                        className={styles.refreshBtn}
-                        title={p.refreshTitle}
-                        onClick={() => say(`${p.refreshLabel} — ${p.name}`)}
-                      >
-                        {p.refreshLabel}
-                      </button>
-                    )}
                   </div>
                 </div>
               )
@@ -357,42 +329,14 @@ export function ChannelsPage({
 
             <div className={styles.detail}>
               <div className={styles.detailHead}>
-                <span
-                  className={styles.avatar}
-                  style={{ width: 44, height: 44, background: platform.color, fontSize: 18 }}
-                >
-                  {initialOf(platform.name)}
-                </span>
+                <PlatformMark platform={platform} size={44} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span className={styles.detailName}>{platform.name}</span>
-                    <span className={styles.detailMethod}>{platform.method}</span>
-                  </div>
-                  <div className={styles.effect} style={{ marginTop: 8, fontSize: 13 }}>
-                    <span
-                      className={styles.effectDot}
-                      style={{ background: EFFECT_COLOR[platform.effect.kind], width: 8, height: 8 }}
-                    />
-                    <span>
-                      <b style={{ color: EFFECT_TEXT_COLOR[platform.effect.kind] }}>
-                        {platform.effect.head}
-                      </b>{' '}
-                      {platform.effect.text}
-                    </span>
                   </div>
                   {platform.tip && <div className={styles.detailTip}>{platform.tip}</div>}
                 </div>
                 <div className={styles.detailActions}>
-                  {platform.refreshLabel && (
-                    <button
-                      type="button"
-                      className={styles.detailBtn}
-                      title={platform.refreshTitle}
-                      onClick={() => say(`${platform.refreshLabel} — ${platform.name}`)}
-                    >
-                      {platform.refreshLabel}
-                    </button>
-                  )}
                   <button
                     type="button"
                     className={styles.detailBtnPrimary}
@@ -419,7 +363,9 @@ export function ChannelsPage({
                     <span />
                     <span>{platform.unit === 'Page' ? 'Page' : platform.unit}</span>
                     <span>상태</span>
-                    <span>쓰는 곳</span>
+                    <span>
+                      {platform.audienceLabel ? `${platform.audienceLabel} · 평균 조회수` : '쓰는 곳'}
+                    </span>
                     <span />
                   </div>
                   {accountsOf(platform.key).map((a) => (
@@ -451,6 +397,27 @@ export function ChannelsPage({
 
 /* ================================================================== */
 
+/**
+ * 플랫폼 표식 — STEPD 본 저장소의 공식 채널 아이콘을 씁니다.
+ * 쿠팡 파트너스는 공식 아이콘이 없어 기존 이니셜 원을 그대로 둡니다.
+ */
+function PlatformMark({ platform, size }: { platform: Platform; size: number }) {
+  if (platform.key === 'cp')
+    return (
+      <span
+        className={styles.avatar}
+        style={{ width: size, height: size, background: platform.color, fontSize: size * 0.4 }}
+      >
+        {initialOf(platform.name)}
+      </span>
+    )
+  return (
+    <span className={styles.platformMark} style={{ width: size, height: size }}>
+      <ChannelIcon channel={platform.key} size={Math.round(size * 0.62)} />
+    </span>
+  )
+}
+
 function RailItem({
   platform,
   accounts,
@@ -472,12 +439,7 @@ function RailItem({
       className={active ? `${styles.railItem} ${styles.railItemOn}` : styles.railItem}
       onClick={onSelect}
     >
-      <span
-        className={styles.avatar}
-        style={{ width: 30, height: 30, background: platform.color, fontSize: 12 }}
-      >
-        {initialOf(platform.name)}
-      </span>
+      <PlatformMark platform={platform} size={30} />
       <span className={styles.railBody}>
         <span className={styles.railName}>{platform.name}</span>
         <span className={styles.railSub}>
@@ -699,12 +661,15 @@ function AccountTableRow(props: RowActions) {
         </div>
 
         <div className={styles.usesCell}>
+          {/* 구독자 수를 부르는 이름은 플랫폼마다 다릅니다 — 없는 플랫폼은 쓰는 곳을 그대로 */}
           <div>
-            {platform.key === 'cp'
-              ? '영상 설명의 상품 링크'
-              : account.rules.length
-                ? `자동배포 ${account.rules.length}개 프로그램`
-                : '자동배포에 안 씀'}
+            {platform.audienceLabel
+              ? `${platform.audienceLabel} ${countText(account.audience ?? 0)} · 평균 조회수 ${countText(account.avgViews ?? 0)}`
+              : platform.key === 'cp'
+                ? '영상 설명의 상품 링크'
+                : account.rules.length
+                  ? `자동배포 ${account.rules.length}개 프로그램`
+                  : '자동배포에 안 씀'}
           </div>
           <div
             className={

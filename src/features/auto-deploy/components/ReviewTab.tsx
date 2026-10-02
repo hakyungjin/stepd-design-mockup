@@ -9,7 +9,6 @@ import type { Rule } from '../types'
 import type { AutoDeployStore } from '../hooks/useAutoDeploy'
 import { HoldDetail } from './HoldDetail'
 import { PlanBoard, type BoardLook } from './PlanBoard'
-import { SlotPopover } from './SlotPopover'
 import { VideoLibrary } from './VideoLibrary'
 import styles from './schedule.module.css'
 import emptyStyles from './board.module.css'
@@ -140,7 +139,6 @@ export function ReviewTab({
 
       <PlanBoard rule={rule} plan={plan} store={store} look={look} />
       <VideoLibrary rule={rule} plan={plan} store={store} />
-      <SlotPopover rule={rule} plan={plan} store={store} />
     </div>
   )
 }

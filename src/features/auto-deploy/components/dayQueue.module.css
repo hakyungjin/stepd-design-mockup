@@ -145,6 +145,67 @@
   background: var(--bg-card-hover);
 }
 
+/* 아직 비어 있는 자리 */
+.emptyRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 6px 16px;
+  padding: 11px 14px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 9px;
+  background: repeating-linear-gradient(135deg, var(--bg-card-hover) 0 8px, transparent 8px 16px);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.emptyRow button {
+  flex: none;
+  padding: 5px 11px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-accent);
+  cursor: pointer;
+}
+
+.emptyRow button:hover {
+  border-color: var(--text-accent);
+  background: var(--bg-accent-subtle);
+}
+
+/* 썸네일 보기의 빈 자리 — 카드 한 칸을 그대로 차지합니다 */
+.emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 150px;
+  padding: 14px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 12px;
+  background: repeating-linear-gradient(135deg, var(--bg-card-hover) 0 8px, transparent 8px 16px);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.emptyCard small {
+  font-size: 11px;
+}
+
+/* 끌어온 영상이 이 자리 위에 있을 때 */
+.dropTarget {
+  border-style: solid;
+  border-color: var(--text-accent);
+  background: var(--bg-accent-subtle);
+  color: var(--text-accent);
+}
+
 .rowTitle {
   min-width: 0;
   display: flex;
@@ -206,55 +267,54 @@
 
 /* ---------------- 플랫폼 묶음 ---------------- */
 
-.platformGroup {
+/* ---------------- 시간대 묶음 (하루에 여러 번) ---------------- *
+ * 나가는 순서대로 읽히도록 시간대가 바깥, 플랫폼이 그 안입니다.            */
+
+.timeGroup {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-/* ---------------- 시간대 묶음 (하루에 여러 번) ---------------- */
-
-/* 표 안에서 시간대를 가르는 줄 */
-.slotRow {
+.timeHead {
   display: flex;
   align-items: baseline;
-  gap: 7px;
-  padding: 9px 16px;
+  gap: 9px;
+  flex-wrap: wrap;
+  padding-bottom: 9px;
   border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-card-hover);
 }
 
-.slotRow strong {
-  font-size: 12.5px;
-  font-weight: 700;
+.timeHead strong {
+  font-size: 15px;
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
   color: var(--text-primary);
 }
 
-.slotGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding-left: 12px;
-  border-left: 2px solid var(--border-subtle);
+.timeCount {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
-.slotHead {
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-}
-
-.slotHead strong {
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-primary);
-}
-
-.slotCount {
+.timeOpen,
+.timeDone {
   font-size: 11.5px;
   color: var(--text-muted);
+}
+
+.timeOpen {
+  color: var(--text-accent);
+}
+
+/* 시간대 안의 플랫폼 묶음 — 한 칸 들여서 아래에 매답니다 */
+.platformGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-left: 12px;
+  border-left: 2px solid var(--border-subtle);
 }
 
 .platformHead {
@@ -263,27 +323,6 @@
   gap: 9px;
   flex-wrap: wrap;
 }
-
-.platformHead i {
-  display: grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-style: normal;
-  font-weight: 700;
-}
-
-.platformHead i[data-platform='YT'] { background: rgba(220, 38, 38, 0.14); color: #b91c1c; }
-.platformHead i[data-platform='NC'] { background: rgba(3, 199, 90, 0.16); color: #15803d; }
-.platformHead i[data-platform='TT'] { background: rgba(15, 23, 42, 0.1); color: #334155; }
-.platformHead i[data-platform='IG'] { background: rgba(193, 53, 132, 0.16); color: #9d174d; }
-
-:global(html.dark) .platformHead i[data-platform='YT'] { background: rgba(220, 38, 38, 0.18); color: #f87171; }
-:global(html.dark) .platformHead i[data-platform='NC'] { background: rgba(3, 199, 90, 0.18); color: #34d399; }
-:global(html.dark) .platformHead i[data-platform='TT'] { background: rgba(255, 255, 255, 0.12); color: #e2e8f0; }
-:global(html.dark) .platformHead i[data-platform='IG'] { background: rgba(193, 53, 132, 0.2); color: #f472b6; }
 
 .platformHead strong {
   font-size: 13px;

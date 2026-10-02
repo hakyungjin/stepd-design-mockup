@@ -1,0 +1,93 @@
+/* 에이전트 첫 화면 — 인사와 예시 문장만 */
+
+/* 아래 입력창(.composerWrap) 과 같은 폭으로 맞춥니다 */
+.welcome {
+  width: min(800px, 100%);
+  /* 위아래 auto — 대화가 비어 있는 동안 가운데에 섭니다 */
+  margin: auto;
+  padding: 40px 30px 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: var(--gradient-accent);
+  color: #fff;
+  font-size: 19px;
+  box-shadow: 0 10px 24px -12px rgba(28, 96, 255, 0.9);
+}
+
+.hello {
+  margin: 16px 0 4px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  color: var(--text-primary);
+}
+
+/* ---------------- 예시 문장 ---------------- */
+
+.suggestList {
+  max-width: 640px;
+  margin-top: 26px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.suggest {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.suggest:hover {
+  border-color: color-mix(in srgb, var(--text-accent) 45%, var(--border-subtle));
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.suggest svg {
+  flex: none;
+}
+
+/* 아이콘 색으로만 갈래를 구분합니다 */
+.suggest[data-kind='search'] svg { color: #6188ce; }
+.suggest[data-kind='highlight'] svg { color: #d87731; }
+.suggest[data-kind='edit'] svg { color: #7e6bd1; }
+.suggest[data-kind='deploy'] svg { color: #299475; }
+.suggest[data-kind='channel'] svg { color: #c05c8e; }
+
+@media (max-width: 760px) {
+  .welcome { padding: 36px 18px 20px; }
+  .title { font-size: 22px; }
+  .mark { width: 38px; height: 38px; font-size: 17px; }
+  .suggest { font-size: 12px; padding: 8px 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggest { transition: none; }
+}

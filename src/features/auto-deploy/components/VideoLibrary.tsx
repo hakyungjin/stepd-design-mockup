@@ -1,6 +1,7 @@
 /*
- * 영상 보관함 — 아직 편성하지 않은 영상을 골라 편성표로 끌어다 놓습니다.
- * 카드를 칸에 놓으면 추가, 이미 있는 카드 위에 놓으면 교체됩니다 (PlanBoard 가 처리).
+ * 영상 보관함 — 이 자동배포가 쥐고 있는 영상과 편성 여부를 봅니다.
+ * 카드를 편성표의 빈 자리로 끌어다 놓으면 그 자리에 들어갑니다 (DayQueue 가 받습니다).
+ * 한 번에 채우려면 편성표의 "✦ 자동배치" 를 씁니다.
  */
 
 import { useState } from 'react'
@@ -92,7 +93,6 @@ export function VideoLibrary({
               draggable
               title={h.source}
               onDragStart={(e) => {
-                store.setPop(null)
                 store.dragRef.current = { hid: h.id, from: null }
                 e.dataTransfer.effectAllowed = 'move'
                 e.dataTransfer.setData('text/plain', h.id)
